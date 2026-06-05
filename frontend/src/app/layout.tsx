@@ -5,6 +5,8 @@ import { ThemeProvider } from '@/providers/ThemeProvider';
 import { AuthProvider } from '@/providers/AuthProvider';
 import './globals.css';
 import { cn } from "@/lib/utils";
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -39,7 +41,13 @@ export default function RootLayout({
         >
           <QueryProvider>
             <AuthProvider>
-              {children}
+              <div className="flex flex-col min-h-screen">
+                <Header />
+                <main className="flex-1">
+                  {children}
+                </main>
+                <Footer />
+              </div>
             </AuthProvider>
           </QueryProvider>
         </ThemeProvider>

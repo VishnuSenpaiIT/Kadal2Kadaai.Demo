@@ -26,13 +26,9 @@ class Category extends Model
         'is_active',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'is_active' => 'boolean',
-            'sort_order' => 'integer',
-        ];
-    }
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
 
     public function parent(): BelongsTo
     {
@@ -49,8 +45,13 @@ class Category extends Model
         return $this->hasMany(Product::class);
     }
 
-    public function isRoot(): bool
+    public function scopeActive($query)
     {
-        return $this->parent_id === null;
+        return $query->where('is_active', true);
+    }
+
+    public function scopeRootCategories($query)
+    {
+        return $query->whereNull('parent_id');
     }
 }

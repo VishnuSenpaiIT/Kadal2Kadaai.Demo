@@ -23,6 +23,11 @@ return new class extends Migration
             $table->decimal('minimum_order', 8, 2)->default(0.25);
             $table->string('status', 20)->default('draft');
             $table->boolean('is_featured')->default(false);
+            $table->boolean('is_popular')->default(false);
+            $table->string('origin')->nullable();
+            $table->text('freshness_notes')->nullable();
+            $table->json('weight_options')->nullable();
+            $table->unsignedInteger('view_count')->default(0);
             $table->string('meta_title')->nullable();
             $table->text('meta_description')->nullable();
             $table->timestamps();

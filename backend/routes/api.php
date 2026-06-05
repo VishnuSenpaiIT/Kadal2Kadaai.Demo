@@ -56,6 +56,19 @@ Route::prefix('v1')->middleware([\App\Http\Middleware\VisitorTrackingMiddleware:
         });
     });
 
+    // Marketplace Public Routes
+    Route::prefix('marketplace')->group(function () {
+        Route::get('/categories', [\App\Http\Controllers\Api\V1\Marketplace\CategoryController::class, 'index']);
+        Route::get('/categories/{slug}', [\App\Http\Controllers\Api\V1\Marketplace\CategoryController::class, 'show']);
+        
+        Route::get('/products', [\App\Http\Controllers\Api\V1\Marketplace\ProductController::class, 'index']);
+        Route::get('/products/featured', [\App\Http\Controllers\Api\V1\Marketplace\ProductController::class, 'featured']);
+        Route::get('/products/popular', [\App\Http\Controllers\Api\V1\Marketplace\ProductController::class, 'popular']);
+        Route::get('/products/{slug}', [\App\Http\Controllers\Api\V1\Marketplace\ProductController::class, 'show']);
+        
+        Route::get('/search', [\App\Http\Controllers\Api\V1\Marketplace\SearchController::class, 'search']);
+    });
+
     // Authenticated Routes
     Route::middleware('auth:sanctum')->group(function () {
         

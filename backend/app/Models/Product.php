@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\ProductStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
@@ -29,20 +27,20 @@ class Product extends Model
         'minimum_order',
         'status',
         'is_featured',
+        'is_popular',
+        'origin',
+        'freshness_notes',
+        'weight_options',
+        'view_count',
         'meta_title',
         'meta_description',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'price' => 'decimal:2',
-            'sale_price' => 'decimal:2',
-            'minimum_order' => 'decimal:2',
-            'is_featured' => 'boolean',
-            'status' => ProductStatus::class,
-        ];
-    }
+    protected $casts = [
+        'is_featured' => 'boolean',
+        'is_popular' => 'boolean',
+        'weight_options' => 'array',
+    ];
 
     public function seller(): BelongsTo
     {
@@ -56,32 +54,37 @@ class Product extends Model
 
     public function images(): HasMany
     {
-        return $this->hasMany(ProductImage::class)->orderBy('sort_order');
+        return $this->hasMany(ProductImage::class);
     }
 
-    public function primaryImage(): HasOne
-    {
-        return $this->hasOne(ProductImage::class)->where('is_primary', true);
-    }
-
-    public function inventory(): HasOne
+    public function inventory(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Inventory::class);
     }
 
-    public function orderItems(): HasMany
+    public function scopeActive($query)
     {
-        return $this->hasMany(OrderItem::class);
+        return $query->where('status', 'active');
     }
 
-    public function getEffectivePriceAttribute(): string
+    public function scopeFeatured($query)
     {
-        return $this->sale_price ?? $this->price;
+        return $query->where('is_featured', true);
     }
 
-    public function isAvailable(): bool
+    public function scopePopular($query)
     {
-        return $this->status === ProductStatus::Active
-            && ($this->inventory?->quantity ?? 0) > 0;
+        return $query->where('is_popular', true);
+    }
+
+    public function getPrimaryImageAttribute(): ?string
+    {
+        return $this->images()->where('is_primary', true)->value('url')
+            ?? $this->images()->value('url');
+    }
+
+    public function getEffectivePriceAttribute(): float
+    {
+        return (float) ($this->sale_price ?? $this->price);
     }
 }
