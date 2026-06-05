@@ -11,10 +11,8 @@ const apiClient = axios.create({
 });
 
 apiClient.interceptors.request.use((config) => {
-  // We can attach the token if we store it in memory or localStorage
-  // For now, let's assume it's stored in localStorage for SPA mode
   if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('api_token');
+    const token = localStorage.getItem('auth_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -27,8 +25,7 @@ apiClient.interceptors.response.use(
   (error) => {
     // Handle 401 Unauthorized globally
     if (error.response?.status === 401 && typeof window !== 'undefined') {
-      localStorage.removeItem('api_token');
-      // Redirect to login or dispatch event
+      localStorage.removeItem('auth_token');
       window.dispatchEvent(new Event('auth-unauthorized'));
     }
     return Promise.reject(error.response?.data || error.message);
@@ -36,3 +33,4 @@ apiClient.interceptors.response.use(
 );
 
 export default apiClient;
+export { apiClient as api };

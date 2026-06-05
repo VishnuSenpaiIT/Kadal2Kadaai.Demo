@@ -17,9 +17,11 @@ class ConsumerProfile extends Model
         'user_id',
         'preferred_delivery_address_id',
         'loyalty_points',
-        'total_orders',
+        'lifetime_orders',
         'lifetime_spending',
+        'total_logins',
         'last_order_date',
+        'last_visit_at',
     ];
 
     protected $casts = [

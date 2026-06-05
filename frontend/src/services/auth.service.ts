@@ -1,17 +1,17 @@
 import apiClient from '@/lib/api-client';
-import { ApiResponse } from './api.types';
-import { AuthResponse, User } from './auth.types';
+import { ApiResponse } from '@/types/api.types';
+import { AuthResponse, User } from '@/types/auth.types';
 
 export const authService = {
   async me(): Promise<User> {
     const res = await apiClient.get<ApiResponse<User>>('/auth/me');
-    return res.data;
+    return (res as unknown as ApiResponse<User>).data;
   },
 
   async logout(): Promise<void> {
     await apiClient.post('/auth/logout');
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('api_token');
+      localStorage.removeItem('auth_token');
     }
   },
 };

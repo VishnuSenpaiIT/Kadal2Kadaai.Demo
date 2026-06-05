@@ -27,7 +27,7 @@ Route::get('/health', function () {
     ]);
 });
 
-Route::prefix('v1')->group(function () {
+Route::prefix('v1')->middleware([\App\Http\Middleware\VisitorTrackingMiddleware::class])->group(function () {
     
     // Ping
     Route::get('/ping', function () {
@@ -41,11 +41,13 @@ Route::prefix('v1')->group(function () {
 
     // Authentication Routes
     Route::prefix('auth')->group(function () {
-        Route::post('/register', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'register']);
-        Route::post('/login', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'login']);
+        Route::post('/register', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'register'])->middleware('throttle:auth');
+        Route::post('/login', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'login'])->middleware('throttle:auth');
+        Route::post('/forgot-password', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'forgotPassword'])->middleware('throttle:forgot-password');
+        Route::post('/reset-password', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'resetPassword'])->middleware('throttle:auth');
         
-        Route::post('/otp/send', [\App\Http\Controllers\Api\V1\Auth\OtpController::class, 'send']);
-        Route::post('/otp/verify', [\App\Http\Controllers\Api\V1\Auth\OtpController::class, 'verify']);
+        Route::post('/otp/send', [\App\Http\Controllers\Api\V1\Auth\OtpController::class, 'send'])->middleware('throttle:auth');
+        Route::post('/otp/verify', [\App\Http\Controllers\Api\V1\Auth\OtpController::class, 'verify'])->middleware('throttle:auth');
 
         // Authenticated Auth Routes
         Route::middleware('auth:sanctum')->group(function () {
@@ -83,6 +85,13 @@ Route::prefix('v1')->group(function () {
 
             Route::get('/customers', function () { /* TODO */ });
             Route::get('/customers/{id}', function () { /* TODO */ });
+        });
+
+        // Admin Routes
+        Route::prefix('admin')->group(function () {
+            Route::get('/dashboard', [\App\Http\Controllers\Api\V1\Admin\ConsumerController::class, 'dashboard']);
+            Route::get('/consumers', [\App\Http\Controllers\Api\V1\Admin\ConsumerController::class, 'index']);
+            Route::get('/consumers/{id}', [\App\Http\Controllers\Api\V1\Admin\ConsumerController::class, 'show']);
         });
     });
 

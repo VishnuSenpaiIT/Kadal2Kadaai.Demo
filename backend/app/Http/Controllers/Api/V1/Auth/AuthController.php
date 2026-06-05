@@ -5,67 +5,114 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
-use App\Http\Requests\Auth\RegisterRequest;
-use App\Http\Resources\UserResource;
 use App\Services\Auth\AuthService;
-use App\Services\Auth\TokenService;
-use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Traits\ApiResponse;
 
 class AuthController extends Controller
 {
     use ApiResponse;
 
     public function __construct(
-        protected AuthService $authService,
-        protected TokenService $tokenService
+        protected AuthService $authService
     ) {}
 
-    public function register(RegisterRequest $request): JsonResponse
+    public function register(Request $request): JsonResponse
     {
-        $user = $this->authService->registerUser($request->validated());
-        $token = $this->tokenService->createTokenForUser($user);
+        // Ideally this should be a FormRequest, but using simple validation here for brevity
+        $validated = $request->validate([
+            'first_name' => 'required|string|min:2|max:50',
+            'last_name' => 'required|string|min:2|max:50',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'contact_number' => 'required|string|max:15|unique:users',
+            'district' => 'required|string',
+            'pincode' => 'required|string',
+        ]);
 
-        return $this->created([
-            'user' => new UserResource($user),
-            'token' => $token,
-        ], 'User registered successfully');
+        $user = $this->authService->registerConsumer(
+            $validated, 
+            $request->ip(), 
+            $request->userAgent()
+        );
+
+        return $this->successResponse($user, 'Registration successful', 201);
     }
 
-    public function login(LoginRequest $request): JsonResponse
+    public function login(Request $request): JsonResponse
     {
-        $user = $this->authService->loginWithEmail($request->email, $request->password);
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        $user = $this->authService->login(
+            $request->email, 
+            $request->password, 
+            $request->ip(), 
+            $request->userAgent()
+        );
 
         if (!$user) {
-            return $this->error('Invalid email or password', 401, null, 'AUTH_001');
+            return $this->errorResponse('Invalid credentials or inactive account', 401);
         }
 
-        if (!$user->isActive()) {
-            return $this->error('Account is inactive or suspended', 403, null, 'AUTH_004');
-        }
+        $token = $user->createToken('auth_token')->plainTextToken;
 
-        $token = $this->tokenService->createTokenForUser($user);
-
-        return $this->success([
-            'user' => new UserResource($user),
-            'token' => $token,
-        ], 'Logged in successfully');
+        return $this->successResponse([
+            'user' => $user,
+            'token' => $token
+        ], 'Login successful');
     }
 
     public function logout(Request $request): JsonResponse
     {
-        $this->tokenService->revokeCurrentToken($request->user());
+        $this->authService->logout(
+            $request->user(),
+            $request->ip(),
+            $request->userAgent()
+        );
+        return $this->successResponse(null, 'Logged out successfully');
+    }
 
-        return $this->success(null, 'Logged out successfully');
+    public function forgotPassword(Request $request): JsonResponse
+    {
+        $request->validate(['email' => 'required|email']);
+        
+        $status = $this->authService->sendResetLink($request->email);
+        
+        if ($status === 'success') {
+            return $this->successResponse(null, 'Password reset link sent');
+        }
+
+        return $this->errorResponse('Failed to send reset link', 400);
+    }
+
+    public function resetPassword(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string|min:8|confirmed',
+            'token' => 'required|string',
+        ]);
+
+        $status = $this->authService->resetPassword(
+            $validated,
+            $request->ip(),
+            $request->userAgent()
+        );
+
+        if ($status === 'success') {
+            return $this->successResponse(null, 'Password has been reset');
+        }
+
+        return $this->errorResponse('Failed to reset password', 400);
     }
 
     public function me(Request $request): JsonResponse
     {
-        return $this->success(
-            new UserResource($request->user()),
-            'User retrieved successfully'
-        );
+        $user = $request->user()->load('consumerProfile');
+        return $this->successResponse($user, 'User profile retrieved');
     }
 }

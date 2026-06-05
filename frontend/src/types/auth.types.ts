@@ -1,14 +1,26 @@
 export interface User {
   id: string;
-  name: string;
-  email: string | null;
-  phone: string | null;
-  avatar: string | null;
+  first_name: string;
+  last_name: string;
+  email: string;
+  contact_number: string;
+  district: string;
+  pincode: string;
   status: string;
-  has_verified_email: boolean;
-  has_verified_phone: boolean;
-  roles: string[];
+  last_login_at: string | null;
   created_at: string;
+  consumer_profile?: ConsumerProfile;
+}
+
+export interface ConsumerProfile {
+  id: string;
+  user_id: string;
+  loyalty_points: number;
+  lifetime_orders: number;
+  lifetime_spending: string;
+  total_logins: number;
+  last_order_date: string | null;
+  last_visit_at: string | null;
 }
 
 export interface AuthResponse {

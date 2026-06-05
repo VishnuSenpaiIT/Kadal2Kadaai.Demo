@@ -15,9 +15,11 @@ return new class extends Migration
             $table->foreignUuid('user_id')->unique()->constrained()->cascadeOnDelete();
             $table->foreignUuid('preferred_delivery_address_id')->nullable()->constrained('addresses')->nullOnDelete();
             $table->integer('loyalty_points')->default(0);
-            $table->integer('total_orders')->default(0);
+            $table->integer('lifetime_orders')->default(0);
             $table->decimal('lifetime_spending', 12, 2)->default(0);
+            $table->integer('total_logins')->default(0);
             $table->timestamp('last_order_date')->nullable();
+            $table->timestamp('last_visit_at')->nullable();
             $table->timestamps();
         });
     }
