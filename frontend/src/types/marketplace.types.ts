@@ -9,21 +9,43 @@ export interface Category {
   children?: Category[];
 }
 
+export enum ProductStatus {
+  DRAFT = 'DRAFT',
+  PENDING_REVIEW = 'PENDING_REVIEW',
+  PUBLISHED = 'PUBLISHED',
+  OUT_OF_STOCK = 'OUT_OF_STOCK',
+  ARCHIVED = 'ARCHIVED',
+  DISABLED = 'DISABLED',
+}
+
+export enum StockStatus {
+  IN_STOCK = 'IN_STOCK',
+  LOW_STOCK = 'LOW_STOCK',
+  OUT_OF_STOCK = 'OUT_OF_STOCK',
+  PREORDER = 'PREORDER',
+}
+
 export interface Product {
   id: string;
+  seller_id: string;
+  category_id: string;
   name: string;
   slug: string;
-  description: string | null;
-  price: string;
-  sale_price: string | null;
-  unit: string;
-  minimum_order: string;
-  status: string;
+  short_description: string | null;
+  full_description: string | null;
+  price: number;
+  sale_price: number | null;
+  weight_unit: string;
+  minimum_order_quantity: number;
+  maximum_order_quantity: number | null;
+  available_quantity: number;
+  reserved_quantity: number;
+  stock_status: StockStatus;
+  product_status: ProductStatus;
   is_featured: boolean;
   is_popular: boolean;
-  origin: string | null;
-  freshness_notes: string | null;
-  weight_options: string[] | null;
+  origin_location: string | null;
+  freshness_hours: number | null;
   view_count: number;
   meta_title?: string;
   meta_description?: string;
@@ -32,18 +54,15 @@ export interface Product {
     name: string;
     slug: string;
   };
-  seller: {
+  seller?: {
     id: string;
     first_name: string;
     last_name: string;
-    sellerProfile?: {
-      store_name: string;
-      rating: number;
-    }
   };
   images: Array<{
     id: string;
-    url: string;
+    image_url: string;
+    image_order: number;
     is_primary: boolean;
   }>;
 }

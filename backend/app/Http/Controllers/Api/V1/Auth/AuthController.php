@@ -58,6 +58,7 @@ class AuthController extends Controller
             return $this->errorResponse('Invalid credentials or inactive account', 401);
         }
 
+        $user->load(['roles', 'permissions', 'sellerProfile']);
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return $this->successResponse([
@@ -112,7 +113,7 @@ class AuthController extends Controller
 
     public function me(Request $request): JsonResponse
     {
-        $user = $request->user()->load('consumerProfile');
+        $user = $request->user()->load(['consumerProfile', 'sellerProfile', 'roles', 'permissions']);
         return $this->successResponse($user, 'User profile retrieved');
     }
 }

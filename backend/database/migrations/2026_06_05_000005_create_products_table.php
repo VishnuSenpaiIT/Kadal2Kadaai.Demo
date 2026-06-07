@@ -16,17 +16,21 @@ return new class extends Migration
             $table->foreignUuid('category_id')->constrained()->nullOnDelete();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->text('description')->nullable();
+            $table->text('short_description')->nullable();
+            $table->longText('full_description')->nullable();
             $table->decimal('price', 10, 2);
             $table->decimal('sale_price', 10, 2)->nullable();
-            $table->string('unit', 50)->default('kg');
-            $table->decimal('minimum_order', 8, 2)->default(0.25);
-            $table->string('status', 20)->default('draft');
+            $table->string('weight_unit', 50)->default('kg');
+            $table->decimal('minimum_order_quantity', 10, 3)->default(0.25);
+            $table->decimal('maximum_order_quantity', 10, 3)->nullable();
+            $table->decimal('available_quantity', 10, 3)->default(0);
+            $table->decimal('reserved_quantity', 10, 3)->default(0);
+            $table->string('stock_status', 50)->default('OUT_OF_STOCK');
+            $table->string('product_status', 50)->default('DRAFT');
             $table->boolean('is_featured')->default(false);
             $table->boolean('is_popular')->default(false);
-            $table->string('origin')->nullable();
-            $table->text('freshness_notes')->nullable();
-            $table->json('weight_options')->nullable();
+            $table->string('origin_location')->nullable();
+            $table->integer('freshness_hours')->nullable();
             $table->unsignedInteger('view_count')->default(0);
             $table->string('meta_title')->nullable();
             $table->text('meta_description')->nullable();
@@ -35,7 +39,9 @@ return new class extends Migration
 
             $table->index('seller_id');
             $table->index('category_id');
-            $table->index('status');
+            $table->index('slug');
+            $table->index('product_status');
+            $table->index('stock_status');
             $table->index('is_featured');
         });
     }

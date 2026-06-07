@@ -69,18 +69,18 @@ npm run dev
 - [Environment Variables](./docs/environment.md)
 - [Security Checklist](./docs/security.md)
 
-## Portals (Planned)
+## Applications & Portals
 
-- **Consumer Marketplace** — Browse, order, track
-- **Seller Portal** — Inventory, orders, earnings
-- **Fisherman Portal** — Catch listing, daily supply
-- **Delivery Portal** — Assignments, routing, proof
-- **Admin Dashboard** — Platform management, analytics
+- **Consumer Marketplace** — Browse, order, track (Public Interface)
+- **KadalOperations Portal** — Unified enterprise portal replacing individual admin and seller dashboards. Manages platform, inventory, orders, earnings, and analytics via Role-Based Access Control (RBAC).
+- **Delivery Portal** (Planned) — Assignments, routing, proof
+- **B2B Marketplace** (Future) — Wholesale and bulk transactions
 
 ## Development Status
 
-This repository is currently in the **Foundation & Preparation Phase**.  
-No business features have been built yet — only the architectural foundation.
+This repository has completed its **Foundation & Preparation Phase** and the **Authentication & Consumer Management Phase**.
+Currently in the **Operations Portal Consolidation & Marketplace Completion Phase**.
+Core architecture, unified auth, and RBAC are established.
 
 ---
 

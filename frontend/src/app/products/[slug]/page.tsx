@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     const product = await productService.getBySlug(params.slug);
     return {
       title: `${product.name} | Kadal2Kadaai`,
-      description: product.meta_description || product.description,
+      description: product.meta_description || product.short_description || '',
     };
   } catch (e) {
     return { title: 'Product Not Found' };
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 export default async function ProductDetailPage({ params }: { params: { slug: string } }) {
   try {
     const product = await productService.getBySlug(params.slug);
-    const primaryImage = product.images?.find(i => i.is_primary)?.url || product.images?.[0]?.url || 'https://placehold.co/800x800/e2e8f0/1e293b?text=No+Image';
+    const primaryImage = product.images?.find(i => i.is_primary)?.image_url || product.images?.[0]?.image_url || 'https://placehold.co/800x800/e2e8f0/1e293b?text=No+Image';
 
     return (
       <div className="container mx-auto px-4 py-12">
@@ -52,7 +52,7 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
             {product.images && product.images.length > 1 && (
               <div className="flex gap-2 p-4 overflow-x-auto">
                 {product.images.map(img => (
-                  <img key={img.id} src={img.url} className="w-20 h-20 object-cover rounded-md border cursor-pointer opacity-70 hover:opacity-100 transition-opacity" alt="thumbnail" />
+                  <img key={img.id} src={img.image_url} className="w-20 h-20 object-cover rounded-md border cursor-pointer opacity-70 hover:opacity-100 transition-opacity" alt="thumbnail" />
                 ))}
               </div>
             )}
@@ -71,28 +71,17 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
                 <div className="flex items-baseline gap-3">
                   <span className="text-4xl font-bold text-primary">₹{product.sale_price}</span>
                   <span className="text-xl text-muted-foreground line-through">₹{product.price}</span>
-                  <span className="text-sm text-muted-foreground ml-1">per {product.unit}</span>
+                  <span className="text-sm text-muted-foreground ml-1">per {product.weight_unit}</span>
                 </div>
               ) : (
                 <div className="flex items-baseline gap-2">
                   <span className="text-4xl font-bold text-primary">₹{product.price}</span>
-                  <span className="text-sm text-muted-foreground">per {product.unit}</span>
+                  <span className="text-sm text-muted-foreground">per {product.weight_unit}</span>
                 </div>
               )}
             </div>
 
-            {product.weight_options && product.weight_options.length > 0 && (
-              <div className="mb-8">
-                <h3 className="font-medium mb-3">Available Weights</h3>
-                <div className="flex flex-wrap gap-2">
-                  {product.weight_options.map(weight => (
-                    <button key={weight} className="px-4 py-2 border rounded-md hover:border-primary focus:border-primary focus:ring-1 focus:ring-primary transition-all">
-                      {weight}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+
 
             <div className="mb-8 flex gap-4">
               {/* Quantity placeholder */}
@@ -130,7 +119,7 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
               <h3 className="text-sm text-muted-foreground uppercase tracking-wider font-semibold mb-3">Seller Information</h3>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-bold text-lg">{product.seller.sellerProfile?.store_name || `${product.seller.first_name} ${product.seller.last_name}`}</p>
+                  <p className="font-bold text-lg">{product.seller?.first_name} {product.seller?.last_name}</p>
                   {/* Rating placeholder */}
                   <p className="text-sm text-yellow-500">★★★★★ <span className="text-muted-foreground ml-1">(No reviews yet)</span></p>
                 </div>
@@ -145,28 +134,28 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
           <div className="md:col-span-2">
             <h2 className="text-2xl font-heading font-bold mb-6">Product Description</h2>
             <div className="prose max-w-none text-slate-700 leading-relaxed">
-              <p>{product.description}</p>
+              <p>{product.full_description || product.short_description}</p>
             </div>
           </div>
           
           <div>
             <h2 className="text-xl font-heading font-bold mb-6">Specifications</h2>
             <div className="space-y-4">
-              {product.origin && (
+              {product.origin_location && (
                 <div className="flex flex-col pb-4 border-b">
                   <span className="text-sm text-muted-foreground">Origin / Catch Area</span>
-                  <span className="font-medium">{product.origin}</span>
+                  <span className="font-medium">{product.origin_location}</span>
                 </div>
               )}
-              {product.freshness_notes && (
+              {product.freshness_hours && (
                 <div className="flex flex-col pb-4 border-b">
-                  <span className="text-sm text-muted-foreground">Freshness Notes</span>
-                  <span className="font-medium">{product.freshness_notes}</span>
+                  <span className="text-sm text-muted-foreground">Freshness Guarantee</span>
+                  <span className="font-medium">Up to {product.freshness_hours} hours</span>
                 </div>
               )}
               <div className="flex flex-col pb-4 border-b">
                 <span className="text-sm text-muted-foreground">Minimum Order</span>
-                <span className="font-medium">{product.minimum_order} {product.unit}</span>
+                <span className="font-medium">{product.minimum_order_quantity} {product.weight_unit}</span>
               </div>
             </div>
           </div>

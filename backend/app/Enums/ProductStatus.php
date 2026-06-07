@@ -6,10 +6,12 @@ namespace App\Enums;
 
 enum ProductStatus: string
 {
-    case Draft = 'draft';
-    case Active = 'active';
-    case Inactive = 'inactive';
-    case OutOfStock = 'out_of_stock';
+    case DRAFT = 'DRAFT';
+    case PENDING_REVIEW = 'PENDING_REVIEW';
+    case PUBLISHED = 'PUBLISHED';
+    case OUT_OF_STOCK = 'OUT_OF_STOCK';
+    case ARCHIVED = 'ARCHIVED';
+    case DISABLED = 'DISABLED';
 
     public static function values(): array
     {

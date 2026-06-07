@@ -9,7 +9,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const primaryImage = product.images?.find(i => i.is_primary)?.url || product.images?.[0]?.url || 'https://placehold.co/600x400/e2e8f0/1e293b?text=No+Image';
+  const primaryImage = product.images?.find(i => i.is_primary)?.image_url || product.images?.[0]?.image_url || 'https://placehold.co/600x400/e2e8f0/1e293b?text=No+Image';
 
   return (
     <div className="group flex flex-col bg-card rounded-xl border overflow-hidden shadow-sm hover:shadow-md transition-all duration-200">
@@ -41,18 +41,18 @@ export function ProductCard({ product }: ProductCardProps) {
         </Link>
         
         <div className="text-xs text-muted-foreground mb-3 flex items-center gap-1">
-          <span>By {product.seller?.sellerProfile?.store_name || `${product.seller?.first_name} ${product.seller?.last_name}`}</span>
+          <span>By {product.seller?.first_name} {product.seller?.last_name}</span>
         </div>
 
         <div className="flex items-center justify-between mt-auto pt-2 border-t">
           <div>
             {product.sale_price ? (
               <div className="flex flex-col">
-                <span className="text-sm text-muted-foreground line-through">₹{product.price}/{product.unit}</span>
-                <span className="text-lg font-bold text-primary">₹{product.sale_price}/{product.unit}</span>
+                <span className="text-sm text-muted-foreground line-through">₹{product.price}/{product.weight_unit}</span>
+                <span className="text-lg font-bold text-primary">₹{product.sale_price}/{product.weight_unit}</span>
               </div>
             ) : (
-              <span className="text-lg font-bold text-primary">₹{product.price}/{product.unit}</span>
+              <span className="text-lg font-bold text-primary">₹{product.price}/{product.weight_unit}</span>
             )}
           </div>
           

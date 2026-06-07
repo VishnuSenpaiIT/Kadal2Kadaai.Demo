@@ -87,7 +87,7 @@ Route::prefix('v1')->middleware([\App\Http\Middleware\VisitorTrackingMiddleware:
         Route::post('/orders', function () { /* TODO */ });
 
         // Seller Specific Routes
-        Route::prefix('seller')->group(function () {
+        Route::prefix('seller')->middleware('role:seller|super_admin')->group(function () {
             Route::get('/dashboard', function () { /* TODO */ });
             Route::get('/analytics', function () { /* TODO */ });
             
@@ -98,13 +98,27 @@ Route::prefix('v1')->middleware([\App\Http\Middleware\VisitorTrackingMiddleware:
 
             Route::get('/customers', function () { /* TODO */ });
             Route::get('/customers/{id}', function () { /* TODO */ });
+
+            // Products
+            Route::apiResource('products', \App\Http\Controllers\Api\V1\Seller\ProductController::class);
+            Route::post('products/{id}/publish', [\App\Http\Controllers\Api\V1\Seller\ProductController::class, 'publish']);
+            Route::post('products/{id}/archive', [\App\Http\Controllers\Api\V1\Seller\ProductController::class, 'archive']);
+            Route::post('products/{id}/images', [\App\Http\Controllers\Api\V1\Seller\ProductController::class, 'uploadImage']);
+            Route::delete('products/{id}/images/{imageId}', [\App\Http\Controllers\Api\V1\Seller\ProductController::class, 'deleteImage']);
         });
 
         // Admin Routes
-        Route::prefix('admin')->group(function () {
+        Route::prefix('admin')->middleware('role:admin|super_admin')->group(function () {
             Route::get('/dashboard', [\App\Http\Controllers\Api\V1\Admin\ConsumerController::class, 'dashboard']);
             Route::get('/consumers', [\App\Http\Controllers\Api\V1\Admin\ConsumerController::class, 'index']);
             Route::get('/consumers/{id}', [\App\Http\Controllers\Api\V1\Admin\ConsumerController::class, 'show']);
+
+            // Products
+            Route::get('/products', [\App\Http\Controllers\Api\V1\Admin\ProductController::class, 'index']);
+            Route::patch('/products/{id}/status', [\App\Http\Controllers\Api\V1\Admin\ProductController::class, 'updateStatus']);
+
+            // Categories
+            Route::apiResource('categories', \App\Http\Controllers\Api\V1\Admin\CategoryController::class)->except(['show']);
         });
     });
 

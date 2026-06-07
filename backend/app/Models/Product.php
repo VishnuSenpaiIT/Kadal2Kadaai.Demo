@@ -20,17 +20,21 @@ class Product extends Model
         'category_id',
         'name',
         'slug',
-        'description',
+        'short_description',
+        'full_description',
         'price',
         'sale_price',
-        'unit',
-        'minimum_order',
-        'status',
+        'weight_unit',
+        'minimum_order_quantity',
+        'maximum_order_quantity',
+        'available_quantity',
+        'reserved_quantity',
+        'stock_status',
+        'product_status',
         'is_featured',
         'is_popular',
-        'origin',
-        'freshness_notes',
-        'weight_options',
+        'origin_location',
+        'freshness_hours',
         'view_count',
         'meta_title',
         'meta_description',
@@ -39,7 +43,14 @@ class Product extends Model
     protected $casts = [
         'is_featured' => 'boolean',
         'is_popular' => 'boolean',
-        'weight_options' => 'array',
+        'price' => 'float',
+        'sale_price' => 'float',
+        'minimum_order_quantity' => 'float',
+        'maximum_order_quantity' => 'float',
+        'available_quantity' => 'float',
+        'reserved_quantity' => 'float',
+        'product_status' => \App\Enums\ProductStatus::class,
+        'stock_status' => \App\Enums\StockStatus::class,
     ];
 
     public function seller(): BelongsTo
@@ -57,14 +68,14 @@ class Product extends Model
         return $this->hasMany(ProductImage::class);
     }
 
-    public function inventory(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function inventoryTransactions(): HasMany
     {
-        return $this->hasOne(Inventory::class);
+        return $this->hasMany(InventoryTransaction::class);
     }
 
     public function scopeActive($query)
     {
-        return $query->where('status', 'active');
+        return $query->where('product_status', \App\Enums\ProductStatus::PUBLISHED->value);
     }
 
     public function scopeFeatured($query)
@@ -79,8 +90,8 @@ class Product extends Model
 
     public function getPrimaryImageAttribute(): ?string
     {
-        return $this->images()->where('is_primary', true)->value('url')
-            ?? $this->images()->value('url');
+        return $this->images()->where('is_primary', true)->value('image_url')
+            ?? $this->images()->value('image_url');
     }
 
     public function getEffectivePriceAttribute(): float
