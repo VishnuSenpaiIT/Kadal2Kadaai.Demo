@@ -83,6 +83,6 @@ class Order extends Model
 
     public function isCancellable(): bool
     {
-        return in_array($this->status, [OrderStatus::Pending, OrderStatus::Confirmed]);
+        return in_array($this->status, [OrderStatus::PendingSellerApproval, OrderStatus::Approved]);
     }
 }

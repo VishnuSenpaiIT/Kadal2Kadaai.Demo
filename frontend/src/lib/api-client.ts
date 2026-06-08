@@ -1,18 +1,20 @@
 import axios from 'axios';
 
+const TOKEN_KEY = 'api_token';
+
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
   headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
     'X-Requested-With': 'XMLHttpRequest',
   },
-  withCredentials: true, // For Sanctum CSRF cookies if needed
+  withCredentials: true,
 });
 
 apiClient.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem(TOKEN_KEY);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -21,14 +23,13 @@ apiClient.interceptors.request.use((config) => {
 });
 
 apiClient.interceptors.response.use(
-  (response) => response.data, // Unwrap the Axios response to get our standard JSON envelope
+  (response) => response.data, // Unwrap to our JSON envelope for legacy callers (services/)
   (error) => {
-    // Handle 401 Unauthorized globally
     if (error.response?.status === 401 && typeof window !== 'undefined') {
-      localStorage.removeItem('auth_token');
+      localStorage.removeItem(TOKEN_KEY);
       window.dispatchEvent(new Event('auth-unauthorized'));
     }
-    return Promise.reject(error.response?.data || error.message);
+    return Promise.reject(error.response?.data || error.message || error);
   }
 );
 

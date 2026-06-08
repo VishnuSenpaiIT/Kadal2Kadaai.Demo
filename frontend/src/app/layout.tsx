@@ -5,8 +5,7 @@ import { ThemeProvider } from '@/providers/ThemeProvider';
 import { AuthProvider } from '@/providers/AuthProvider';
 import './globals.css';
 import { cn } from "@/lib/utils";
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
+
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -25,6 +24,8 @@ export const metadata: Metadata = {
   description: 'A multi-vendor fish marketplace connecting consumers, fishermen, and vendors directly.',
 };
 
+import { Toaster } from 'sonner';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -32,21 +33,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
-      <body className={`${inter.variable} ${outfit.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} ${outfit.variable} font-sans antialiased bg-background text-foreground min-h-screen`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="light"
+          forcedTheme="light"
           disableTransitionOnChange
         >
           <QueryProvider>
             <AuthProvider>
               <div className="flex flex-col min-h-screen">
-                <Header />
-                <main className="flex-1">
-                  {children}
-                </main>
-                <Footer />
+                {children}
+                <Toaster richColors position="top-right" />
               </div>
             </AuthProvider>
           </QueryProvider>

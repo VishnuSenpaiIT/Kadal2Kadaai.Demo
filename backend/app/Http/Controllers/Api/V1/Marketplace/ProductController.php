@@ -17,7 +17,7 @@ class ProductController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = Product::active()
-            ->with(['category:id,name,slug', 'seller:id,first_name,last_name', 'images'])
+            ->with(['category:id,name,slug', 'seller:id,first_name,last_name', 'images', 'tags'])
             ->withCount([]);
 
         // Filter
@@ -64,6 +64,7 @@ class ProductController extends Controller
                 'seller:id,first_name,last_name',
                 'seller.sellerProfile',
                 'images',
+                'tags',
                 'inventory',
             ])
             ->firstOrFail();
@@ -78,7 +79,7 @@ class ProductController extends Controller
     {
         $products = Product::active()
             ->featured()
-            ->with(['category:id,name,slug', 'seller:id,first_name,last_name', 'images'])
+            ->with(['category:id,name,slug', 'seller:id,first_name,last_name', 'images', 'tags'])
             ->orderBy('view_count', 'desc')
             ->limit(8)
             ->get();
@@ -90,7 +91,7 @@ class ProductController extends Controller
     {
         $products = Product::active()
             ->popular()
-            ->with(['category:id,name,slug', 'seller:id,first_name,last_name', 'images'])
+            ->with(['category:id,name,slug', 'seller:id,first_name,last_name', 'images', 'tags'])
             ->orderBy('view_count', 'desc')
             ->limit(8)
             ->get();

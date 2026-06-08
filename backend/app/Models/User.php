@@ -28,6 +28,7 @@ class User extends Authenticatable
         'email',
         'contact_number',
         'district',
+        'state',
         'pincode',
         'google_id',
         'avatar',

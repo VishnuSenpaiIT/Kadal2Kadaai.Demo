@@ -8,6 +8,7 @@ import { User } from '@/types/auth.types';
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
+  isInitialized: boolean;
   isAuthenticated: boolean;
   logout: () => void;
   setToken: (token: string) => void;
@@ -19,9 +20,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
 
   const [hasToken, setHasToken] = React.useState<boolean>(false);
+  const [isInitialized, setIsInitialized] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     setHasToken(!!localStorage.getItem('api_token'));
+    setIsInitialized(true);
 
     const handleUnauthorized = () => {
       setHasToken(false);
@@ -60,6 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const value = {
     user: user ?? null,
     isLoading,
+    isInitialized,
     isAuthenticated: !!user,
     logout,
     setToken,

@@ -19,12 +19,23 @@ trait ApiResponse
         ?array $pagination = null,
     ): JsonResponse {
         return response()->json([
-            'success' => true,
-            'message' => $message,
-            'data' => $data,
+            'success'    => true,
+            'message'    => $message,
+            'data'       => $data,
             'pagination' => $pagination,
-            'meta' => $this->buildMeta(),
+            'meta'       => $this->buildMeta(),
         ], $statusCode);
+    }
+
+    /**
+     * Alias for success() — used by Auth, Marketplace, and Admin controllers.
+     */
+    protected function successResponse(
+        mixed $data = null,
+        string $message = 'Success',
+        int $statusCode = 200,
+    ): JsonResponse {
+        return $this->success($data, $message, $statusCode);
     }
 
     /**
@@ -55,11 +66,22 @@ trait ApiResponse
         $body = [
             'success' => false,
             'message' => $message,
-            'errors' => $errors,
-            'meta' => $this->buildMeta($errorCode),
+            'errors'  => $errors,
+            'meta'    => $this->buildMeta($errorCode),
         ];
 
         return response()->json($body, $statusCode);
+    }
+
+    /**
+     * Alias for error() — used by Auth, Search controllers.
+     */
+    protected function errorResponse(
+        string $message = 'An error occurred',
+        int $statusCode = 400,
+        ?array $errors = null,
+    ): JsonResponse {
+        return $this->error($message, $statusCode, $errors);
     }
 
     /**
@@ -101,13 +123,13 @@ trait ApiResponse
     {
         return [
             'current_page' => $paginator->currentPage(),
-            'per_page' => $paginator->perPage(),
-            'total' => $paginator->total(),
-            'last_page' => $paginator->lastPage(),
-            'from' => $paginator->firstItem(),
-            'to' => $paginator->lastItem(),
-            'next_page_url' => $paginator->nextPageUrl(),
-            'prev_page_url' => $paginator->previousPageUrl(),
+            'per_page'     => $paginator->perPage(),
+            'total'        => $paginator->total(),
+            'last_page'    => $paginator->lastPage(),
+            'from'         => $paginator->firstItem(),
+            'to'           => $paginator->lastItem(),
+            'next_page_url'=> $paginator->nextPageUrl(),
+            'prev_page_url'=> $paginator->previousPageUrl(),
         ];
     }
 
@@ -128,8 +150,8 @@ trait ApiResponse
     private function buildMeta(?string $errorCode = null): array
     {
         $meta = [
-            'version' => '1.0',
-            'timestamp' => now()->toIso8601ZuluString(),
+            'version'    => '1.0',
+            'timestamp'  => now()->toIso8601ZuluString(),
             'request_id' => request()->header('X-Request-ID', (string) Str::uuid()),
         ];
 

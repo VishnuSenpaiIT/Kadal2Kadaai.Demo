@@ -58,7 +58,7 @@ class AuthService
     {
         $user = User::where('email', $email)->first();
 
-        if (!$user || !Hash::check($password, $user->password) || $user->status !== 'active') {
+        if (!$user || !Hash::check($password, $user->password) || !$user->isActive()) {
             if ($user) {
                 $this->auditLogService->log($user->id, 'failed_login', 'Failed login attempt', $ip, $userAgent);
             }

@@ -22,13 +22,14 @@ class AuthController extends Controller
     {
         // Ideally this should be a FormRequest, but using simple validation here for brevity
         $validated = $request->validate([
-            'first_name' => 'required|string|min:2|max:50',
-            'last_name' => 'required|string|min:2|max:50',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'first_name'     => 'required|string|min:2|max:50',
+            'last_name'      => 'nullable|string|max:50',
+            'email'          => 'required|email|unique:users',
+            'password'       => ['required', 'string', 'confirmed', \Illuminate\Validation\Rules\Password::min(8)->mixedCase()->numbers()],
             'contact_number' => 'required|string|max:15|unique:users',
-            'district' => 'required|string',
-            'pincode' => 'required|string',
+            'state'          => 'required|string',
+            'district'       => 'required|string',
+            'pincode'        => 'nullable|string',
         ]);
 
         $user = $this->authService->registerConsumer(

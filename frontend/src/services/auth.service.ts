@@ -4,14 +4,14 @@ import { AuthResponse, User } from '@/types/auth.types';
 
 export const authService = {
   async me(): Promise<User> {
-    const res = await apiClient.get<ApiResponse<User>>('/auth/me');
+    const res = await apiClient.get<ApiResponse<User>>('/v1/auth/me');
     return (res as unknown as ApiResponse<User>).data;
   },
 
   async logout(): Promise<void> {
-    await apiClient.post('/auth/logout');
+    await apiClient.post('/v1/auth/logout');
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('auth_token');
+      localStorage.removeItem('api_token');
     }
   },
 };
