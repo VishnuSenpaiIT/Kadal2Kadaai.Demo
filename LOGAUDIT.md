@@ -112,6 +112,44 @@ The project has undergone a major platform decision to consolidate the Admin App
 
 ## 2026-06-08 21:00 UTC
 
+## 2026-06-08 22:30 UTC
+
+### Module
+Platform Deployment & Bug Resolution
+
+### Action Type
+DevOps / Quality Assurance / Bug Fix
+
+### Files Created
+- HOWTORUN.md
+- backend/test_api.php
+- backend/test_login.php
+- frontend/src/app/(operations)/admin/profile/page.tsx
+
+### Files Modified
+- frontend/src/components/layout/operations/Sidebar.tsx
+- frontend/src/providers/AuthProvider.tsx
+- frontend/src/components/guards/AdminGuard.tsx
+- frontend/src/app/(auth)/admin/login/page.tsx
+- frontend/src/app/(consumer)/login/page.tsx
+- frontend/src/services/auth.service.ts
+- README.md
+- LOGAUDIT.md
+
+### Files Deleted
+None
+
+### Description
+Resolved critical authentication race conditions across the platform. Fixed incorrect API payloads in the frontend Consumer Login. Fixed a soft-navigation hydration bug in the Admin Operations Guard where `hasToken` initialization was racing against the route protection checks. Created a fully functional Admin Profile module linked from the Operations Sidebar. Finally, staged, committed, and forcefully pushed all codebase changes to the definitive GitHub remote repository (main branch) and generated a comprehensive HOWTORUN.md deployment guide.
+
+### Result
+All authentication flows (Consumer & Admin) work flawlessly. Operations Portal has a dynamic Admin Profile page. Project is fully synced to GitHub and ready for local deployments.
+
+### Status
+COMPLETED
+
+---
+
 ### Module
 KadalOperations - Category Management Module
 
