@@ -25,39 +25,45 @@ class DatabaseSeeder extends Seeder
         \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'support_agent', 'guard_name' => 'web']);
 
         // Admin user
-        $admin = \App\Models\User::create([
-            'id'           => (string) \Illuminate\Support\Str::uuid(),
-            'first_name'   => 'Kadal',
-            'last_name'    => 'Admin',
-            'email'        => 'admin@kadal.local',
-            'password'     => bcrypt('Admin@12345'),
-            'status'       => 'active',
-            'email_verified_at' => now(),
-        ]);
+        $admin = \App\Models\User::firstOrCreate(
+            ['email' => 'admin@kadal.local'],
+            [
+                'id'           => (string) \Illuminate\Support\Str::uuid(),
+                'first_name'   => 'Kadal',
+                'last_name'    => 'Admin',
+                'password'     => bcrypt('Admin@12345'),
+                'status'       => 'active',
+                'email_verified_at' => now(),
+            ]
+        );
         $admin->assignRole($adminRole);
 
         // Seller user
-        $seller = \App\Models\User::create([
-            'id'           => (string) \Illuminate\Support\Str::uuid(),
-            'first_name'   => 'Tamil',
-            'last_name'    => 'Seller',
-            'email'        => 'seller@kadal.local',
-            'password'     => bcrypt('Seller@12345'),
-            'status'       => 'active',
-            'email_verified_at' => now(),
-        ]);
+        $seller = \App\Models\User::firstOrCreate(
+            ['email' => 'seller@kadal.local'],
+            [
+                'id'           => (string) \Illuminate\Support\Str::uuid(),
+                'first_name'   => 'Tamil',
+                'last_name'    => 'Seller',
+                'password'     => bcrypt('Seller@12345'),
+                'status'       => 'active',
+                'email_verified_at' => now(),
+            ]
+        );
         $seller->assignRole($sellerRole);
 
         // Consumer user
-        $consumer = \App\Models\User::create([
-            'id'           => (string) \Illuminate\Support\Str::uuid(),
-            'first_name'   => 'Demo',
-            'last_name'    => 'Customer',
-            'email'        => 'customer@kadal.local',
-            'password'     => bcrypt('Customer@12345'),
-            'status'       => 'active',
-            'email_verified_at' => now(),
-        ]);
+        $consumer = \App\Models\User::firstOrCreate(
+            ['email' => 'customer@kadal.local'],
+            [
+                'id'           => (string) \Illuminate\Support\Str::uuid(),
+                'first_name'   => 'Demo',
+                'last_name'    => 'Customer',
+                'password'     => bcrypt('Customer@12345'),
+                'status'       => 'active',
+                'email_verified_at' => now(),
+            ]
+        );
         $consumer->assignRole($consumerRole);
 
         // Seed categories and products

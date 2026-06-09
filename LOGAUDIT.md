@@ -110,6 +110,32 @@ The project has undergone a major platform decision to consolidate the Admin App
 
 # CHANGE HISTORY
 
+## 2026-06-09 02:12 UTC
+
+### Module
+Platform Deployment / Database Seeding
+
+### Action Type
+Bug Fix
+
+### Files Created
+None
+
+### Files Modified
+- backend/database/seeders/DatabaseSeeder.php
+- LOGAUDIT.md
+
+### Description
+Since the `CMD` instruction in the Dockerfile runs `php artisan db:seed --force` on every container start, it crashed on subsequent starts because the `admin@kadal.local` user had already been successfully created in the first run (before the Spatie permission crash). This resulted in a `SQLSTATE[23505]: Unique violation` on `users_email_unique`. Updated `DatabaseSeeder.php` to use `User::firstOrCreate` instead of `User::create` for all default users, making the seeder fully idempotent and safe to run on every deploy/restart.
+
+### Result
+The seeder will safely skip user creation if the users already exist, preventing startup crashes.
+
+### Status
+COMPLETED
+
+---
+
 ## 2026-06-09 02:06 UTC
 
 ### Module
