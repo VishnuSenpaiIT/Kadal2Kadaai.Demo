@@ -110,6 +110,32 @@ The project has undergone a major platform decision to consolidate the Admin App
 
 # CHANGE HISTORY
 
+## 2026-06-09 02:38 UTC
+
+### Module
+Platform Deployment / Security (CORS)
+
+### Action Type
+Bug Fix
+
+### Files Created
+None
+
+### Files Modified
+- backend/config/cors.php
+- LOGAUDIT.md
+
+### Description
+The frontend on Vercel was unable to login and showed an "Invalid credentials" network error because the backend rejected the cross-origin request. `config/cors.php` was strictly configured to only allow `http://localhost:3000`. Updated `allowed_origins_patterns` with a regex (`#^https://.*\.vercel\.app$#`) to dynamically allow all Vercel preview domains to make authenticated API requests while preserving `supports_credentials = true`.
+
+### Result
+Vercel frontend can successfully authenticate with the Render backend.
+
+### Status
+COMPLETED
+
+---
+
 ## 2026-06-09 02:35 UTC
 
 ### Module
