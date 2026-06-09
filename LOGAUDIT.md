@@ -110,6 +110,33 @@ The project has undergone a major platform decision to consolidate the Admin App
 
 # CHANGE HISTORY
 
+## 2026-06-09 01:01 UTC
+
+### Module
+Platform Deployment / Type Safety
+
+### Action Type
+Bug Fix
+
+### Files Created
+None
+
+### Files Modified
+- frontend/src/types/auth.types.ts
+- frontend/src/shared/store/useAuthStore.ts
+- LOGAUDIT.md
+
+### Description
+Resolved another strict TypeScript type error in the Admin Profile page during the Vercel build (`Property 'id' does not exist on type '{ name: string; }'`). Updated the `User` interface to explicitly define the `id` property on the `roles` array (`roles?: { id: number | string; name: string }[]`), as the React `key` prop requires it during map iteration.
+
+### Result
+Admin Profile page `roles.map` iteration passes strict type-checking. Vercel build can proceed.
+
+### Status
+COMPLETED
+
+---
+
 ## 2026-06-09 00:58 UTC
 
 ### Module

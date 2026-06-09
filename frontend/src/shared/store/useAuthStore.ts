@@ -9,7 +9,7 @@ interface User {
   last_name: string;
   email: string;
   role?: Role;
-  roles?: { name: string }[];
+  roles?: { id: number | string; name: string }[];
 }
 
 interface AuthStore {
