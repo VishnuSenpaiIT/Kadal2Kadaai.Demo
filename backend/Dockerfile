@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions (pdo_mysql for MySQL, pdo_pgsql for Postgres)
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-install pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd
 
 # Enable Apache mod_rewrite for Laravel routes
 RUN a2enmod rewrite
@@ -47,4 +47,5 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-CMD ["apache2-foreground"]
+# Auto-run database migrations and seeders before starting Apache
+CMD php artisan migrate --force && php artisan db:seed --force && apache2-foreground

@@ -110,6 +110,32 @@ The project has undergone a major platform decision to consolidate the Admin App
 
 # CHANGE HISTORY
 
+## 2026-06-09 01:39 UTC
+
+### Module
+Platform Deployment / Database Connectivity
+
+### Action Type
+DevOps / Bug Fix
+
+### Files Created
+None
+
+### Files Modified
+- backend/Dockerfile
+- LOGAUDIT.md
+
+### Description
+Render Free Tier restricts access to the Shell, preventing manual execution of `php artisan migrate`. Updated the `Dockerfile` to automatically run `php artisan migrate --force && php artisan db:seed --force` as part of the `CMD` instruction before starting Apache. Additionally, discovered that the `pdo_pgsql` PHP extension was missing from the `docker-php-ext-install` command, which would have caused connection failures to the Aiven PostgreSQL database. Added `pdo_pgsql` to the installation step.
+
+### Result
+PostgreSQL extension is successfully installed, and migrations/seeders run automatically on container startup without requiring manual SSH access.
+
+### Status
+COMPLETED
+
+---
+
 ## 2026-06-09 01:22 UTC
 
 ### Module
