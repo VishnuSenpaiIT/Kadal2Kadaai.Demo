@@ -37,6 +37,9 @@ WORKDIR /var/www/html
 # Copy existing application directory contents
 COPY . .
 
+# Ensure necessary directories exist
+RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache
+
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 

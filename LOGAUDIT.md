@@ -110,6 +110,32 @@ The project has undergone a major platform decision to consolidate the Admin App
 
 # CHANGE HISTORY
 
+## 2026-06-09 01:22 UTC
+
+### Module
+Platform Deployment / Backend Configuration
+
+### Action Type
+DevOps / Bug Fix
+
+### Files Created
+None
+
+### Files Modified
+- backend/Dockerfile
+- LOGAUDIT.md
+
+### Description
+Render backend deployment failed during `composer install` because the `bootstrap/cache` directory was missing, which is required by Laravel's post-autoload-dump scripts (like `artisan package:discover`). Updated the Dockerfile to explicitly `mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache` before running `composer install`.
+
+### Result
+Composer successfully runs post-installation scripts during the Docker image build on Render.
+
+### Status
+COMPLETED
+
+---
+
 ## 2026-06-09 01:15 UTC
 
 ### Module
