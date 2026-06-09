@@ -110,6 +110,34 @@ The project has undergone a major platform decision to consolidate the Admin App
 
 # CHANGE HISTORY
 
+## 2026-06-09 02:06 UTC
+
+### Module
+Platform Deployment / Type Safety / Database Schema
+
+### Action Type
+Bug Fix
+
+### Files Created
+None
+
+### Files Modified
+- backend/database/migrations/2026_06_05_010606_create_permission_tables.php
+- backend/routes/web.php
+- LOGAUDIT.md
+
+### Description
+Database Seeder failed on attaching roles to the User model with `SQLSTATE[22P02]: Invalid text representation: 7 ERROR: invalid input syntax for type bigint: "3ad9a273..."`. This happened because the Spatie `laravel-permission` migration defaults the `model_id` column to an `unsignedBigInteger`, but our `User` model uses `uuid` as its primary key. Updated the `create_permission_tables` migration to change `$table->unsignedBigInteger($columnNames['model_morph_key'])` to `$table->uuid($columnNames['model_morph_key'])`.
+Since Render runs `migrate --force` and the `permission_tables` migration was already recorded in the database, the column wasn't automatically updated on restart. Created a temporary web route `/dev/refresh-db` to programmatically trigger `php artisan migrate:fresh --seed --force`.
+
+### Result
+Permission pivot tables correctly support UUID morph columns, allowing roles to be successfully seeded and assigned to the admin user.
+
+### Status
+COMPLETED
+
+---
+
 ## 2026-06-09 01:45 UTC
 
 ### Module
