@@ -34,7 +34,7 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
         sort_order: category.order_index || 0,
         is_active: category.is_active ?? true,
       });
-      setImagePreview(category.image_url || category.image || category.icon || null);
+      setImagePreview(category.image_url || (category as any).image || (category as any).icon || null);
     }
   }, [category]);
 
