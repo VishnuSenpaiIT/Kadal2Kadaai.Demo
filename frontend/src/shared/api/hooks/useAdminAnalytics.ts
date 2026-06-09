@@ -8,6 +8,7 @@ export interface AdminDashboardStats {
   total_orders: number;
   total_revenue?: string;
   recent_orders?: any[];
+  recent_activity?: any[];
 }
 
 export function useAdminAnalytics() {

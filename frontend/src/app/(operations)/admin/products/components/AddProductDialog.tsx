@@ -13,14 +13,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useCategories } from '@/shared/api/hooks/useCategories';
 import { useCreateProduct } from '@/shared/api/hooks/useAdminProducts';
-import { useAuthStore } from '@/shared/store/useAuthStore';
+import { useAuth } from '@/providers/AuthProvider';
 import { Plus, Loader2 } from 'lucide-react';
 
 export function AddProductDialog() {
   const [open, setOpen] = useState(false);
   const { data: categories } = useCategories();
   const { mutate: createProduct, isPending } = useCreateProduct();
-  const { user } = useAuthStore();
+  const { user } = useAuth();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -28,8 +28,8 @@ export function AddProductDialog() {
     price: '',
     available_quantity: '',
     weight_unit: 'kg',
-    stock_status: 'in_stock',
-    product_status: 'published'
+    stock_status: 'IN_STOCK',
+    product_status: 'PUBLISHED'
   });
 
   const generateSlug = (name: string) => {
@@ -55,8 +55,8 @@ export function AddProductDialog() {
           price: '',
           available_quantity: '',
           weight_unit: 'kg',
-          stock_status: 'in_stock',
-          product_status: 'published'
+          stock_status: 'IN_STOCK',
+          product_status: 'PUBLISHED'
         });
       },
       onError: (err: any) => {
@@ -151,8 +151,8 @@ export function AddProductDialog() {
                 value={formData.product_status}
                 onChange={(e) => setFormData({...formData, product_status: e.target.value})}
               >
-                <option value="draft">Draft</option>
-                <option value="published">Published</option>
+                <option value="DRAFT">Draft</option>
+                <option value="PUBLISHED">Published</option>
               </select>
             </div>
           </div>

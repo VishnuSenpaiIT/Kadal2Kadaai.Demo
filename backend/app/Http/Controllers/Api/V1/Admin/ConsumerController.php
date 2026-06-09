@@ -32,9 +32,24 @@ class ConsumerController extends Controller
             });
         }
 
+        $totalConsumers = User::role('consumer')->count();
+        $totalLoggedInConsumers = User::role('consumer')
+            ->whereHas('consumerProfile', function ($q) {
+                $q->where('total_logins', '>', 0);
+            })
+            ->count();
+
         $consumers = $query->paginate($request->query('per_page', 15));
 
-        return $this->successResponse($consumers, 'Consumers retrieved successfully');
+        return response()->json([
+            'success' => true,
+            'message' => 'Consumers retrieved successfully',
+            'data'    => $consumers,
+            'meta'    => [
+                'total_consumers' => $totalConsumers,
+                'total_logged_in_consumers' => $totalLoggedInConsumers,
+            ]
+        ]);
     }
 
     public function show(string $id): JsonResponse
