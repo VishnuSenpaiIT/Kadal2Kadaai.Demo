@@ -10,6 +10,7 @@ export interface User {
   last_login_at: string | null;
   created_at: string;
   consumer_profile?: ConsumerProfile;
+  roles?: { name: string }[];
 }
 
 export interface ConsumerProfile {

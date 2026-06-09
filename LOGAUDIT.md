@@ -110,6 +110,33 @@ The project has undergone a major platform decision to consolidate the Admin App
 
 # CHANGE HISTORY
 
+## 2026-06-09 00:58 UTC
+
+### Module
+Platform Deployment / Type Safety
+
+### Action Type
+Bug Fix
+
+### Files Created
+None
+
+### Files Modified
+- frontend/src/types/auth.types.ts
+- frontend/src/shared/store/useAuthStore.ts
+- LOGAUDIT.md
+
+### Description
+Resolved a strict TypeScript type error in the Admin Profile page during the Vercel build (`Property 'roles' does not exist on type 'User'`). Updated the central `User` interface in both `auth.types.ts` and `useAuthStore.ts` to explicitly define the optional `roles?: { name: string }[]` property that is returned by the Laravel API.
+
+### Result
+Admin Profile page passes strict type-checking. Vercel build can proceed.
+
+### Status
+COMPLETED
+
+---
+
 ## 2026-06-09 00:53 UTC
 
 ### Module
