@@ -110,6 +110,32 @@ The project has undergone a major platform decision to consolidate the Admin App
 
 # CHANGE HISTORY
 
+## 2026-06-09 01:45 UTC
+
+### Module
+Platform Deployment / Database Schema
+
+### Action Type
+Bug Fix
+
+### Files Created
+None
+
+### Files Modified
+- backend/database/migrations/2026_06_05_000004_create_categories_table.php
+- LOGAUDIT.md
+
+### Description
+Render auto-migrations failed on `create_categories_table` with `SQLSTATE[42830]: Invalid foreign key: 7 ERROR: there is no unique constraint matching given keys for referenced table "categories"`. This occurs in PostgreSQL when attempting to create a self-referencing foreign key using the fluent `foreignUuid()->constrained()` syntax in the same `Schema::create` block before the primary key index is fully committed. Resolved by explicitly separating the `parent_id` column creation from the foreign key constraint assignment into a subsequent `Schema::table` block.
+
+### Result
+PostgreSQL processes the self-referencing foreign key constraint successfully after the table and primary key are fully instantiated.
+
+### Status
+COMPLETED
+
+---
+
 ## 2026-06-09 01:39 UTC
 
 ### Module
