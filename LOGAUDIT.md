@@ -110,6 +110,33 @@ The project has undergone a major platform decision to consolidate the Admin App
 
 # CHANGE HISTORY
 
+## 2026-06-09 00:50 UTC
+
+### Module
+Platform Deployment
+
+### Action Type
+DevOps / Bug Fix
+
+### Files Created
+- backend/Dockerfile
+
+### Files Modified
+- frontend/src/app/(operations)/admin/categories/[id]/edit/page.tsx
+- LOGAUDIT.md
+- README.md
+
+### Description
+Created a Dockerfile for the Laravel backend to enable deployment on Render (which does not natively support PHP). Resolved a strict TypeScript type error in the admin category edit page that was causing Vercel builds to fail. Both the frontend and backend are now configured for successful cloud deployment.
+
+### Result
+Vercel frontend build succeeds. Render backend deployment is configured via Docker.
+
+### Status
+COMPLETED
+
+---
+
 ## 2026-06-08 21:00 UTC
 
 ## 2026-06-08 22:30 UTC

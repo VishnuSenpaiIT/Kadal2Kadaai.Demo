@@ -82,6 +82,8 @@ This repository has completed its **Foundation Phase**, **Authentication Phase**
 
 Currently, the **Operations Portal (Admin and Seller)** is fully built, utilizing real-time API hooks and connected directly to the Laravel backend. The system is functional from Consumer Checkout to Seller Operations and Admin Oversight.
 
+The application has also been configured for cloud deployment, with the frontend hosted on Vercel (TypeScript build errors resolved) and the backend containerized via Docker for deployment on Render.
+
 All codebase changes have been forcefully synced with the official GitHub repository, and a comprehensive [HOWTORUN.md](./HOWTORUN.md) guide has been provided for streamlined local deployments.
 
 ---
