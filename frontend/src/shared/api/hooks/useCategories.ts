@@ -8,6 +8,7 @@ export interface Category {
   description?: string;
   image?: string;
   icon?: string;
+  image_url?: string;
   products_count?: number;
 }
 

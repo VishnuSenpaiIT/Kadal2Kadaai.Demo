@@ -7,6 +7,8 @@ export interface Category {
   slug: string;
   description?: string;
   image_url?: string;
+  image?: string;
+  icon?: string;
   is_active: boolean;
   order_index: number;
 }
