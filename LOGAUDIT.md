@@ -110,6 +110,32 @@ The project has undergone a major platform decision to consolidate the Admin App
 
 # CHANGE HISTORY
 
+## 2026-06-09 02:20 UTC
+
+### Module
+Platform Deployment / Security
+
+### Action Type
+Security Fix
+
+### Files Created
+None
+
+### Files Modified
+- backend/routes/web.php
+- LOGAUDIT.md
+
+### Description
+Database migrations and seeders completed successfully following the manual schema drop in Aiven PG Studio. Removed the temporary `/dev/refresh-db` web route from `backend/routes/web.php` to secure the production environment and prevent accidental database wipes.
+
+### Result
+Application backend is secure.
+
+### Status
+COMPLETED
+
+---
+
 ## 2026-06-09 02:12 UTC
 
 ### Module
