@@ -110,6 +110,35 @@ The project has undergone a major platform decision to consolidate the Admin App
 
 # CHANGE HISTORY
 
+## 2026-06-09 00:53 UTC
+
+### Module
+Platform Deployment / Type Safety
+
+### Action Type
+Bug Fix / Refactoring
+
+### Files Created
+None
+
+### Files Modified
+- frontend/src/app/(operations)/admin/categories/[id]/edit/page.tsx
+- frontend/src/shared/api/hooks/useAdminCategories.ts
+- frontend/src/shared/api/hooks/useCategories.ts
+- frontend/src/types/marketplace.types.ts
+- LOGAUDIT.md
+
+### Description
+Globally resolved the Vercel build failures by updating the `Category` TypeScript interfaces across the application (`marketplace.types.ts`, `useCategories.ts`, and `useAdminCategories.ts`). Added explicit type definitions for `image`, `icon`, and `image_url` properties to prevent strict type-checking errors during Next.js production builds. Removed messy type casting from the Category Edit component.
+
+### Result
+Frontend is fully type-safe regarding category media properties. Vercel builds will now pass successfully without `Property 'image' does not exist` errors.
+
+### Status
+COMPLETED
+
+---
+
 ## 2026-06-09 00:50 UTC
 
 ### Module
