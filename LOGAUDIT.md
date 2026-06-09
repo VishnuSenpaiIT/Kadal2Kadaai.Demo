@@ -110,6 +110,32 @@ The project has undergone a major platform decision to consolidate the Admin App
 
 # CHANGE HISTORY
 
+## 2026-06-09 01:15 UTC
+
+### Module
+Platform Deployment / Backend Configuration
+
+### Action Type
+DevOps / Bug Fix
+
+### Files Created
+None
+
+### Files Modified
+- backend/Dockerfile
+- LOGAUDIT.md
+
+### Description
+Render backend deployment failed because the initial Dockerfile used the `php:8.2-apache` image, but the Laravel project and its dependencies (like `spatie/laravel-permission`) strictly require PHP `^8.3`. Updated the Dockerfile to use `php:8.3-apache` to resolve the Composer installation errors.
+
+### Result
+Composer can now successfully install the PHP 8.3 dependencies during the Docker image build on Render.
+
+### Status
+COMPLETED
+
+---
+
 ## 2026-06-09 01:04 UTC
 
 ### Module
