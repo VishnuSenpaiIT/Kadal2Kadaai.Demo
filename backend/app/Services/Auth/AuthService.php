@@ -27,11 +27,12 @@ class AuthService
         return DB::transaction(function () use ($data, $ip, $userAgent) {
             $user = User::create([
                 'first_name' => $data['first_name'],
-                'last_name' => $data['last_name'],
+                'last_name' => $data['last_name'] ?? null,
                 'email' => $data['email'],
                 'contact_number' => $data['contact_number'],
-                'district' => $data['district'],
-                'pincode' => $data['pincode'],
+                'state' => $data['state'] ?? null,
+                'district' => $data['district'] ?? null,
+                'pincode' => $data['pincode'] ?? null,
                 'password' => Hash::make($data['password']),
                 'status' => 'active',
             ]);
