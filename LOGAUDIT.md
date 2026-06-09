@@ -110,6 +110,31 @@ The project has undergone a major platform decision to consolidate the Admin App
 
 # CHANGE HISTORY
 
+## 2026-06-09 02:35 UTC
+
+### Module
+Platform Deployment / Authentication
+
+### Action Type
+Bug Fix
+
+### Files Created
+- backend/database/migrations/2026_06_09_023405_create_sessions_table.php
+
+### Files Modified
+- LOGAUDIT.md
+
+### Description
+The API was returning a `500 Server Error` on `/api/v1/auth/login`. Investigation revealed that the `SESSION_DRIVER` was set to `database`, but the `sessions` table migration was missing from the repository. When the `AuthService` fired the `Login` event, the session driver attempted to write to the nonexistent `sessions` table, causing a crash. Generated the `sessions` table migration and updated the `user_id` column to use `uuid` instead of `unsignedBigInteger` to properly map to the `users` table primary key.
+
+### Result
+Session state is correctly handled, resolving the login 500 error.
+
+### Status
+COMPLETED
+
+---
+
 ## 2026-06-09 02:20 UTC
 
 ### Module
