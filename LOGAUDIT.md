@@ -110,6 +110,32 @@ The project has undergone a major platform decision to consolidate the Admin App
 
 # CHANGE HISTORY
 
+## 2026-06-09 01:04 UTC
+
+### Module
+Platform Deployment / Type Safety
+
+### Action Type
+Bug Fix
+
+### Files Created
+None
+
+### Files Modified
+- frontend/src/app/(operations)/admin/profile/page.tsx
+- LOGAUDIT.md
+
+### Description
+Resolved another strict TypeScript error in the Admin Profile page during Vercel builds (`Argument of type 'string | null | undefined' is not assignable to parameter of type 'string | undefined'`). Updated the `formatDate` helper function to explicitly accept `string | null` instead of just `string`, allowing it to handle the `last_login_at` property safely.
+
+### Result
+Admin Profile page `formatDate` logic passes strict type-checking. Vercel build can proceed.
+
+### Status
+COMPLETED
+
+---
+
 ## 2026-06-09 01:01 UTC
 
 ### Module

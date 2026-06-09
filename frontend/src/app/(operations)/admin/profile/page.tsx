@@ -25,7 +25,7 @@ export default function AdminProfilePage() {
     return 'A';
   };
 
-  const formatDate = (dateString?: string) => {
+  const formatDate = (dateString?: string | null) => {
     if (!dateString) return 'N/A';
     try {
       return format(new Date(dateString), 'PPpp');
