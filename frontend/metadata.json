@@ -1,0 +1,6 @@
+{
+  "name": "KADAL 2 KADAI",
+  "description": "World-class premium coastal seafood marketplace bridging direct fishermen-sourced morning catches to households in hours.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
