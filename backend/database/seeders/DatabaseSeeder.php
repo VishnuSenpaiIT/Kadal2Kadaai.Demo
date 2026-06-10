@@ -38,6 +38,20 @@ class DatabaseSeeder extends Seeder
         );
         $admin->assignRole($adminRole);
 
+        // Prebuilt Admin User from HOWTORUN.md
+        $k2kAdmin = \App\Models\User::firstOrCreate(
+            ['email' => 'k2k-admin@gmail.com'],
+            [
+                'id'           => (string) \Illuminate\Support\Str::uuid(),
+                'first_name'   => 'K2K',
+                'last_name'    => 'Admin',
+                'password'     => bcrypt('admin123'),
+                'status'       => 'active',
+                'email_verified_at' => now(),
+            ]
+        );
+        $k2kAdmin->assignRole($adminRole);
+
         // Seller user
         $seller = \App\Models\User::firstOrCreate(
             ['email' => 'seller@kadal.local'],

@@ -36,6 +36,7 @@ export default function RegisterPage() {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const router = useRouter();
 
   const form1 = useForm({
@@ -50,18 +51,35 @@ export default function RegisterPage() {
 
   const onStep1Submit = (data: any) => {
     setFormData(data);
+    setError('');
     setStep(2);
   };
 
   const onStep2Submit = async (data: any) => {
     const finalData = { ...formData, ...data };
     setLoading(true);
+    setError('');
     try {
       await api.post('/v1/auth/register', finalData);
       router.push('/login?registered=true');
-    } catch (error) {
-      console.error('Registration failed', error);
-      // Handle error visually
+    } catch (err: any) {
+      console.error('Registration failed', err);
+      let errMsg = 'Registration failed. Please check your inputs and try again.';
+      if (err && typeof err === 'object') {
+        if (err.message) {
+          errMsg = err.message;
+        } else if (err.response?.data?.message) {
+          errMsg = err.response.data.message;
+        }
+        const validationErrors = err.errors || err.response?.data?.errors;
+        if (validationErrors && typeof validationErrors === 'object') {
+          const details = Object.values(validationErrors).flat().join(' ');
+          if (details) {
+            errMsg = `${errMsg} (${details})`;
+          }
+        }
+      }
+      setError(errMsg);
     } finally {
       setLoading(false);
     }
@@ -77,6 +95,12 @@ export default function RegisterPage() {
             <div className="bg-primary h-full transition-all" style={{ width: step === 1 ? '50%' : '100%' }} />
           </div>
         </div>
+        
+        {error && (
+          <div className="bg-destructive/15 border border-destructive/30 text-destructive text-sm p-3 rounded-md mb-6">
+            {error}
+          </div>
+        )}
 
         {step === 1 && (
           <form onSubmit={form1.handleSubmit(onStep1Submit)} className="space-y-4">

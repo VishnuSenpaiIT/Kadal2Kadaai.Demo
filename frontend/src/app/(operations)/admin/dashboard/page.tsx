@@ -79,10 +79,21 @@ export default function AdminDashboardPage() {
             <CardTitle>System Activity</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-6">
-              <div className="text-center py-10 text-muted-foreground">
-                <p>Live activity feed integrated with operations module.</p>
-              </div>
+            <div className="space-y-4">
+              {data?.recent_activity && data.recent_activity.length > 0 ? (
+                data.recent_activity.map((activity: any) => (
+                  <div key={activity.id} className="flex flex-col pb-3 border-b border-muted last:border-0 last:pb-0">
+                    <p className="text-sm font-medium text-foreground">{activity.description}</p>
+                    <span className="text-xs text-muted-foreground">
+                      {activity.created_at ? new Date(activity.created_at).toLocaleTimeString() : ''}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-10 text-muted-foreground">
+                  <p>No recent activity logs found.</p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
