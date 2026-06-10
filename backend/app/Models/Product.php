@@ -34,16 +34,19 @@ class Product extends Model
         'product_status',
         'is_featured',
         'is_popular',
+        'is_frozen_available',
         'origin_location',
         'freshness_hours',
         'view_count',
         'meta_title',
         'meta_description',
+        'custom_options',
     ];
 
     protected $casts = [
         'is_featured' => 'boolean',
         'is_popular' => 'boolean',
+        'is_frozen_available' => 'boolean',
         'price' => 'float',
         'sale_price' => 'float',
         'minimum_order_quantity' => 'float',
@@ -52,6 +55,7 @@ class Product extends Model
         'reserved_quantity' => 'float',
         'product_status' => \App\Enums\ProductStatus::class,
         'stock_status' => \App\Enums\StockStatus::class,
+        'custom_options' => 'array',
     ];
 
     public function seller(): BelongsTo

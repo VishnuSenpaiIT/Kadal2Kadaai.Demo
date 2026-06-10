@@ -43,6 +43,8 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'weight_unit' => 'required|string',
             'short_description' => 'nullable|string',
+            'is_frozen_available' => 'boolean',
+            'custom_options' => 'nullable|array',
         ]);
 
         if ($validator->fails()) {
@@ -73,6 +75,7 @@ class ProductController extends Controller
             'price' => 'sometimes|numeric|min:0',
             'available_quantity' => 'sometimes|numeric|min:0',
             'product_status' => 'sometimes|string',
+            'is_frozen_available' => 'boolean',
         ]);
 
         if ($validator->fails()) {

@@ -22,6 +22,14 @@ export function ProductCard({ product }: ProductCardProps) {
         {product.sale_price && (
           <Badge className="absolute top-2 right-2 z-10 bg-red-500 hover:bg-red-600">Sale</Badge>
         )}
+        <div className="absolute bottom-2 left-2 z-10 flex flex-wrap gap-1 max-w-[90%]">
+          {product.is_frozen_available && (
+            <Badge className="bg-sky-100 text-sky-800 hover:bg-sky-200 border-sky-300 shadow-sm truncate">❄️ Frozen</Badge>
+          )}
+          {product.custom_options && Object.entries(product.custom_options).map(([key, value], idx) => (
+             value ? <Badge key={idx} className="bg-indigo-100 text-indigo-800 hover:bg-indigo-200 border-indigo-300 shadow-sm truncate">{key}</Badge> : null
+          ))}
+        </div>
         <img 
           src={primaryImage} 
           alt={product.name} 
@@ -32,9 +40,18 @@ export function ProductCard({ product }: ProductCardProps) {
 
       {/* Content Area */}
       <div className="flex flex-col flex-1 p-4">
-        <Link href={`/categories/${product.category.slug}`} className="text-xs text-muted-foreground hover:text-primary mb-1 inline-block">
-          {product.category.name}
-        </Link>
+        <div className="flex items-center gap-2 mb-1">
+          <Link href={`/categories/${product.category.slug}`} className="text-xs text-muted-foreground hover:text-primary">
+            {product.category.name}
+          </Link>
+          {product.tags && product.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {product.tags.map(tag => (
+                <span key={tag.id} className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">{tag.name}</span>
+              ))}
+            </div>
+          )}
+        </div>
         
         <Link href={`/products/${product.slug}`} className="font-medium text-foreground hover:text-primary line-clamp-2 mb-2 flex-1">
           {product.name}

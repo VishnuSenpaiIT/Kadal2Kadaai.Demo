@@ -62,10 +62,21 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
           {/* Product Info */}
           <div className="flex flex-col">
             <h1 className="text-3xl md:text-4xl font-heading font-bold mb-2">{product.name}</h1>
-            <div className="flex items-center gap-4 mb-6 pb-6 border-b">
+            <div className="flex items-center gap-4 mb-2">
               <span className="text-muted-foreground">Category: <Link href={`/categories/${product.category.slug}`} className="text-primary hover:underline">{product.category.name}</Link></span>
               <span className="text-muted-foreground border-l pl-4">Views: {product.view_count}</span>
             </div>
+            {product.tags && product.tags.length > 0 ? (
+              <div className="flex flex-wrap gap-2 mb-6 pb-6 border-b">
+                {product.tags.map(tag => (
+                  <Badge key={tag.id} variant="secondary" className="bg-slate-100 text-slate-700 hover:bg-slate-200">
+                    {tag.name}
+                  </Badge>
+                ))}
+              </div>
+            ) : (
+              <div className="mb-6 pb-6 border-b"></div>
+            )}
 
             <div className="mb-8">
               {product.sale_price ? (
@@ -143,6 +154,27 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
                   <span className="font-medium">Up to {product.freshness_hours} hours</span>
                 </div>
               )}
+              {product.is_frozen_available && (
+                <div className="flex flex-col pb-4 border-b">
+                  <span className="text-sm text-muted-foreground">Packaging Options</span>
+                  <span className="font-medium flex items-center gap-2">
+                    <span className="text-sky-500">❄️</span> Available as Frozen
+                  </span>
+                </div>
+              )}
+              {product.custom_options && Object.entries(product.custom_options).map(([key, value], idx) => {
+                if (value) {
+                  return (
+                    <div key={idx} className="flex flex-col pb-4 border-b">
+                      <span className="text-sm text-muted-foreground">Additional Options</span>
+                      <span className="font-medium flex items-center gap-2">
+                        <span className="text-indigo-500">✨</span> {key}
+                      </span>
+                    </div>
+                  );
+                }
+                return null;
+              })}
               <div className="flex flex-col pb-4 border-b">
                 <span className="text-sm text-muted-foreground">Minimum Order</span>
                 <span className="font-medium">{product.minimum_order_quantity} {product.weight_unit}</span>

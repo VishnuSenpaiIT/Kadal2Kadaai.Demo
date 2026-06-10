@@ -47,14 +47,24 @@ class ProductController extends Controller
             'product_status' => 'required|string',
             'is_featured' => 'boolean',
             'is_popular' => 'boolean',
+            'is_frozen_available' => 'boolean',
             'tags' => 'nullable|array',
-            'tags.*' => 'exists:tags,id',
+            'tags.*' => 'string',
+            'custom_options' => 'nullable|array',
         ]);
 
         $product = Product::create($validated);
 
         if ($request->has('tags')) {
-            $product->tags()->sync($request->input('tags'));
+            $tagIds = [];
+            foreach ($request->input('tags') as $tagName) {
+                $tag = \App\Models\Tag::firstOrCreate(
+                    ['slug' => \Illuminate\Support\Str::slug($tagName)],
+                    ['name' => $tagName]
+                );
+                $tagIds[] = $tag->id;
+            }
+            $product->tags()->sync($tagIds);
         }
 
         $product->load(['seller', 'category', 'tags', 'images']);
@@ -83,14 +93,24 @@ class ProductController extends Controller
             'product_status' => 'sometimes|string',
             'is_featured' => 'boolean',
             'is_popular' => 'boolean',
+            'is_frozen_available' => 'boolean',
             'tags' => 'nullable|array',
-            'tags.*' => 'exists:tags,id',
+            'tags.*' => 'string',
+            'custom_options' => 'nullable|array',
         ]);
 
         $product->update($validated);
 
         if ($request->has('tags')) {
-            $product->tags()->sync($request->input('tags'));
+            $tagIds = [];
+            foreach ($request->input('tags') as $tagName) {
+                $tag = \App\Models\Tag::firstOrCreate(
+                    ['slug' => \Illuminate\Support\Str::slug($tagName)],
+                    ['name' => $tagName]
+                );
+                $tagIds[] = $tag->id;
+            }
+            $product->tags()->sync($tagIds);
         }
 
         $product->load(['seller', 'category', 'tags', 'images']);

@@ -115,6 +115,7 @@ export default function ProductsPage() {
                     category={product.category?.name || "Uncategorized"}
                     image={product.images?.[0]?.image_url}
                     isAvailable={product.available_quantity > 0}
+                    is_frozen_available={product.is_frozen_available}
                   />
                 ))}
               </Grid>

@@ -10,6 +10,12 @@ export interface Category {
   children?: Category[];
 }
 
+export interface Tag {
+  id: string;
+  name: string;
+  slug: string;
+}
+
 export enum ProductStatus {
   DRAFT = 'DRAFT',
   PENDING_REVIEW = 'PENDING_REVIEW',
@@ -45,6 +51,8 @@ export interface Product {
   product_status: ProductStatus;
   is_featured: boolean;
   is_popular: boolean;
+  is_frozen_available?: boolean;
+  custom_options?: Record<string, boolean>;
   origin_location: string | null;
   freshness_hours: number | null;
   view_count: number;

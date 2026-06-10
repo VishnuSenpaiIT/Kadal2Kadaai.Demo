@@ -20,6 +20,7 @@ export interface ProductCardProps {
   image?: string | null;
   category: string;
   isAvailable?: boolean;
+  is_frozen_available?: boolean;
   className?: string;
 }
 
@@ -33,6 +34,7 @@ export function ProductCard({
   image,
   category,
   isAvailable = true,
+  is_frozen_available,
   className
 }: ProductCardProps) {
   const addToCartMutation = useAddToCart();
@@ -58,10 +60,15 @@ export function ProductCard({
             ) : (
               <Anchor className="h-16 w-16 text-muted-foreground/50" />
             )}
-            <div className="absolute top-3 left-3">
-              <Badge variant="outline" className="bg-background/80 backdrop-blur-sm shadow-sm">
+            <div className="absolute top-3 left-3 flex flex-col gap-2">
+              <Badge variant="outline" className="bg-background/80 backdrop-blur-sm shadow-sm w-fit">
                 {category}
               </Badge>
+              {is_frozen_available && (
+                <Badge className="bg-sky-100 text-sky-800 hover:bg-sky-200 border-sky-300 shadow-sm w-fit">
+                  ❄️ Frozen
+                </Badge>
+              )}
             </div>
             {!isAvailable && (
               <div className="absolute inset-0 bg-background/60 backdrop-blur-[2px] flex items-center justify-center">
