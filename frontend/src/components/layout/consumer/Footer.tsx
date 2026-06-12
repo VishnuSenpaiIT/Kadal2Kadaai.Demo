@@ -5,7 +5,7 @@ import { Mail, Phone, MapPin, Globe } from 'lucide-react';
 
 export function ConsumerFooter() {
   return (
-    <footer className="relative bg-foreground text-background pt-24 pb-8 mt-auto overflow-hidden">
+    <footer className="relative bg-[#023e8a] dark:bg-slate-950 text-white pt-24 pb-8 mt-auto overflow-hidden">
       {/* Wave SVG Top */}
       <div className="absolute top-0 left-0 w-full overflow-hidden leading-none rotate-180">
         <svg className="relative block w-full h-[50px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">

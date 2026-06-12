@@ -37,7 +37,7 @@ export default function Homepage() {
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-cyan-400/10 rounded-full blur-[120px] pointer-events-none -translate-y-1/2 translate-x-1/3 z-0"></div>
         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[100px] pointer-events-none translate-y-1/3 -translate-x-1/4 z-0"></div>
 
-        <Container className="relative z-10">
+        <div className="relative z-10 w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
             
             {/* Left Column: Text and CTA */}
@@ -113,14 +113,14 @@ export default function Homepage() {
             </motion.div>
 
           </div>
-        </Container>
+        </div>
       </section>
 
       {/* ═══════════════════════════════════════════════════
           DYNAMIC PRODUCT SECTION
           ═══════════════════════════════════════════════════ */}
       <section className="py-16 pb-32">
-        <Container>
+        <div className="w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
           <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6 text-center md:text-left">
             <div className="space-y-3">
               <h2 className="text-4xl md:text-5xl font-heading font-black text-foreground">Explore Our Catch</h2>
@@ -159,7 +159,7 @@ export default function Homepage() {
                 transition={{ duration: 0.4 }}
               >
                 {products && products.length > 0 ? (
-                  <Grid cols="responsive-products" gap="xl">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6 gap-6 xl:gap-8">
                     {products.map((product) => (
                       <ProductCard 
                         key={product.id}
@@ -173,7 +173,7 @@ export default function Homepage() {
                         isAvailable={product.available_quantity > 0}
                       />
                     ))}
-                  </Grid>
+                  </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center h-80 glass-panel rounded-3xl text-center p-8">
                     <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-6">
@@ -195,7 +195,7 @@ export default function Homepage() {
               </Button>
             </Link>
           </div>
-        </Container>
+        </div>
       </section>
     </div>
   );
