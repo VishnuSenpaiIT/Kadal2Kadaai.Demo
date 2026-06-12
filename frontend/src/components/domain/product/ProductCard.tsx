@@ -58,16 +58,16 @@ export function ProductCard({
         <Link href={`/products/${slug}`} className="flex-1 flex flex-col z-10">
           <div className="aspect-[4/3] bg-muted/20 relative flex items-center justify-center p-4 overflow-hidden border-b border-border/40">
             {/* Dark overlay on hover for better image contrast */}
-            <div className="absolute inset-0 bg-primary-900/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></div>
+            <div className="absolute inset-0 bg-primary-900/5 dark:bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></div>
 
             {image ? (
               <img src={image} alt={name} className="object-contain w-full h-full group-hover:scale-105 transition-transform duration-500 ease-out z-10 relative" />
             ) : (
-              <Anchor className="h-12 w-12 text-primary/20 group-hover:scale-110 transition-transform duration-700 z-10 relative" />
+              <Anchor className="h-12 w-12 text-primary/20 dark:text-primary/40 group-hover:scale-110 transition-transform duration-700 z-10 relative" />
             )}
             
             <div className="absolute top-3 left-3 z-20">
-              <Badge className="bg-white/90 text-foreground backdrop-blur-md shadow-sm border border-border/50 font-semibold uppercase tracking-wider text-[9px] px-2 py-0.5">
+              <Badge className="bg-white/90 dark:bg-slate-800/90 text-slate-900 dark:text-slate-100 backdrop-blur-md shadow-sm border border-border/50 font-semibold uppercase tracking-wider text-[9px] px-2 py-0.5">
                 {category}
               </Badge>
             </div>
@@ -81,12 +81,12 @@ export function ProductCard({
           
           <CardContent className="p-4 flex-1 flex flex-col justify-between relative bg-card">
             <div>
-              <h4 className="font-semibold text-sm md:text-base text-foreground line-clamp-2 group-hover:text-primary transition-colors leading-snug" title={name}>{name}</h4>
+              <h4 className="font-semibold text-sm md:text-base text-foreground line-clamp-2 group-hover:text-primary dark:group-hover:text-primary-400 transition-colors leading-snug" title={name}>{name}</h4>
             </div>
             <div className="mt-2 flex items-end justify-between">
               <div>
                 <p className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider mb-0.5">Per {weight}</p>
-                <p className="text-lg sm:text-xl font-bold text-primary">
+                <p className="text-lg sm:text-xl font-bold text-primary dark:text-primary-400">
                   {currency}{price}
                 </p>
               </div>

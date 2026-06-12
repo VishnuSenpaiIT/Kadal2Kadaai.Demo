@@ -45,7 +45,7 @@ export default function ProductsPage() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input 
                 placeholder="Search catalog..." 
-                className="pl-11 h-12 bg-white/60 backdrop-blur-sm border-white/40 focus:bg-white rounded-xl text-base" 
+                className="pl-11 h-12 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border-white/40 dark:border-white/10 focus:bg-white dark:focus:bg-slate-800 rounded-xl text-base text-foreground" 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -53,10 +53,10 @@ export default function ProductsPage() {
             
             <div className="flex items-center gap-3 w-full sm:w-auto">
               <Select value={sort} onValueChange={(val: any) => setSort(val)}>
-                <SelectTrigger className="w-[180px] h-12 bg-white/60 backdrop-blur-sm border-white/40 rounded-xl font-medium">
+                <SelectTrigger className="w-[180px] h-12 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border-white/40 dark:border-white/10 rounded-xl font-medium text-foreground">
                   <SelectValue placeholder="Sort By" />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl border-white/40 bg-white/95 backdrop-blur-md">
+                <SelectContent className="rounded-xl border-white/40 dark:border-white/10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-foreground">
                   <SelectItem value="popular">Most Popular</SelectItem>
                   <SelectItem value="newest">Freshly Landed</SelectItem>
                   <SelectItem value="price_asc">Price: Low to High</SelectItem>
@@ -64,7 +64,7 @@ export default function ProductsPage() {
                 </SelectContent>
               </Select>
               
-              <Button variant="outline" size="icon" className="shrink-0 md:hidden h-12 w-12 rounded-xl bg-white/60 backdrop-blur-sm border-white/40">
+              <Button variant="outline" size="icon" className="shrink-0 md:hidden h-12 w-12 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border-white/40 dark:border-white/10 text-foreground">
                 <Filter className="h-5 w-5" />
               </Button>
             </div>
