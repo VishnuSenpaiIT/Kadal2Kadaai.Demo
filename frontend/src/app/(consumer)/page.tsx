@@ -29,71 +29,9 @@ export default function Homepage() {
     <div className="flex flex-col min-h-screen bg-background transition-colors duration-500">
 
       {/* ═══════════════════════════════════════════════════
-          HERO SECTION
-          ═══════════════════════════════════════════════════ */}
-      <section className="relative w-full overflow-hidden" style={{ height: '80vh', minHeight: '600px' }}>
-        
-        {/* Abstract Deep Ocean Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-900 via-primary-800 to-secondary-900 z-0"></div>
-        <div className="absolute inset-0 opacity-30 z-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-accent/40 via-transparent to-transparent"></div>
-
-        <motion.div
-          className="absolute inset-0 z-0 mix-blend-overlay opacity-40"
-          initial={{ scale: 1.05, opacity: 0 }}
-          animate={{ scale: 1, opacity: 0.4 }}
-          transition={{ duration: 2, ease: 'easeOut' }}
-        >
-          <Image
-            src="/hero-fishermen.png"
-            alt="South Indian fishermen at sunrise"
-            fill
-            priority
-            className="object-cover object-center"
-            sizes="100vw"
-          />
-        </motion.div>
-
-        {/* Floating Glass Panels Decoration */}
-        <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-accent/20 rounded-full blur-3xl z-0 animate-pulse"></div>
-        <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-secondary/20 rounded-full blur-3xl z-0 animate-pulse" style={{ animationDelay: '2s' }}></div>
-
-        {/* ── Foreground Content ── */}
-        <div className="absolute inset-0 z-20 flex flex-col justify-center items-center text-center px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.3 }}
-            className="glass-panel px-8 py-12 md:px-16 md:py-16 rounded-[3rem] max-w-4xl w-full border border-white/10"
-          >
-            <h1 className="font-heading font-black leading-tight mb-6 text-white text-4xl md:text-6xl lg:text-7xl drop-shadow-lg">
-              Straight from the Sea.<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-secondary">Made in your Kitchen.</span>
-            </h1>
-
-            <p className="text-white/80 mb-10 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed font-light">
-              Experience the real taste of the coast. Traceable, premium-grade marine catch from local fishermen, delivered to your doorstep.
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/products">
-                <Button size="lg" className="bg-accent hover:bg-accent-600 text-white rounded-full px-8 h-14 text-lg shadow-[0_0_20px_rgba(247,127,0,0.4)] hover:shadow-[0_0_30px_rgba(247,127,0,0.6)] transition-all">
-                  Explore Our Story
-                </Button>
-              </Link>
-              <Link href="/categories">
-                <Button size="lg" variant="outline" className="rounded-full px-8 h-14 text-lg border-white/30 text-white hover:bg-white/10 backdrop-blur-sm">
-                  View Categories
-                </Button>
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════
           TRUST INDICATORS
           ═══════════════════════════════════════════════════ */}
-      <section className="relative -mt-16 z-30 mb-20 px-4">
+      <section className="relative z-30 mb-20 px-4 mt-8">
         <Container>
           <div className="glass-panel rounded-3xl p-8 grid grid-cols-1 md:grid-cols-3 gap-8 shadow-xl">
             {[
