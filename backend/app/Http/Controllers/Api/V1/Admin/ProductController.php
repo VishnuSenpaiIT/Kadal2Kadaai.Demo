@@ -31,30 +31,51 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'seller_id' => 'required|exists:users,id',
-            'category_id' => 'required|exists:categories,id',
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:products,slug',
-            'short_description' => 'nullable|string',
-            'full_description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'sale_price' => 'nullable|numeric|min:0',
-            'weight_unit' => 'required|string',
+            'seller_id'              => 'required|exists:users,id',
+            'category_id'            => 'required|exists:categories,id',
+            'name'                   => 'required|string|max:255',
+            'slug'                   => 'required|string|max:255|unique:products,slug',
+            'short_description'      => 'nullable|string|max:500',
+            'full_description'       => 'nullable|string',
+            'price'                  => 'required|numeric|min:0',
+            'sale_price'             => 'nullable|numeric|min:0',
+            'weight_unit'            => 'required|string',
             'minimum_order_quantity' => 'nullable|numeric|min:0',
             'maximum_order_quantity' => 'nullable|numeric|min:0',
-            'available_quantity' => 'required|numeric|min:0',
-            'stock_status' => 'required|string',
-            'product_status' => 'required|string',
-            'is_featured' => 'boolean',
-            'is_popular' => 'boolean',
-            'tags' => 'nullable|array',
-            'tags.*' => 'exists:tags,id',
+            'available_quantity'     => 'required|numeric|min:0',
+            'stock_status'           => 'required|string',
+            'product_status'         => 'required|string',
+            'is_featured'            => 'boolean',
+            'is_popular'             => 'boolean',
+            'variants'               => 'nullable|array',
+            'variants.*'             => 'string|max:100',
+            'tags'                   => 'nullable|array',
+            'tags.*'                 => 'string',
+            'image'                  => 'nullable|image|max:5120',
         ]);
 
-        $product = Product::create($validated);
+        $product = Product::create(\Arr::except($validated, ['tags', 'image']));
 
-        if ($request->has('tags')) {
-            $product->tags()->sync($request->input('tags'));
+        // Handle tags — create if not exist, then sync
+        if ($request->has('tags') && !empty($validated['tags'])) {
+            $tagIds = [];
+            foreach ($validated['tags'] as $tagName) {
+                $tag = \App\Models\Tag::firstOrCreate(
+                    ['name' => $tagName],
+                    ['slug' => \Illuminate\Support\Str::slug($tagName)]
+                );
+                $tagIds[] = $tag->id;
+            }
+            $product->tags()->sync($tagIds);
+        }
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('products', 'public');
+            $product->images()->create([
+                'image_url'  => '/storage/' . $path,
+                'is_primary' => true,
+            ]);
         }
 
         $product->load(['seller', 'category', 'tags', 'images']);

@@ -6,6 +6,7 @@ import { useSellerProducts, useDeleteSellerProduct, usePublishSellerProduct, use
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Search, Plus, Edit, Trash2, Eye, Power, Loader2, PlayCircle, PauseCircle } from 'lucide-react';
+import { assetUrl } from '@/lib/asset-url';
 
 export default function SellerProductsDashboard() {
   const [page, setPage] = useState(1);
@@ -90,7 +91,7 @@ export default function SellerProductsDashboard() {
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-slate-100 rounded-md overflow-hidden flex items-center justify-center shrink-0">
                           {product.images?.[0] ? (
-                            <img src={product.images[0].image_url} alt={product.name} className="w-full h-full object-cover" />
+                            <img src={assetUrl(product.images[0].image_url) || ''} alt={product.name} className="w-full h-full object-cover" />
                           ) : (
                             <span className="text-xl">🐟</span>
                           )}

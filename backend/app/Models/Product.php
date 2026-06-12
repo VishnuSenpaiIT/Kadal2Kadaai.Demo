@@ -34,6 +34,7 @@ class Product extends Model
         'product_status',
         'is_featured',
         'is_popular',
+        'variants',
         'origin_location',
         'freshness_hours',
         'view_count',
@@ -44,6 +45,7 @@ class Product extends Model
     protected $casts = [
         'is_featured' => 'boolean',
         'is_popular' => 'boolean',
+        'variants' => 'array',
         'price' => 'float',
         'sale_price' => 'float',
         'minimum_order_quantity' => 'float',

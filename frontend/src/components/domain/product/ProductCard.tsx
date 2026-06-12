@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { useAddToCart } from '@/shared/api/hooks/useCart';
 import Link from 'next/link';
+import { assetUrl } from '@/lib/asset-url';
 
 export interface ProductCardProps {
   id: string;
@@ -36,6 +37,7 @@ export function ProductCard({
   className
 }: ProductCardProps) {
   const addToCartMutation = useAddToCart();
+  const resolvedImage = assetUrl(image);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -60,8 +62,8 @@ export function ProductCard({
             {/* Dark overlay on hover for better image contrast */}
             <div className="absolute inset-0 bg-primary-900/5 dark:bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></div>
 
-            {image ? (
-              <img src={image} alt={name} className="object-contain w-full h-full group-hover:scale-105 transition-transform duration-500 ease-out z-10 relative" />
+            {resolvedImage ? (
+              <img src={resolvedImage} alt={name} className="object-contain w-full h-full group-hover:scale-105 transition-transform duration-500 ease-out z-10 relative" />
             ) : (
               <Anchor className="h-12 w-12 text-primary/20 dark:text-primary/40 group-hover:scale-110 transition-transform duration-700 z-10 relative" />
             )}

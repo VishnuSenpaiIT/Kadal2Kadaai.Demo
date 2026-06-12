@@ -63,10 +63,42 @@ export default function AdminProductsPage() {
                   </TableCell>
                 </TableRow>
               ) : (
-                products.map((product) => (
+                products.map((product: any) => {
+                  const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+                  const imgSrc = product.images?.[0]?.image_url
+                    ? `${BACKEND}${product.images[0].image_url}`
+                    : null;
+
+                  return (
                   <TableRow key={product.id}>
                     <TableCell><input type="checkbox" className="rounded border-input" /></TableCell>
-                    <TableCell className="font-medium">{product.name}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        {imgSrc ? (
+                          <img
+                            src={imgSrc}
+                            alt={product.name}
+                            className="h-10 w-10 rounded-md object-cover border border-border shrink-0"
+                          />
+                        ) : (
+                          <div className="h-10 w-10 rounded-md bg-muted border border-border flex items-center justify-center shrink-0 text-muted-foreground text-xs">
+                            No img
+                          </div>
+                        )}
+                        <div>
+                          <p className="font-medium text-foreground leading-tight">{product.name}</p>
+                          {product.tags?.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {product.tags.slice(0, 3).map((tag: any) => (
+                                <span key={tag.id} className="text-xs px-1.5 py-0.5 rounded-sm bg-primary/10 text-primary">
+                                  {tag.name}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </TableCell>
                     <TableCell>{product.category?.name}</TableCell>
                     <TableCell>₹{product.price}</TableCell>
                     <TableCell className={product.available_quantity === 0 ? "text-error-600 font-medium" : ""}>
@@ -85,7 +117,8 @@ export default function AdminProductsPage() {
                       </Button>
                     </TableCell>
                   </TableRow>
-                ))
+                  );
+                })
               )}
             </TableBody>
           </Table>

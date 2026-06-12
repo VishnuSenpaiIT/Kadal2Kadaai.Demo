@@ -3,13 +3,15 @@ import { Product } from '@/types/marketplace.types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, Anchor } from 'lucide-react';
+import { assetUrl } from '@/lib/asset-url';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const primaryImage = product.images?.find(i => i.is_primary)?.image_url || product.images?.[0]?.image_url;
+  const rawImage = product.images?.find(i => i.is_primary)?.image_url || product.images?.[0]?.image_url;
+  const primaryImage = assetUrl(rawImage);
 
   return (
     <div className="group flex flex-col bg-card rounded-2xl border border-border/50 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
