@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Container } from '../shared/Container';
-import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { Mail, Phone, MapPin, Globe } from 'lucide-react';
 
 export function ConsumerFooter() {
   return (
@@ -21,18 +21,15 @@ export function ConsumerFooter() {
             <p className="text-bodyMedium text-white/70 leading-relaxed max-w-xs">
               The premium South Indian marine commerce platform. From the harbor directly to your kitchen, experiencing the real taste of the coast.
             </p>
-            <div className="flex space-x-4 pt-2">
-              <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-accent hover:text-white transition-all transform hover:-translate-y-1">
-                <Facebook className="w-5 h-5" />
+            <div className="flex gap-4">
+              <a href="#" className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary hover:text-white transition-colors border border-white/10">
+                <Globe className="h-5 w-5" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-accent hover:text-white transition-all transform hover:-translate-y-1">
-                <Twitter className="w-5 h-5" />
+              <a href="#" className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary hover:text-white transition-colors border border-white/10">
+                <Globe className="h-5 w-5" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-accent hover:text-white transition-all transform hover:-translate-y-1">
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-accent hover:text-white transition-all transform hover:-translate-y-1">
-                <Linkedin className="w-5 h-5" />
+              <a href="#" className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary hover:text-white transition-colors border border-white/10">
+                <Globe className="h-5 w-5" />
               </a>
             </div>
           </div>
