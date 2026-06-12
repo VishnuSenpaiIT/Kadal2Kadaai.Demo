@@ -107,7 +107,7 @@ export default function ProductsPage() {
                 <p className="text-muted-foreground font-medium animate-pulse">Fetching fresh catch...</p>
               </div>
             ) : products.length > 0 ? (
-              <Grid cols="responsive-products" gap="xl">
+              <Grid cols={3} gap="lg">
                 {products.map((product: any) => (
                   <ProductCard 
                     key={product.id}
