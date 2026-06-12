@@ -36,7 +36,7 @@ export function useCart() {
   return useQuery<Cart>({
     queryKey: ['cart'],
     queryFn: async () => {
-      const res = await apiClient.get<{ data: Cart }>('/cart');
+      const res = await apiClient.get<{ data: Cart }>('/v1/cart');
       return (res as unknown as { data: Cart }).data;
     },
     staleTime: 30_000,
@@ -47,7 +47,7 @@ export function useAddToCart() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (payload: { product_id: string; quantity: number }) => {
-      const res = await apiClient.post('/cart/items', payload);
+      const res = await apiClient.post('/v1/cart/items', payload);
       return (res as unknown as { data: Cart }).data;
     },
     onSuccess: () => {
@@ -60,7 +60,7 @@ export function useUpdateCartItem() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, quantity }: { id: string; quantity: number }) => {
-      const res = await apiClient.put(`/cart/items/${id}`, { quantity });
+      const res = await apiClient.put(`/v1/cart/items/${id}`, { quantity });
       return (res as unknown as { data: Cart }).data;
     },
     onSuccess: () => {
@@ -73,7 +73,7 @@ export function useRemoveCartItem() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      await apiClient.delete(`/cart/items/${id}`);
+      await apiClient.delete(`/v1/cart/items/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
@@ -85,7 +85,7 @@ export function useClearCart() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => {
-      await apiClient.delete('/cart');
+      await apiClient.delete('/v1/cart');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });

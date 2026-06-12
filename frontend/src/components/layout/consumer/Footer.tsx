@@ -1,9 +1,24 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Container } from '../shared/Container';
 import { Mail, Phone, MapPin, Globe } from 'lucide-react';
+import { usePublicSettings } from '@/shared/api/hooks/useSettings';
 
 export function ConsumerFooter() {
+  const { data: settings } = usePublicSettings();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const aboutText = mounted && settings?.footer_about ? settings.footer_about : "The premium South Indian marine commerce platform. From the harbor directly to your kitchen, experiencing the real taste of the coast.";
+  const addressText = mounted && settings?.footer_address ? settings.footer_address : "123 Coastal Highway, Chennai Harbor, Tamil Nadu 600001";
+  const phoneText = mounted && settings?.footer_phone ? settings.footer_phone : "+91 98765 43210";
+  const emailText = mounted && settings?.footer_email ? settings.footer_email : "support@kadal2kadaai.com";
+
   return (
     <footer className="relative bg-[#023e8a] dark:bg-slate-950 text-white pt-24 pb-8 mt-auto overflow-hidden">
       {/* Wave SVG Top */}
@@ -18,8 +33,8 @@ export function ConsumerFooter() {
           {/* Brand & About */}
           <div className="space-y-6">
             <h3 className="font-heading text-h3 font-bold text-white tracking-tight">Kadal2Kadaai</h3>
-            <p className="text-bodyMedium text-white/70 leading-relaxed max-w-xs">
-              The premium South Indian marine commerce platform. From the harbor directly to your kitchen, experiencing the real taste of the coast.
+            <p className="text-bodyMedium text-white/70 leading-relaxed max-w-xs transition-opacity duration-300">
+              {aboutText}
             </p>
             <div className="flex gap-4">
               <a href="#" className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary hover:text-white transition-colors border border-white/10">
@@ -73,19 +88,19 @@ export function ConsumerFooter() {
                 <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-accent transition-colors">
                   <MapPin className="h-5 w-5 text-accent group-hover:text-white transition-colors" />
                 </div>
-                <span className="mt-2">123 Coastal Highway, Chennai Harbor, Tamil Nadu 600001</span>
+                <span className="mt-2 transition-opacity duration-300">{addressText}</span>
               </li>
               <li className="flex items-center gap-3 group">
                 <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-accent transition-colors">
                   <Phone className="h-5 w-5 text-accent group-hover:text-white transition-colors" />
                 </div>
-                <span>+91 98765 43210</span>
+                <span className="transition-opacity duration-300">{phoneText}</span>
               </li>
               <li className="flex items-center gap-3 group">
                 <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-accent transition-colors">
                   <Mail className="h-5 w-5 text-accent group-hover:text-white transition-colors" />
                 </div>
-                <span>support@kadal2kadaai.com</span>
+                <span className="transition-opacity duration-300">{emailText}</span>
               </li>
             </ul>
           </div>

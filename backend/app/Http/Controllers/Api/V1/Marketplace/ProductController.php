@@ -58,7 +58,7 @@ class ProductController extends Controller
     public function show(string $slug): JsonResponse
     {
         $product = Product::where('slug', $slug)
-            ->where('status', 'active')
+            ->where('product_status', 'PUBLISHED')
             ->with([
                 'category:id,name,slug',
                 'seller:id,first_name,last_name',

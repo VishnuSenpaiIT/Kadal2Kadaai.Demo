@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Container } from '@/components/layout/shared/Container';
@@ -12,8 +12,23 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useProducts } from '@/shared/api/hooks/useProducts';
 import { useCategories } from '@/shared/api/hooks/useCategories';
 
+// High quality generated placeholder images
+const HERO_IMAGES = [
+  "/hero1_hq.png", 
+  "/hero2_hq.png",
+  "/hero3_hq.png"
+];
+
 export default function Homepage() {
   const [activeTab, setActiveTab] = useState('all');
+  const [currentHeroImage, setCurrentHeroImage] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentHeroImage((prev) => (prev + 1) % HERO_IMAGES.length);
+    }, 5000); // Wait 5 seconds before sliding
+    return () => clearInterval(timer);
+  }, []);
   
   const { data: categories } = useCategories();
   const queryCategory = activeTab === 'all' ? undefined : activeTab;
@@ -31,21 +46,36 @@ export default function Homepage() {
       {/* ═══════════════════════════════════════════════════
           NEW HERO SECTION (From Screenshot)
           ═══════════════════════════════════════════════════ */}
-      <section className="relative w-full py-16 md:py-24 lg:py-32 overflow-hidden bg-gradient-to-br from-slate-900 via-[#0d3b66] to-[#001f3f]">
+      <section className="relative w-full py-16 md:py-24 lg:py-32 overflow-hidden bg-slate-900">
         
-        {/* Subtle background light effects */}
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-cyan-400/10 rounded-full blur-[120px] pointer-events-none -translate-y-1/2 translate-x-1/3 z-0"></div>
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[100px] pointer-events-none translate-y-1/3 -translate-x-1/4 z-0"></div>
+        {/* Animated Slideshow Background */}
+        <div className="absolute inset-0 z-0 overflow-hidden bg-black">
+          {/* Lighter, less opaque gradient to remove heavy blue tint */}
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-slate-900/30 to-transparent z-10"></div>
+          
+          <AnimatePresence mode="popLayout">
+            <motion.img
+              key={currentHeroImage}
+              src={HERO_IMAGES[currentHeroImage]}
+              alt="Ocean Background"
+              className="absolute inset-0 w-full h-full object-cover"
+              initial={{ x: "100%", opacity: 0.8 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: "-100%", opacity: 0.8 }}
+              transition={{ duration: 1.2, ease: "easeInOut" }}
+            />
+          </AnimatePresence>
+        </div>
 
-        <div className="relative z-10 w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+        <div className="relative z-20 w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+          <div className="flex items-center min-h-[50vh]">
             
-            {/* Left Column: Text and CTA */}
+            {/* Text and CTA */}
             <motion.div 
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-              className="text-white space-y-8 max-w-xl"
+              className="text-white space-y-8 max-w-2xl py-12"
             >
               <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] tracking-tight">
                 THE DEEP OCEAN'S FRESHNESS, DELIVERED DIRECT.
@@ -81,33 +111,6 @@ export default function Homepage() {
                 <div className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-lg border border-white/20 backdrop-blur-sm">
                   <ShieldCheck className="w-5 h-5" />
                   Quality Verified
-                </div>
-              </div>
-            </motion.div>
-            
-            {/* Right Column: Image and Floating Card */}
-            <motion.div 
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative lg:ml-auto w-full max-w-lg lg:max-w-none"
-            >
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/20 aspect-[4/3] w-full">
-                <img 
-                  src="https://images.unsplash.com/photo-1615141982883-c7da0e698800?q=80&w=1000&auto=format&fit=crop" 
-                  alt="Fresh seafood on ice" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              
-              {/* Floating Live Update Card */}
-              <div className="absolute -bottom-6 -right-6 md:bottom-8 md:-right-8 bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-xl flex items-start gap-4 border border-white/50 max-w-[300px]">
-                <div className="bg-blue-100 p-2 rounded-full text-blue-600 shrink-0 mt-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-slate-800">Live Update: Seer Fish just landed!</p>
-                  <p className="text-sm text-slate-600 mt-1">Fresh stock available.</p>
                 </div>
               </div>
             </motion.div>

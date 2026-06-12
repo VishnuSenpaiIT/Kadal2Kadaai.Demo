@@ -70,6 +70,7 @@ Route::prefix('v1')->middleware([\App\Http\Middleware\VisitorTrackingMiddleware:
         Route::get('/products/{slug}',    [\App\Http\Controllers\Api\V1\Marketplace\ProductController::class, 'show']);
 
         Route::get('/search', [\App\Http\Controllers\Api\V1\Marketplace\SearchController::class, 'search']);
+        Route::get('/settings', [\App\Http\Controllers\Api\V1\Marketplace\SettingController::class, 'index']);
     });
 
     // ──────────────────────────────────────────────────────────────────────────
@@ -136,6 +137,10 @@ Route::prefix('v1')->middleware([\App\Http\Middleware\VisitorTrackingMiddleware:
             Route::get('/dashboard',  [\App\Http\Controllers\Api\V1\Admin\DashboardController::class, 'index']);
             Route::get('/consumers',  [\App\Http\Controllers\Api\V1\Admin\ConsumerController::class, 'index']);
             Route::get('/consumers/{id}', [\App\Http\Controllers\Api\V1\Admin\ConsumerController::class, 'show']);
+
+            // Settings
+            Route::get('/settings',   [\App\Http\Controllers\Api\V1\Admin\SettingController::class, 'index']);
+            Route::post('/settings',  [\App\Http\Controllers\Api\V1\Admin\SettingController::class, 'update']);
 
             // Products
             Route::apiResource('products', \App\Http\Controllers\Api\V1\Admin\ProductController::class);

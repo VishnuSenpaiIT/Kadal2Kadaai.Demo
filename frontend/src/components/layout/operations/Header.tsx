@@ -1,7 +1,17 @@
+'use client';
+
 import React from 'react';
 import { Search, Bell, ChevronRight, Menu } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 export function OperationsHeader() {
+  const pathname = usePathname();
+  
+  const segments = pathname.split('/').filter(Boolean);
+  const pageName = segments.length > 1 
+    ? segments[segments.length - 1].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) 
+    : 'Dashboard';
+
   return (
     <header className="h-20 bg-card border-b border-border shadow-sm flex items-center justify-between px-6 shrink-0 z-10">
       <div className="flex items-center gap-4">
@@ -13,7 +23,7 @@ export function OperationsHeader() {
         <div className="hidden md:flex items-center text-bodyMedium text-muted-foreground">
           <span className="hover:text-foreground cursor-pointer transition-colors">Operations</span>
           <ChevronRight className="h-4 w-4 mx-2" />
-          <span className="font-medium text-foreground">Dashboard</span>
+          <span className="font-medium text-foreground">{pageName}</span>
         </div>
       </div>
 

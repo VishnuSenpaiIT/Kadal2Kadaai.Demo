@@ -23,6 +23,16 @@ export function OperationsSidebar() {
 
   const mainRole = user?.roles?.[0]?.name?.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Super Admin';
 
+  const isActive = (path: string) => pathname.startsWith(path);
+  
+  const getLinkClasses = (path: string) => 
+    isActive(path)
+      ? "flex items-center gap-3 px-3 py-2.5 rounded-md bg-primary-800 text-white font-medium"
+      : "flex items-center gap-3 px-3 py-2.5 rounded-md text-primary-200 hover:bg-primary-800/50 hover:text-white transition-colors";
+      
+  const getIconClasses = (path: string) =>
+    isActive(path) ? "h-5 w-5 text-accent-400" : "h-5 w-5";
+
   return (
     <aside className="w-64 bg-primary-900 flex flex-col h-full shadow-lg shrink-0">
       <div className="h-20 flex items-center px-6 border-b border-primary-800">
@@ -49,44 +59,41 @@ export function OperationsSidebar() {
       <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-1">
         <div className="mb-6">
           <p className="px-3 text-caption font-semibold text-primary-400 uppercase tracking-wider mb-2">Overview</p>
-          <Link href="/admin/dashboard" className="flex items-center gap-3 px-3 py-2.5 rounded-md bg-primary-800 text-white font-medium">
-            <Home className="h-5 w-5 text-accent-400" />
+          <Link href="/admin/dashboard" className={getLinkClasses('/admin/dashboard')}>
+            <Home className={getIconClasses('/admin/dashboard')} />
             Dashboard
           </Link>
-          <Link href="/admin/analytics" className="flex items-center gap-3 px-3 py-2.5 rounded-md text-primary-200 hover:bg-primary-800/50 hover:text-white transition-colors">
-            <BarChart2 className="h-5 w-5" />
-            Analytics
+          <Link href="/admin/consumers" className={getLinkClasses('/admin/consumers')}>
+            <Users className={getIconClasses('/admin/consumers')} />
+            Consumers
           </Link>
         </div>
 
         <div className="mb-6">
           <p className="px-3 text-caption font-semibold text-primary-400 uppercase tracking-wider mb-2">Commerce</p>
-          <Link href="/admin/orders" className="flex items-center gap-3 px-3 py-2.5 rounded-md text-primary-200 hover:bg-primary-800/50 hover:text-white transition-colors">
-            <ShoppingBag className="h-5 w-5" />
+          <Link href="/admin/orders" className={getLinkClasses('/admin/orders')}>
+            <ShoppingBag className={getIconClasses('/admin/orders')} />
             Orders
           </Link>
-          <Link href="/admin/products" className="flex items-center gap-3 px-3 py-2.5 rounded-md text-primary-200 hover:bg-primary-800/50 hover:text-white transition-colors">
-            <Package className="h-5 w-5" />
+          <Link href="/admin/products" className={getLinkClasses('/admin/products')}>
+            <Package className={getIconClasses('/admin/products')} />
             Inventory
           </Link>
-          <Link href="/admin/categories" className="flex items-center gap-3 px-3 py-2.5 rounded-md text-primary-200 hover:bg-primary-800/50 hover:text-white transition-colors">
-            <Package className="h-5 w-5" />
+          <Link href="/admin/categories" className={getLinkClasses('/admin/categories')}>
+            <Package className={getIconClasses('/admin/categories')} />
             Categories
           </Link>
         </div>
 
         <div className="mb-6">
           <p className="px-3 text-caption font-semibold text-primary-400 uppercase tracking-wider mb-2">Administration</p>
-          <Link href="/admin/users" className="flex items-center gap-3 px-3 py-2.5 rounded-md text-primary-200 hover:bg-primary-800/50 hover:text-white transition-colors">
-            <Users className="h-5 w-5" />
+          <Link href="/admin/users" className={getLinkClasses('/admin/users')}>
+            <Users className={getIconClasses('/admin/users')} />
             Users & Roles
           </Link>
-          <Link href="/admin/consumers" className="flex items-center gap-3 px-3 py-2.5 rounded-md text-primary-200 hover:bg-primary-800/50 hover:text-white transition-colors">
-            <Users className="h-5 w-5" />
-            Consumers
-          </Link>
-          <Link href="/admin/settings" className="flex items-center gap-3 px-3 py-2.5 rounded-md text-primary-200 hover:bg-primary-800/50 hover:text-white transition-colors">
-            <Settings className="h-5 w-5" />
+
+          <Link href="/admin/settings" className={getLinkClasses('/admin/settings')}>
+            <Settings className={getIconClasses('/admin/settings')} />
             System Settings
           </Link>
           <button 

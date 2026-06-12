@@ -6,7 +6,6 @@ import { Search, MapPin, ShoppingCart, Bell, User, Heart, LogOut } from 'lucide-
 import { Container } from '../shared/Container';
 import { useCart } from '@/shared/api/hooks/useCart';
 import { useAuth } from '@/providers/AuthProvider';
-import { ThemeToggle } from '../shared/ThemeToggle';
 
 export function ConsumerHeader() {
   const { data: cart } = useCart();
@@ -26,7 +25,7 @@ export function ConsumerHeader() {
   const cartCount = cart?.total_items || 0;
 
   return (
-    <header className={`sticky top-0 z-sticky w-full transition-all duration-300 ${isScrolled ? 'glass-nav py-2' : 'bg-transparent py-4'}`}>
+    <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${isScrolled ? 'glass-nav py-2' : 'bg-transparent py-4'}`}>
       <Container className="flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center gap-6">
@@ -50,8 +49,8 @@ export function ConsumerHeader() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
             <input 
               type="text" 
-              placeholder="Search fresh seafood, vendors..." 
-              className="w-full h-12 pl-12 pr-4 rounded-full border border-border/50 bg-white/60 dark:bg-slate-800/60 backdrop-blur-md focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-primary/30 focus:border-primary shadow-sm transition-all outline-none text-foreground font-medium placeholder:text-muted-foreground"
+              placeholder="Search fresh seafood..." 
+              className="w-full h-12 pl-12 pr-4 rounded-full border border-border/50 bg-white/60 dark:bg-slate-800/60 backdrop-blur-md focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-primary/30 focus:border-primary shadow-sm transition-all outline-none text-foreground font-medium placeholder:text-muted-foreground text-ellipsis overflow-hidden whitespace-nowrap"
             />
           </div>
         </div>
@@ -78,7 +77,6 @@ export function ConsumerHeader() {
             <button className="p-2.5 text-foreground/80 hover:text-primary hover:bg-primary/10 rounded-full transition-all">
               <Bell className="h-5 w-5" />
             </button>
-            <ThemeToggle />
             
             {mounted && (
               isAuthenticated ? (
