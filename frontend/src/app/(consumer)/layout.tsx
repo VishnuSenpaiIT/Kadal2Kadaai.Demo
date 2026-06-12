@@ -8,9 +8,9 @@ export default function ConsumerLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="consumer-theme flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300">
       <ConsumerHeader />
-      <main className="flex-1 w-full flex flex-col bg-background">
+      <main className="flex-1 w-full flex flex-col">
         {children}
       </main>
       <ConsumerFooter />

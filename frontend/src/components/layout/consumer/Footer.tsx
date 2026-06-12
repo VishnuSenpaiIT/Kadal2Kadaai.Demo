@@ -1,70 +1,100 @@
 import React from 'react';
 import Link from 'next/link';
 import { Container } from '../shared/Container';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 
 export function ConsumerFooter() {
   return (
-    <footer className="bg-primary-900 text-primary-50 pt-16 pb-8 mt-auto">
-      <Container>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+    <footer className="relative bg-foreground text-background pt-24 pb-8 mt-auto overflow-hidden">
+      {/* Wave SVG Top */}
+      <div className="absolute top-0 left-0 w-full overflow-hidden leading-none rotate-180">
+        <svg className="relative block w-full h-[50px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+          <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" className="fill-background"></path>
+        </svg>
+      </div>
+
+      <Container className="relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           {/* Brand & About */}
-          <div className="space-y-4">
-            <h3 className="font-heading text-h5 font-bold text-white">Kadal2Kadaai</h3>
-            <p className="text-bodyMedium text-primary-200 leading-relaxed">
-              The premium South Indian marine commerce platform connecting fresh catches directly to your kitchen.
+          <div className="space-y-6">
+            <h3 className="font-heading text-h3 font-bold text-white tracking-tight">Kadal2Kadaai</h3>
+            <p className="text-bodyMedium text-white/70 leading-relaxed max-w-xs">
+              The premium South Indian marine commerce platform. From the harbor directly to your kitchen, experiencing the real taste of the coast.
             </p>
-            <div className="flex space-x-4 pt-4">
-              <a href="#" className="text-primary-300 hover:text-white transition-colors font-medium">FB</a>
-              <a href="#" className="text-primary-300 hover:text-white transition-colors font-medium">TW</a>
-              <a href="#" className="text-primary-300 hover:text-white transition-colors font-medium">IG</a>
-              <a href="#" className="text-primary-300 hover:text-white transition-colors font-medium">IN</a>
+            <div className="flex space-x-4 pt-2">
+              <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-accent hover:text-white transition-all transform hover:-translate-y-1">
+                <Facebook className="w-5 h-5" />
+              </a>
+              <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-accent hover:text-white transition-all transform hover:-translate-y-1">
+                <Twitter className="w-5 h-5" />
+              </a>
+              <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-accent hover:text-white transition-all transform hover:-translate-y-1">
+                <Instagram className="w-5 h-5" />
+              </a>
+              <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-accent hover:text-white transition-all transform hover:-translate-y-1">
+                <Linkedin className="w-5 h-5" />
+              </a>
             </div>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-semibold text-white mb-6">Categories</h4>
-            <ul className="space-y-3 text-bodyMedium text-primary-200">
-              <li><Link href="/categories/seawater" className="hover:text-accent-300 transition-colors">Seawater Fish</Link></li>
-              <li><Link href="/categories/freshwater" className="hover:text-accent-300 transition-colors">Freshwater Fish</Link></li>
-              <li><Link href="/categories/shellfish" className="hover:text-accent-300 transition-colors">Crabs & Shellfish</Link></li>
-              <li><Link href="/categories/dry-fish" className="hover:text-accent-300 transition-colors">Dry Fish</Link></li>
+            <h4 className="font-semibold text-white mb-6 text-lg relative inline-block">
+              Categories
+              <span className="absolute -bottom-2 left-0 w-1/2 h-1 bg-accent rounded-full"></span>
+            </h4>
+            <ul className="space-y-4 text-bodyMedium text-white/70">
+              <li><Link href="/categories/seawater" className="hover:text-accent transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-accent/50"></span> Seawater Fish</Link></li>
+              <li><Link href="/categories/freshwater" className="hover:text-accent transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-accent/50"></span> Freshwater Fish</Link></li>
+              <li><Link href="/categories/shellfish" className="hover:text-accent transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-accent/50"></span> Crabs & Shellfish</Link></li>
+              <li><Link href="/categories/dry-fish" className="hover:text-accent transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-accent/50"></span> Dry Fish</Link></li>
             </ul>
           </div>
 
           {/* Customer Support */}
           <div>
-            <h4 className="font-semibold text-white mb-6">Support</h4>
-            <ul className="space-y-3 text-bodyMedium text-primary-200">
-              <li><Link href="/contact" className="hover:text-accent-300 transition-colors">Contact Us</Link></li>
-              <li><Link href="/faq" className="hover:text-accent-300 transition-colors">FAQ</Link></li>
-              <li><Link href="/shipping" className="hover:text-accent-300 transition-colors">Shipping Policy</Link></li>
-              <li><Link href="/returns" className="hover:text-accent-300 transition-colors">Returns & Refunds</Link></li>
+            <h4 className="font-semibold text-white mb-6 text-lg relative inline-block">
+              Support
+              <span className="absolute -bottom-2 left-0 w-1/2 h-1 bg-accent rounded-full"></span>
+            </h4>
+            <ul className="space-y-4 text-bodyMedium text-white/70">
+              <li><Link href="/contact" className="hover:text-accent transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-accent/50"></span> Contact Us</Link></li>
+              <li><Link href="/faq" className="hover:text-accent transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-accent/50"></span> FAQ</Link></li>
+              <li><Link href="/shipping" className="hover:text-accent transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-accent/50"></span> Shipping Policy</Link></li>
+              <li><Link href="/returns" className="hover:text-accent transition-colors flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-accent/50"></span> Returns & Refunds</Link></li>
             </ul>
           </div>
 
           {/* Contact Info */}
           <div>
-            <h4 className="font-semibold text-white mb-6">Contact</h4>
-            <ul className="space-y-4 text-bodyMedium text-primary-200">
-              <li className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 text-accent-400 shrink-0 mt-0.5" />
-                <span>123 Coastal Highway, Chennai Harbor, Tamil Nadu 600001</span>
+            <h4 className="font-semibold text-white mb-6 text-lg relative inline-block">
+              Contact
+              <span className="absolute -bottom-2 left-0 w-1/2 h-1 bg-accent rounded-full"></span>
+            </h4>
+            <ul className="space-y-5 text-bodyMedium text-white/70">
+              <li className="flex items-start gap-3 group">
+                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-accent transition-colors">
+                  <MapPin className="h-5 w-5 text-accent group-hover:text-white transition-colors" />
+                </div>
+                <span className="mt-2">123 Coastal Highway, Chennai Harbor, Tamil Nadu 600001</span>
               </li>
-              <li className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-accent-400 shrink-0" />
+              <li className="flex items-center gap-3 group">
+                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-accent transition-colors">
+                  <Phone className="h-5 w-5 text-accent group-hover:text-white transition-colors" />
+                </div>
                 <span>+91 98765 43210</span>
               </li>
-              <li className="flex items-center gap-3">
-                <Mail className="h-5 w-5 text-accent-400 shrink-0" />
+              <li className="flex items-center gap-3 group">
+                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-accent transition-colors">
+                  <Mail className="h-5 w-5 text-accent group-hover:text-white transition-colors" />
+                </div>
                 <span>support@kadal2kadaai.com</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-primary-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-bodySmall text-primary-400">
+        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-bodySmall text-white/50">
           <p>© {new Date().getFullYear()} Kadal2Kadaai. All rights reserved.</p>
           <div className="flex gap-6">
             <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>

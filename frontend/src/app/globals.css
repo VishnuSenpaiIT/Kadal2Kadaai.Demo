@@ -157,3 +157,45 @@
     @apply font-body;
   }
 }
+
+/* Consumer Theme Scoped Variables */
+.consumer-theme {
+  /* Vibrant Ocean Theme */
+  --primary: #0077b6; /* Oceanic Blue */
+  --primary-foreground: #ffffff;
+  
+  --secondary: #00b4d8; /* Bright Cyan */
+  --secondary-foreground: #ffffff;
+  
+  --accent: #f77f00; /* Coral Orange */
+  --accent-foreground: #ffffff;
+  
+  --background: #f0f8ff; /* Alice Blue for light, breezy feel */
+  --foreground: #023e8a; /* Deep Navy */
+  
+  --card: rgba(255, 255, 255, 0.85); /* Glassmorphic base */
+  --card-foreground: #023e8a;
+  
+  --border: #caf0f8;
+  --ring: #00b4d8;
+}
+
+.dark .consumer-theme {
+  --background: #03045e; /* Midnight Blue */
+  --foreground: #caf0f8; /* Pale Cyan */
+  
+  --card: rgba(2, 62, 138, 0.6); /* Deep glass */
+  --card-foreground: #e0fbfc;
+  
+  --border: #0077b6;
+  --ring: #00b4d8;
+}
+
+/* Glassmorphism Utilities */
+@utility glass-panel {
+  @apply bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)];
+}
+
+@utility glass-nav {
+  @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-white/20 shadow-sm;
+}

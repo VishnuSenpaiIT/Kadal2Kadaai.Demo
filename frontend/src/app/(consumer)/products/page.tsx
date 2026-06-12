@@ -27,32 +27,36 @@ export default function ProductsPage() {
   const products = productsData?.data || [];
 
   return (
-    <div className="py-8 bg-background min-h-[calc(100vh-80px)]">
-      <Container>
+    <div className="py-12 bg-background min-h-[calc(100vh-80px)] relative overflow-hidden">
+      {/* Decorative background glows */}
+      <div className="absolute top-0 right-0 w-1/2 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none z-0"></div>
+      <div className="absolute bottom-0 left-0 w-1/2 h-96 bg-secondary/5 rounded-full blur-[100px] pointer-events-none z-0"></div>
+
+      <Container className="relative z-10">
         {/* Page Header & Filtering */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+        <div className="glass-panel p-6 md:p-8 rounded-3xl mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm border border-white/10">
           <div>
-            <h1 className="text-h2 font-heading font-bold text-foreground">Fresh Catch Catalog</h1>
-            <p className="text-bodyMedium text-muted-foreground mt-1">Showing all available landings from our harbor network.</p>
+            <h1 className="text-3xl md:text-4xl font-heading font-black text-foreground drop-shadow-sm">Fresh Catch Catalog</h1>
+            <p className="text-lg text-muted-foreground mt-2">Showing all available landings from our harbor network.</p>
           </div>
           
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <div className="relative w-full sm:w-72 shadow-sm">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input 
                 placeholder="Search catalog..." 
-                className="pl-9" 
+                className="pl-11 h-12 bg-white/60 backdrop-blur-sm border-white/40 focus:bg-white rounded-xl text-base" 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             
-            <div className="flex items-center gap-2 w-full sm:w-auto">
+            <div className="flex items-center gap-3 w-full sm:w-auto">
               <Select value={sort} onValueChange={(val: any) => setSort(val)}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[180px] h-12 bg-white/60 backdrop-blur-sm border-white/40 rounded-xl font-medium">
                   <SelectValue placeholder="Sort By" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="rounded-xl border-white/40 bg-white/95 backdrop-blur-md">
                   <SelectItem value="popular">Most Popular</SelectItem>
                   <SelectItem value="newest">Freshly Landed</SelectItem>
                   <SelectItem value="price_asc">Price: Low to High</SelectItem>
@@ -60,35 +64,35 @@ export default function ProductsPage() {
                 </SelectContent>
               </Select>
               
-              <Button variant="outline" size="icon" className="shrink-0 md:hidden">
-                <Filter className="h-4 w-4" />
+              <Button variant="outline" size="icon" className="shrink-0 md:hidden h-12 w-12 rounded-xl bg-white/60 backdrop-blur-sm border-white/40">
+                <Filter className="h-5 w-5" />
               </Button>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-10">
           {/* Sidebar Filters */}
-          <aside className="hidden lg:block w-64 shrink-0 space-y-8">
-            <div>
-              <h3 className="font-heading font-semibold text-h6 mb-4 pb-2 border-b">Categories</h3>
-              <ul className="space-y-3 text-bodyMedium">
-                <li className="flex items-center justify-between font-medium">
-                  <span 
-                    className={`cursor-pointer hover:underline ${!activeCategory ? 'text-accent-600' : 'text-muted-foreground hover:text-foreground'}`}
+          <aside className="hidden lg:block w-72 shrink-0">
+            <div className="glass-panel rounded-3xl p-6 sticky top-24 border border-white/10 shadow-sm">
+              <h3 className="font-heading font-bold text-xl mb-6 pb-4 border-b border-border/50 text-foreground">Categories</h3>
+              <ul className="space-y-2">
+                <li className="font-medium">
+                  <button 
+                    className={`w-full text-left px-4 py-3 rounded-xl transition-all ${!activeCategory ? 'bg-primary text-white shadow-md' : 'text-muted-foreground hover:bg-white/40 hover:text-foreground'}`}
                     onClick={() => setActiveCategory(undefined)}
                   >
                     All Catch
-                  </span>
+                  </button>
                 </li>
                 {categories?.map((cat) => (
-                  <li key={cat.id} className="flex items-center justify-between">
-                    <span 
-                      className={`cursor-pointer hover:underline ${activeCategory === cat.slug ? 'text-accent-600' : 'text-muted-foreground hover:text-foreground'}`}
+                  <li key={cat.id}>
+                    <button 
+                      className={`w-full text-left px-4 py-3 rounded-xl transition-all ${activeCategory === cat.slug ? 'bg-primary text-white shadow-md' : 'text-muted-foreground hover:bg-white/40 hover:text-foreground'}`}
                       onClick={() => setActiveCategory(cat.slug)}
                     >
                       {cat.name}
-                    </span>
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -98,12 +102,12 @@ export default function ProductsPage() {
           {/* Product Grid */}
           <div className="flex-1">
             {isLoading ? (
-              <div className="flex flex-col items-center justify-center h-64 text-gray-400">
-                <Loader2 className="w-10 h-10 animate-spin mb-4 text-teal-400" />
-                <p>Fetching fresh catch...</p>
+              <div className="flex flex-col items-center justify-center h-80 glass-panel rounded-3xl text-center">
+                <Loader2 className="w-12 h-12 animate-spin mb-4 text-primary" />
+                <p className="text-muted-foreground font-medium animate-pulse">Fetching fresh catch...</p>
               </div>
             ) : products.length > 0 ? (
-              <Grid cols="responsive-products" gap="lg">
+              <Grid cols="responsive-products" gap="xl">
                 {products.map((product: any) => (
                   <ProductCard 
                     key={product.id}
@@ -119,9 +123,12 @@ export default function ProductsPage() {
                 ))}
               </Grid>
             ) : (
-              <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-gray-200 rounded-2xl">
-                <Anchor className="w-12 h-12 text-gray-300 mb-4" />
-                <p className="text-gray-400">No catch available matching your criteria.</p>
+              <div className="flex flex-col items-center justify-center h-80 glass-panel rounded-3xl text-center p-8 border border-white/10">
+                <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                  <Anchor className="w-12 h-12 text-primary" />
+                </div>
+                <h3 className="text-2xl font-bold text-foreground mb-2">No Catch Matching Your Criteria</h3>
+                <p className="text-muted-foreground max-w-md">Try adjusting your filters or search terms to see what our fishermen brought in today.</p>
               </div>
             )}
           </div>

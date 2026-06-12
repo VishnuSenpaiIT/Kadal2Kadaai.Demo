@@ -26,19 +26,22 @@ export default function Homepage() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
+    <div className="flex flex-col min-h-screen bg-background transition-colors duration-500">
 
       {/* ═══════════════════════════════════════════════════
-          HERO SECTION — Kadal2Kadaai Reference Design
+          HERO SECTION
           ═══════════════════════════════════════════════════ */}
-      <section className="relative w-full overflow-hidden" style={{ height: '580px' }}>
+      <section className="relative w-full overflow-hidden" style={{ height: '80vh', minHeight: '600px' }}>
+        
+        {/* Abstract Deep Ocean Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-900 via-primary-800 to-secondary-900 z-0"></div>
+        <div className="absolute inset-0 opacity-30 z-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-accent/40 via-transparent to-transparent"></div>
 
-        {/* ── Background: Ocean / Fishermen Photo ── */}
         <motion.div
-          className="absolute inset-0"
-          initial={{ scale: 1.06, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1.6, ease: 'easeOut' }}
+          className="absolute inset-0 z-0 mix-blend-overlay opacity-40"
+          initial={{ scale: 1.05, opacity: 0 }}
+          animate={{ scale: 1, opacity: 0.4 }}
+          transition={{ duration: 2, ease: 'easeOut' }}
         >
           <Image
             src="/hero-fishermen.png"
@@ -48,184 +51,69 @@ export default function Homepage() {
             className="object-cover object-center"
             sizes="100vw"
           />
-          {/* Gradient overlay — left lighter, right darker for text readability */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                'linear-gradient(to right, rgba(10,30,50,0.18) 0%, rgba(10,30,50,0.10) 40%, rgba(8,25,42,0.72) 65%, rgba(5,18,32,0.88) 100%)',
-            }}
-          />
-          {/* Bottom dark fade */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                'linear-gradient(to top, rgba(5,15,30,0.55) 0%, transparent 50%)',
-            }}
-          />
         </motion.div>
 
-        {/* ── Foreground: Copper Kadai with Fish ── */}
-        <motion.div
-          className="absolute bottom-0 left-0 z-10"
-          style={{ width: '480px', height: '420px' }}
-          initial={{ x: -60, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 1.2, delay: 0.4, ease: 'easeOut' }}
-        >
-          <Image
-            src="/hero-kadai.png"
-            alt="Fresh seafood in copper kadai"
-            fill
-            priority
-            className="object-contain object-bottom-left"
-            sizes="480px"
-          />
-        </motion.div>
+        {/* Floating Glass Panels Decoration */}
+        <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-accent/20 rounded-full blur-3xl z-0 animate-pulse"></div>
+        <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-secondary/20 rounded-full blur-3xl z-0 animate-pulse" style={{ animationDelay: '2s' }}></div>
 
-        {/* ── Top-Left: Logo ── */}
-        <div className="absolute top-5 left-6 z-20 flex items-center gap-2">
-          <div className="flex items-center gap-2 bg-black/25 backdrop-blur-sm rounded-lg px-3 py-1.5">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              <path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z" fill="#4fd1c5" opacity="0.9"/>
-              <path d="M12 6 L12 18 M8 10 L16 10" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-            <span className="font-bold text-white text-sm tracking-wide">
-              Kadal<span className="text-[#4fd1c5]">2</span>Kadaai
-            </span>
-          </div>
-        </div>
-
-        {/* ── Right Side: Main Text Content ── */}
-        <div className="absolute inset-y-0 right-0 z-20 flex flex-col justify-center pr-10 pl-6"
-          style={{ width: '50%', maxWidth: '520px' }}>
-
-          {/* Gold Headline */}
-          <motion.h1
+        {/* ── Foreground Content ── */}
+        <div className="absolute inset-0 z-20 flex flex-col justify-center items-center text-center px-4">
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.5 }}
-            className="font-heading font-black leading-tight mb-4"
-            style={{
-              fontSize: 'clamp(2rem, 4vw, 3.2rem)',
-              color: '#D4AF37',
-              textShadow: '0 2px 20px rgba(0,0,0,0.4)',
-              letterSpacing: '0.02em',
-              textTransform: 'uppercase',
-            }}
+            transition={{ duration: 0.9, delay: 0.3 }}
+            className="glass-panel px-8 py-12 md:px-16 md:py-16 rounded-[3rem] max-w-4xl w-full border border-white/10"
           >
-            Welcome to<br />Kadal2Kadaai
-          </motion.h1>
+            <h1 className="font-heading font-black leading-tight mb-6 text-white text-4xl md:text-6xl lg:text-7xl drop-shadow-lg">
+              Straight from the Sea.<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-secondary">Made in your Kitchen.</span>
+            </h1>
 
-          {/* White Subtitle */}
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.7 }}
-            className="font-sans font-normal text-white mb-3"
-            style={{
-              fontSize: 'clamp(1.1rem, 2.2vw, 1.55rem)',
-              lineHeight: 1.35,
-              textShadow: '0 1px 8px rgba(0,0,0,0.5)',
-            }}
-          >
-            Straight from the Sea.<br />Made in your Kitchen.
-          </motion.h2>
+            <p className="text-white/80 mb-10 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed font-light">
+              Experience the real taste of the coast. Traceable, premium-grade marine catch from local fishermen, delivered to your doorstep.
+            </p>
 
-          {/* Description */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.9, delay: 0.9 }}
-            className="text-white/80 mb-7 leading-relaxed"
-            style={{ fontSize: 'clamp(0.8rem, 1.4vw, 0.95rem)', maxWidth: '400px' }}
-          >
-            Traceable, premium-grade marine catch from local fishermen,
-            delivered to your doorstep. Experience the real taste of the coast.
-          </motion.p>
-
-          {/* CTA Button — Teal Outline Style */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 1.1 }}
-            className="flex items-center gap-4"
-          >
-            <Link href="/products">
-              <motion.button
-                whileHover={{ backgroundColor: '#319795', scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ duration: 0.2 }}
-                className="flex items-center gap-2 font-bold tracking-widest uppercase"
-                style={{
-                  border: '2px solid #4fd1c5',
-                  color: '#4fd1c5',
-                  background: 'transparent',
-                  padding: '0.6rem 1.6rem',
-                  fontSize: '0.78rem',
-                  letterSpacing: '0.12em',
-                  borderRadius: '2px',
-                  cursor: 'pointer',
-                }}
-              >
-                Explore Our Story
-              </motion.button>
-            </Link>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link href="/products">
+                <Button size="lg" className="bg-accent hover:bg-accent-600 text-white rounded-full px-8 h-14 text-lg shadow-[0_0_20px_rgba(247,127,0,0.4)] hover:shadow-[0_0_30px_rgba(247,127,0,0.6)] transition-all">
+                  Explore Our Story
+                </Button>
+              </Link>
+              <Link href="/categories">
+                <Button size="lg" variant="outline" className="rounded-full px-8 h-14 text-lg border-white/30 text-white hover:bg-white/10 backdrop-blur-sm">
+                  View Categories
+                </Button>
+              </Link>
+            </div>
           </motion.div>
         </div>
-
-        {/* ── Slider Nav Arrows (bottom-right) ── */}
-        <div className="absolute bottom-6 right-5 z-30 flex items-center gap-2">
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="w-9 h-9 rounded-full flex items-center justify-center border border-white/40 bg-black/35 backdrop-blur-sm text-white hover:bg-black/55 transition-all"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="w-9 h-9 rounded-full flex items-center justify-center border border-white/40 bg-black/35 backdrop-blur-sm text-white hover:bg-black/55 transition-all"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </motion.button>
-        </div>
-
-        {/* ── Sparkle Decoration (top-right corner, like ref) ── */}
-        <motion.div
-          className="absolute bottom-8 right-24 z-20 text-white/70"
-          animate={{ rotate: [0, 20, 0, -20, 0] }}
-          transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
-        >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2l2.4 7.2H22l-6.2 4.5 2.4 7.2L12 16.4l-6.2 4.5 2.4-7.2L2 9.2h7.6z"/>
-          </svg>
-        </motion.div>
       </section>
 
       {/* ═══════════════════════════════════════════════════
           TRUST INDICATORS
           ═══════════════════════════════════════════════════ */}
-      <section className="bg-[#f7f9fb] py-12 border-b border-gray-100">
+      <section className="relative -mt-16 z-30 mb-20 px-4">
         <Container>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="glass-panel rounded-3xl p-8 grid grid-cols-1 md:grid-cols-3 gap-8 shadow-xl">
             {[
-              { icon: Ship, label: 'Direct From Harbor', desc: 'Sourced directly from verified local fishermen. No cold-storage middlemen.', color: 'bg-teal-50 text-teal-700' },
-              { icon: Clock, label: 'Same Day Delivery', desc: 'Catch of the day delivered to your doorstep within hours of landing.', color: 'bg-emerald-50 text-emerald-700' },
-              { icon: ShieldCheck, label: '100% Quality Guarantee', desc: "Rigorous quality checks. If it's not fresh, we'll replace it no questions asked.", color: 'bg-blue-50 text-blue-700' },
-            ].map(({ icon: Icon, label, desc, color }) => (
+              { icon: Ship, label: 'Direct From Harbor', desc: 'Sourced directly from verified local fishermen. No cold-storage middlemen.' },
+              { icon: Clock, label: 'Same Day Delivery', desc: 'Catch of the day delivered to your doorstep within hours of landing.' },
+              { icon: ShieldCheck, label: '100% Quality Guarantee', desc: "Rigorous quality checks. If it's not fresh, we'll replace it no questions asked." },
+            ].map(({ icon: Icon, label, desc }, i) => (
               <motion.div
                 key={label}
-                whileHover={{ y: -4 }}
-                className="flex flex-col items-center text-center space-y-3 p-6"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="flex flex-col items-center text-center space-y-4 p-4 rounded-2xl hover:bg-white/5 transition-colors group"
               >
-                <div className={`h-16 w-16 rounded-full ${color} flex items-center justify-center mb-2`}>
-                  <Icon className="h-8 w-8" />
+                <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500 shadow-inner">
+                  <Icon className="h-10 w-10 text-primary" />
                 </div>
-                <h3 className="font-heading font-bold text-gray-900">{label}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{desc}</p>
+                <h3 className="font-heading font-bold text-foreground text-xl">{label}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{desc}</p>
               </motion.div>
             ))}
           </div>
@@ -235,22 +123,23 @@ export default function Homepage() {
       {/* ═══════════════════════════════════════════════════
           DYNAMIC PRODUCT SECTION
           ═══════════════════════════════════════════════════ */}
-      <section className="py-24 bg-white">
+      <section className="py-16 pb-32">
         <Container>
-          <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-6">
-            <div className="space-y-2">
-              <h2 className="text-3xl font-heading font-bold text-gray-900">Explore Our Catch</h2>
-              <p className="text-gray-500">Premium seafood categorized for your convenience.</p>
+          <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6 text-center md:text-left">
+            <div className="space-y-3">
+              <h2 className="text-4xl md:text-5xl font-heading font-black text-foreground">Explore Our Catch</h2>
+              <p className="text-muted-foreground text-lg">Premium seafood curated for the finest kitchens.</p>
             </div>
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 w-full md:w-auto">
+            
+            <div className="flex items-center gap-2 overflow-x-auto pb-4 w-full md:w-auto scrollbar-hide snap-x">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium border transition-all whitespace-nowrap ${
+                  className={`px-6 py-3 rounded-full text-sm font-bold transition-all whitespace-nowrap snap-center shadow-sm ${
                     activeTab === tab.id
-                      ? 'bg-[#102a43] text-white border-[#102a43]'
-                      : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'
+                      ? 'bg-primary text-white scale-105'
+                      : 'bg-card text-muted-foreground hover:bg-primary/5 hover:text-primary'
                   }`}
                 >
                   {tab.label}
@@ -260,9 +149,9 @@ export default function Homepage() {
           </div>
           
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center h-64 text-gray-400">
-              <Loader2 className="w-10 h-10 animate-spin mb-4 text-teal-400" />
-              <p>Fetching fresh catch...</p>
+            <div className="flex flex-col items-center justify-center h-96">
+              <Loader2 className="w-12 h-12 animate-spin mb-4 text-primary" />
+              <p className="text-muted-foreground font-medium animate-pulse">Reeling in the fresh catch...</p>
             </div>
           ) : (
             <AnimatePresence mode="wait">
@@ -271,10 +160,10 @@ export default function Homepage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.4 }}
               >
                 {products && products.length > 0 ? (
-                  <Grid cols="responsive-products" gap="lg">
+                  <Grid cols="responsive-products" gap="xl">
                     {products.map((product) => (
                       <ProductCard 
                         key={product.id}
@@ -290,19 +179,23 @@ export default function Homepage() {
                     ))}
                   </Grid>
                 ) : (
-                  <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-gray-200 rounded-2xl">
-                    <Anchor className="w-12 h-12 text-gray-300 mb-4" />
-                    <p className="text-gray-400">No catch available for this category today.</p>
+                  <div className="flex flex-col items-center justify-center h-80 glass-panel rounded-3xl text-center p-8">
+                    <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                      <Anchor className="w-12 h-12 text-primary" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-foreground mb-2">No Catch Today</h3>
+                    <p className="text-muted-foreground max-w-md">Our fishermen haven't brought in anything for this category yet today. Check back soon!</p>
                   </div>
                 )}
               </motion.div>
             </AnimatePresence>
           )}
           
-          <div className="mt-12 text-center">
+          <div className="mt-20 text-center">
             <Link href="/products">
-              <Button variant="outline" className="min-w-[200px] border-gray-300 hover:border-gray-500">
-                View Entire Catalog <ArrowRight className="ml-2 w-4 h-4" />
+              <Button size="lg" className="bg-card text-foreground hover:bg-primary hover:text-white border border-border shadow-md rounded-full px-10 h-14 font-bold text-base transition-all group">
+                View Entire Catalog 
+                <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
           </div>
