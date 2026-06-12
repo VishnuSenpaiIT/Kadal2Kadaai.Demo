@@ -32,7 +32,7 @@ export default function ProductsPage() {
       <div className="absolute top-0 right-0 w-1/2 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none z-0"></div>
       <div className="absolute bottom-0 left-0 w-1/2 h-96 bg-secondary/5 rounded-full blur-[100px] pointer-events-none z-0"></div>
 
-      <Container className="relative z-10">
+      <div className="relative z-10 w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
         {/* Page Header & Filtering */}
         <div className="glass-panel p-6 md:p-8 rounded-3xl mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm border border-white/10">
           <div>
@@ -71,9 +71,9 @@ export default function ProductsPage() {
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-10">
+        <div className="flex flex-col lg:flex-row gap-8 xl:gap-12">
           {/* Sidebar Filters */}
-          <aside className="hidden lg:block w-72 shrink-0">
+          <aside className="hidden lg:block w-64 xl:w-72 shrink-0">
             <div className="glass-panel rounded-3xl p-6 sticky top-24 border border-white/10 shadow-sm">
               <h3 className="font-heading font-bold text-xl mb-6 pb-4 border-b border-border/50 text-foreground">Categories</h3>
               <ul className="space-y-2">
@@ -100,14 +100,14 @@ export default function ProductsPage() {
           </aside>
 
           {/* Product Grid */}
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             {isLoading ? (
               <div className="flex flex-col items-center justify-center h-80 glass-panel rounded-3xl text-center">
                 <Loader2 className="w-12 h-12 animate-spin mb-4 text-primary" />
                 <p className="text-muted-foreground font-medium animate-pulse">Fetching fresh catch...</p>
               </div>
             ) : products.length > 0 ? (
-              <Grid className="grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5" gap="md">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 xl:gap-8">
                 {products.map((product: any) => (
                   <ProductCard 
                     key={product.id}
@@ -121,7 +121,7 @@ export default function ProductsPage() {
                     isAvailable={product.available_quantity > 0}
                   />
                 ))}
-              </Grid>
+              </div>
             ) : (
               <div className="flex flex-col items-center justify-center h-80 glass-panel rounded-3xl text-center p-8 border border-white/10">
                 <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-6">
@@ -133,7 +133,7 @@ export default function ProductsPage() {
             )}
           </div>
         </div>
-      </Container>
+      </div>
     </div>
   );
 }

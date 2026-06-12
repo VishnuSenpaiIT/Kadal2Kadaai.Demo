@@ -56,7 +56,7 @@ export function ProductCard({
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
         <Link href={`/products/${slug}`} className="flex-1 flex flex-col z-10">
-          <div className="aspect-square bg-muted/20 relative flex items-center justify-center p-4 overflow-hidden border-b border-border/40">
+          <div className="aspect-[4/3] bg-muted/20 relative flex items-center justify-center p-4 overflow-hidden border-b border-border/40">
             {/* Dark overlay on hover for better image contrast */}
             <div className="absolute inset-0 bg-primary-900/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></div>
 
