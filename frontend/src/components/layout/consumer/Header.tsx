@@ -6,6 +6,7 @@ import { Search, MapPin, ShoppingCart, Bell, User, Heart, LogOut } from 'lucide-
 import { Container } from '../shared/Container';
 import { useCart } from '@/shared/api/hooks/useCart';
 import { useAuth } from '@/providers/AuthProvider';
+import { ThemeToggle } from '../shared/ThemeToggle';
 
 export function ConsumerHeader() {
   const { data: cart } = useCart();
@@ -77,6 +78,7 @@ export function ConsumerHeader() {
             <button className="p-2.5 text-foreground/80 hover:text-primary hover:bg-primary/10 rounded-full transition-all">
               <Bell className="h-5 w-5" />
             </button>
+            <ThemeToggle />
             
             {mounted && (
               isAuthenticated ? (

@@ -36,8 +36,8 @@ export default function RootLayout({
       <body suppressHydrationWarning className={`${inter.variable} ${outfit.variable} font-sans antialiased bg-background text-foreground min-h-screen`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
-          forcedTheme="light"
+          defaultTheme="system"
+          enableSystem
           disableTransitionOnChange
         >
           <QueryProvider>
