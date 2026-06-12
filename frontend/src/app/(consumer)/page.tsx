@@ -29,31 +29,89 @@ export default function Homepage() {
     <div className="flex flex-col min-h-screen bg-background transition-colors duration-500">
 
       {/* ═══════════════════════════════════════════════════
-          TRUST INDICATORS
+          NEW HERO SECTION (From Screenshot)
           ═══════════════════════════════════════════════════ */}
-      <section className="relative z-30 mb-20 px-4 mt-8">
-        <Container>
-          <div className="glass-panel rounded-3xl p-8 grid grid-cols-1 md:grid-cols-3 gap-8 shadow-xl">
-            {[
-              { icon: Ship, label: 'Direct From Harbor', desc: 'Sourced directly from verified local fishermen. No cold-storage middlemen.' },
-              { icon: Clock, label: 'Same Day Delivery', desc: 'Catch of the day delivered to your doorstep within hours of landing.' },
-              { icon: ShieldCheck, label: '100% Quality Guarantee', desc: "Rigorous quality checks. If it's not fresh, we'll replace it no questions asked." },
-            ].map(({ icon: Icon, label, desc }, i) => (
-              <motion.div
-                key={label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="flex flex-col items-center text-center space-y-4 p-4 rounded-2xl hover:bg-white/5 transition-colors group"
-              >
-                <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500 shadow-inner">
-                  <Icon className="h-10 w-10 text-primary" />
+      <section className="relative w-full py-16 md:py-24 lg:py-32 overflow-hidden bg-gradient-to-br from-slate-900 via-[#0d3b66] to-[#001f3f]">
+        
+        {/* Subtle background light effects */}
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-cyan-400/10 rounded-full blur-[120px] pointer-events-none -translate-y-1/2 translate-x-1/3 z-0"></div>
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[100px] pointer-events-none translate-y-1/3 -translate-x-1/4 z-0"></div>
+
+        <Container className="relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+            
+            {/* Left Column: Text and CTA */}
+            <motion.div 
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-white space-y-8 max-w-xl"
+            >
+              <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] tracking-tight">
+                THE DEEP OCEAN'S FRESHNESS, DELIVERED DIRECT.
+              </h1>
+              
+              <p className="text-lg md:text-xl text-blue-100/80 font-light leading-relaxed">
+                Kadal2Kadaai (K2K) bridges South India's local fishermen directly to your kitchen. Discover traceable, premium-grade marine catch, eliminating cold-storage middlemen for unparalleled taste and quality.
+              </p>
+              
+              <div className="flex flex-wrap items-center gap-4 pt-2">
+                <Link href="/products">
+                  <Button size="lg" className="bg-[#2A75C3] hover:bg-[#1e5a99] text-white rounded-full px-8 h-14 text-lg font-medium transition-colors border-none shadow-lg shadow-blue-900/50">
+                    Explore All Catch <ChevronRight className="ml-2 w-5 h-5" />
+                  </Button>
+                </Link>
+                <Link href="/products?sort=newest">
+                  <Button size="lg" variant="outline" className="rounded-full px-8 h-14 text-lg font-medium border-white text-white hover:bg-white/10 bg-transparent transition-colors">
+                    Today's Fresh Arrivals
+                  </Button>
+                </Link>
+              </div>
+              
+              {/* Trust Indicators in Hero */}
+              <div className="flex flex-wrap items-center gap-6 pt-6 text-sm font-medium text-blue-100/90">
+                <div className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-lg border border-white/20 backdrop-blur-sm">
+                  <Anchor className="w-5 h-5" />
+                  Direct from Harbor
                 </div>
-                <h3 className="font-heading font-bold text-foreground text-xl">{label}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{desc}</p>
-              </motion.div>
-            ))}
+                <div className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-lg border border-white/20 backdrop-blur-sm">
+                  <Clock className="w-5 h-5" />
+                  Same-Day Delivery
+                </div>
+                <div className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-lg border border-white/20 backdrop-blur-sm">
+                  <ShieldCheck className="w-5 h-5" />
+                  Quality Verified
+                </div>
+              </div>
+            </motion.div>
+            
+            {/* Right Column: Image and Floating Card */}
+            <motion.div 
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="relative lg:ml-auto w-full max-w-lg lg:max-w-none"
+            >
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/20 aspect-[4/3] w-full">
+                <img 
+                  src="https://images.unsplash.com/photo-1615141982883-c7da0e698800?q=80&w=1000&auto=format&fit=crop" 
+                  alt="Fresh seafood on ice" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              
+              {/* Floating Live Update Card */}
+              <div className="absolute -bottom-6 -right-6 md:bottom-8 md:-right-8 bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-xl flex items-start gap-4 border border-white/50 max-w-[300px]">
+                <div className="bg-blue-100 p-2 rounded-full text-blue-600 shrink-0 mt-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-slate-800">Live Update: Seer Fish just landed!</p>
+                  <p className="text-sm text-slate-600 mt-1">Fresh stock available.</p>
+                </div>
+              </div>
+            </motion.div>
+
           </div>
         </Container>
       </section>
