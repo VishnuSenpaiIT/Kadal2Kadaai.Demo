@@ -74,9 +74,9 @@ export default function ProductsPage() {
         <div className="flex flex-col lg:flex-row gap-8 xl:gap-12">
           {/* Sidebar Filters */}
           <aside className="hidden lg:block w-64 xl:w-72 shrink-0">
-            <div className="glass-panel rounded-3xl p-6 sticky top-24 border border-white/10 shadow-sm">
-              <h3 className="font-heading font-bold text-xl mb-6 pb-4 border-b border-border/50 text-foreground">Categories</h3>
-              <ul className="space-y-2">
+            <div className="glass-panel rounded-3xl p-6 sticky top-24 border border-white/10 shadow-sm flex flex-col max-h-[calc(100vh-120px)]">
+              <h3 className="font-heading font-bold text-xl mb-6 pb-4 border-b border-border/50 text-foreground shrink-0">Categories</h3>
+              <ul className="space-y-2 overflow-y-auto pr-2 pb-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
                 <li className="font-medium">
                   <button 
                     className={`w-full text-left px-4 py-3 rounded-xl transition-all ${!activeCategory ? 'bg-primary text-white shadow-md' : 'text-muted-foreground hover:bg-white/40 hover:text-foreground'}`}
