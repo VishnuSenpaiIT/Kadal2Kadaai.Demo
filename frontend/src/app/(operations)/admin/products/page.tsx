@@ -64,9 +64,8 @@ export default function AdminProductsPage() {
                 </TableRow>
               ) : (
                 products.map((product: any) => {
-                  const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
                   const imgSrc = product.images?.[0]?.image_url
-                    ? `${BACKEND}${product.images[0].image_url}`
+                    ? (product.images[0].image_url.startsWith('http') ? product.images[0].image_url : `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'}${product.images[0].image_url}`)
                     : null;
 
                   return (

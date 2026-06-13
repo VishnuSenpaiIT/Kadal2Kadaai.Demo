@@ -37,7 +37,7 @@ export function OperationsSidebar() {
     <aside className="w-64 bg-primary-900 flex flex-col h-full shadow-lg shrink-0">
       <div className="h-20 flex items-center px-6 border-b border-primary-800">
         <Link href="/admin/dashboard" className="flex items-center gap-2">
-          <Anchor className="h-6 w-6 text-accent-400" />
+          <img src="/logo.jpeg" alt="Kadal2Kadaai Logo" className="w-8 h-8 rounded object-cover" />
           <span className="font-heading text-h5 font-bold text-white tracking-tight">Operations</span>
         </Link>
       </div>

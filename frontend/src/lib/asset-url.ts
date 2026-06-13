@@ -7,6 +7,6 @@ export function assetUrl(path: string | null | undefined): string | null {
   if (!path) return null;
   // Already absolute
   if (path.startsWith('http://') || path.startsWith('https://')) return path;
-  const backend = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8001';
+  const backend = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
   return `${backend}${path}`;
 }

@@ -89,6 +89,9 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
       <div className="max-w-md w-full bg-card rounded-xl border shadow-lg p-8">
         <div className="mb-8 text-center">
+          <div className="mx-auto w-20 h-20 mb-4">
+            <img src="/logo.jpeg" alt="Kadal2Kadaai Logo" className="w-full h-full rounded-full object-cover shadow-md" />
+          </div>
           <h1 className="text-3xl font-heading font-bold text-primary mb-2">Join Kadal2Kadaai</h1>
           <p className="text-muted-foreground">Step {step} of 2</p>
           <div className="w-full bg-muted h-2 mt-4 rounded-full overflow-hidden">

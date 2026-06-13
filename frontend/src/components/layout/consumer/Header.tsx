@@ -30,9 +30,7 @@ export function ConsumerHeader() {
         {/* Logo */}
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-transform">
-              <span className="font-bold text-lg">K2</span>
-            </div>
+            <img src="/logo.jpeg" alt="Kadal2Kadaai Logo" className="w-10 h-10 rounded-full object-cover shadow-lg transform group-hover:scale-110 transition-transform" />
             <span className="font-heading text-h4 font-bold text-foreground tracking-tight group-hover:text-primary transition-colors">Kadal2Kadaai</span>
           </Link>
           

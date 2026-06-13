@@ -28,6 +28,13 @@ class ProductImage extends Model
         ];
     }
 
+    protected function imageUrl(): \Illuminate\Database\Eloquent\Casts\Attribute
+    {
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+            get: fn (?string $value) => $value && str_starts_with($value, '/storage') ? url($value) : $value,
+        );
+    }
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

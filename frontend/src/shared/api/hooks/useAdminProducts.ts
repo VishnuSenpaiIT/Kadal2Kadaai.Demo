@@ -36,6 +36,43 @@ export function useAdminProducts(page = 1, perPage = 20) {
   });
 }
 
+export interface ProductAttributes {
+  sku?: string;
+  scientific_name?: string;
+  catch_location?: string;
+  fishing_harbor?: string;
+  catch_date?: string;
+  landing_date?: string;
+  fishing_method?: string;
+  freshness_type?: string;
+  processing_method?: string;
+  quality_grade?: string;
+  gross_weight?: string;
+  net_weight?: string;
+  estimated_yield?: string;
+  calories?: string;
+  protein?: string;
+  fat?: string;
+  omega_3?: string;
+  carbohydrates?: string;
+  sodium?: string;
+  cholesterol?: string;
+  storage_instructions?: string;
+  refrigeration_guidelines?: string;
+  shelf_life?: string;
+  best_before?: string;
+  delivery_availability?: string;
+  packaging_type?: string;
+  cold_chain_info?: string;
+}
+
+export interface ProductVariant {
+  name: string;
+  price_modifier: number;
+  shipping_modifier: number;
+  max_distance: number | null;
+}
+
 export interface CreateProductPayload {
   seller_id: string;
   category_id: string;
@@ -47,7 +84,8 @@ export interface CreateProductPayload {
   stock_status: string;
   product_status: string;
   short_description?: string;
-  variants?: string[];
+  variants?: ProductVariant[];
+  attributes?: ProductAttributes;
   tags?: string[];
   image?: File | null;
 }
@@ -75,7 +113,19 @@ export function useCreateProduct() {
 
       // Append variants array
       if (payload.variants && payload.variants.length > 0) {
-        payload.variants.forEach((v) => formData.append('variants[]', v));
+        payload.variants.forEach((v, index) => {
+          formData.append(`variants[${index}][name]`, v.name);
+          formData.append(`variants[${index}][price_modifier]`, String(v.price_modifier));
+          formData.append(`variants[${index}][shipping_modifier]`, String(v.shipping_modifier));
+          if (v.max_distance !== null && v.max_distance !== undefined) {
+            formData.append(`variants[${index}][max_distance]`, String(v.max_distance));
+          }
+        });
+      }
+
+      // Append attributes as JSON string if exists
+      if (payload.attributes && Object.keys(payload.attributes).length > 0) {
+        formData.append('attributes', JSON.stringify(payload.attributes));
       }
 
       // Append tags array (by name — backend creates if not exist)

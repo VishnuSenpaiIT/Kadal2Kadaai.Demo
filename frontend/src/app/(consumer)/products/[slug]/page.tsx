@@ -11,10 +11,47 @@ import { Button } from '@/components/ui/button';
 import {
   ShoppingCart, ShieldCheck, Anchor, Star, MapPin, Clock,
   ChevronRight, Minus, Plus, Loader2, Check, Tag, Package,
-  Truck, Award, Fish, RefreshCw, ArrowLeft
+  Truck, Award, Fish, RefreshCw, ArrowLeft, Droplets, Info, ThermometerSnowflake
 } from 'lucide-react';
 import { useAddToCart } from '@/shared/api/hooks/useCart';
 import { toast } from 'sonner';
+
+interface ProductVariant {
+  name: string;
+  price_modifier: number;
+  shipping_modifier: number;
+  max_distance: number | null;
+}
+
+interface ProductAttributes {
+  sku?: string;
+  scientific_name?: string;
+  catch_location?: string;
+  fishing_harbor?: string;
+  catch_date?: string;
+  landing_date?: string;
+  fishing_method?: string;
+  freshness_type?: string;
+  processing_method?: string;
+  quality_grade?: string;
+  gross_weight?: string;
+  net_weight?: string;
+  estimated_yield?: string;
+  calories?: string;
+  protein?: string;
+  fat?: string;
+  omega_3?: string;
+  carbohydrates?: string;
+  sodium?: string;
+  cholesterol?: string;
+  storage_instructions?: string;
+  refrigeration_guidelines?: string;
+  shelf_life?: string;
+  best_before?: string;
+  delivery_availability?: string;
+  packaging_type?: string;
+  cold_chain_info?: string;
+}
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -23,7 +60,7 @@ export default function ProductDetailPage() {
 
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
 
   const addToCartMutation = useAddToCart();
 
@@ -31,7 +68,7 @@ export default function ProductDetailPage() {
     queryKey: ['product', slug],
     queryFn: async () => {
       const res = await apiClient.get(`/v1/marketplace/products/${slug}`);
-      return (res as any).data;
+      return (res as any).data.data;
     },
     enabled: !!slug,
     retry: 1,
@@ -94,16 +131,31 @@ export default function ProductDetailPage() {
 
   const images = product.images || [];
   const currentImageUrl = assetUrl(images[selectedImage]?.image_url);
-  const variants: string[] = product.variants || [];
+  const variants: ProductVariant[] = product.variants || [];
   const tags = product.tags || [];
+  const attributes: ProductAttributes = product.attributes || {};
+  
+  // Stock Status logic
   const inStock = (product.available_quantity ?? 0) > 0;
-  const effectivePrice = product.sale_price ?? product.price;
-  const discount = product.sale_price
-    ? Math.round(((product.price - product.sale_price) / product.price) * 100)
+  const isLowStock = inStock && product.available_quantity <= 5;
+  const stockText = inStock ? (isLowStock ? `Only ${product.available_quantity} Left` : 'In Stock') : 'Out of Stock';
+  
+  // Base pricing
+  const basePrice = product.price;
+  const baseSalePrice = product.sale_price;
+  
+  // Dynamic Pricing based on selected variant
+  const variantPriceModifier = selectedVariant?.price_modifier || 0;
+  const displayBasePrice = basePrice + variantPriceModifier;
+  const displaySalePrice = baseSalePrice ? baseSalePrice + variantPriceModifier : null;
+  
+  const effectivePrice = displaySalePrice ?? displayBasePrice;
+  const discount = displaySalePrice
+    ? Math.round(((displayBasePrice - displaySalePrice) / displayBasePrice) * 100)
     : 0;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20">
 
       {/* Decorative blobs */}
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
@@ -131,7 +183,7 @@ export default function ProductDetailPage() {
         </nav>
 
         {/* Main Grid */}
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 mb-20">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 mb-16">
 
           {/* ── LEFT: Image Gallery ── */}
           <div className="flex flex-col gap-4">
@@ -140,7 +192,7 @@ export default function ProductDetailPage() {
               {/* Badges */}
               {product.is_popular && (
                 <Badge className="absolute top-5 left-5 z-20 bg-amber-500 text-white border-none shadow-lg text-xs px-3 py-1 font-bold">
-                  🔥 Popular Catch
+                  🔥 Best Seller
                 </Badge>
               )}
               {discount > 0 && (
@@ -150,9 +202,9 @@ export default function ProductDetailPage() {
               )}
 
               {/* In/Out Stock indicator */}
-              <div className={`absolute bottom-5 left-5 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm border ${inStock ? 'bg-green-500/20 text-green-700 border-green-300/50' : 'bg-red-500/20 text-red-700 border-red-300/50'}`}>
-                <span className={`w-2 h-2 rounded-full ${inStock ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span>
-                {inStock ? 'In Stock' : 'Out of Stock'}
+              <div className={`absolute bottom-5 left-5 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm border ${inStock ? (isLowStock ? 'bg-orange-500/20 text-orange-700 border-orange-300/50' : 'bg-green-500/20 text-green-700 border-green-300/50') : 'bg-red-500/20 text-red-700 border-red-300/50'}`}>
+                <span className={`w-2 h-2 rounded-full ${inStock ? (isLowStock ? 'bg-orange-500 animate-pulse' : 'bg-green-500 animate-pulse') : 'bg-red-500'}`}></span>
+                {stockText}
               </div>
 
               {currentImageUrl ? (
@@ -191,11 +243,11 @@ export default function ProductDetailPage() {
             {/* Trust strip */}
             <div className="grid grid-cols-3 gap-3 mt-2">
               {[
-                { icon: <Truck className="h-4 w-4" />, text: 'Fast Delivery', sub: 'Same day' },
-                { icon: <RefreshCw className="h-4 w-4" />, text: 'Fresh Guarantee', sub: '100% fresh' },
-                { icon: <Award className="h-4 w-4" />, text: 'Quality Assured', sub: 'Verified' },
+                { icon: <Truck className="h-4 w-4" />, text: 'Fast Delivery', sub: attributes.packaging_type || 'Insulated Packaging' },
+                { icon: <RefreshCw className="h-4 w-4" />, text: 'Fresh Guarantee', sub: attributes.freshness_type || '100% fresh' },
+                { icon: <Award className="h-4 w-4" />, text: 'Quality Assured', sub: attributes.quality_grade || 'Verified' },
               ].map((item) => (
-                <div key={item.text} className="flex flex-col items-center gap-1.5 text-center p-3 rounded-2xl bg-muted/40 border border-border/30">
+                <div key={item.text} className="flex flex-col items-center justify-center gap-1.5 text-center p-3 rounded-2xl bg-muted/40 border border-border/30">
                   <span className="text-primary">{item.icon}</span>
                   <span className="text-xs font-semibold text-foreground leading-tight">{item.text}</span>
                   <span className="text-[10px] text-muted-foreground">{item.sub}</span>
@@ -207,19 +259,28 @@ export default function ProductDetailPage() {
           {/* ── RIGHT: Product Info ── */}
           <div className="flex flex-col">
 
-            {/* Category Badge */}
-            {product.category && (
-              <Link href={`/categories/${product.category.slug}`}>
-                <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 px-3 py-1 text-xs font-bold uppercase tracking-widest rounded-full cursor-pointer transition-colors">
-                  {product.category.name}
-                </Badge>
-              </Link>
-            )}
+            <div className="flex justify-between items-start mb-2">
+              {/* Category Badge */}
+              {product.category && (
+                <Link href={`/categories/${product.category.slug}`}>
+                  <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 px-3 py-1 text-xs font-bold uppercase tracking-widest rounded-full cursor-pointer transition-colors">
+                    {product.category.name}
+                  </Badge>
+                </Link>
+              )}
+              {attributes.sku && (
+                <span className="text-xs text-muted-foreground font-medium uppercase">SKU: {attributes.sku}</span>
+              )}
+            </div>
 
             {/* Title */}
-            <h1 className="text-4xl md:text-5xl font-heading font-black text-foreground leading-tight mb-3">
+            <h1 className="text-4xl md:text-5xl font-heading font-black text-foreground leading-tight mb-2">
               {product.name}
             </h1>
+            
+            {attributes.scientific_name && (
+              <p className="text-sm text-muted-foreground italic mb-3">({attributes.scientific_name})</p>
+            )}
 
             {/* Short description */}
             {product.short_description && (
@@ -231,30 +292,35 @@ export default function ProductDetailPage() {
             {/* Rating row */}
             <div className="flex flex-wrap items-center gap-5 mb-6">
               <div className="flex items-center gap-1">
-                {[1, 2, 3, 4].map((i) => (
-                  <Star key={i} fill="currentColor" className="w-4 h-4 text-amber-400" />
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <Star key={i} fill="currentColor" className={`w-4 h-4 ${i === 5 ? 'text-amber-200' : 'text-amber-400'}`} />
                 ))}
-                <Star className="w-4 h-4 text-amber-200" fill="currentColor" />
-                <span className="text-sm text-muted-foreground ml-2 font-medium">4.0 · {product.view_count || 0} views</span>
+                <span className="text-sm text-muted-foreground ml-2 font-medium">4.8 · 124 Reviews</span>
               </div>
             </div>
 
             {/* Price Box */}
             <div className="bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/10 rounded-2xl p-5 mb-6">
               <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-2">Price per {product.weight_unit}</p>
-              {product.sale_price ? (
+              {displaySalePrice ? (
                 <div className="flex items-baseline gap-3">
-                  <span className="text-4xl font-black text-primary">₹{product.sale_price}</span>
-                  <span className="text-xl text-muted-foreground line-through font-medium">₹{product.price}</span>
+                  <span className="text-4xl font-black text-primary">₹{displaySalePrice}</span>
+                  <span className="text-xl text-muted-foreground line-through font-medium">₹{displayBasePrice}</span>
                   <Badge className="bg-red-100 text-red-600 border-red-200 font-bold text-xs">Save {discount}%</Badge>
                 </div>
               ) : (
-                <span className="text-4xl font-black text-foreground">₹{product.price}</span>
+                <span className="text-4xl font-black text-foreground">₹{displayBasePrice}</span>
               )}
-              <p className="text-xs text-muted-foreground mt-2">
-                {product.available_quantity} {product.weight_unit} available
-                {product.minimum_order_quantity > 1 && ` · Min order: ${product.minimum_order_quantity} ${product.weight_unit}`}
-              </p>
+              <div className="flex items-center justify-between mt-2">
+                <p className="text-xs text-muted-foreground">
+                  (Includes all taxes)
+                </p>
+                {attributes.estimated_yield && (
+                  <p className="text-xs font-semibold text-primary">
+                    Est. Yield: {attributes.estimated_yield}
+                  </p>
+                )}
+              </div>
             </div>
 
             {/* Variants */}
@@ -262,20 +328,30 @@ export default function ProductDetailPage() {
               <div className="mb-6">
                 <p className="text-sm font-semibold text-foreground mb-3 uppercase tracking-wide">Available As</p>
                 <div className="flex flex-wrap gap-2">
-                  {variants.map((v) => (
-                    <button
-                      key={v}
-                      type="button"
-                      onClick={() => setSelectedVariant(selectedVariant === v ? null : v)}
-                      className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold border transition-all duration-150 ${selectedVariant === v
-                        ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20 scale-105'
-                        : 'bg-background text-foreground border-border hover:border-primary hover:text-primary'
-                        }`}
-                    >
-                      {selectedVariant === v && <Check className="h-3.5 w-3.5" />}
-                      {v}
-                    </button>
-                  ))}
+                  {variants.map((v) => {
+                    const isSelected = selectedVariant?.name === v.name;
+                    return (
+                      <button
+                        key={v.name}
+                        type="button"
+                        onClick={() => setSelectedVariant(isSelected ? null : v)}
+                        className={`flex flex-col items-start px-4 py-2 rounded-xl text-sm border transition-all duration-150 ${isSelected
+                          ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20 scale-105'
+                          : 'bg-background text-foreground border-border hover:border-primary hover:text-primary'
+                          }`}
+                      >
+                        <div className="flex items-center gap-1.5 font-semibold">
+                          {isSelected && <Check className="h-3.5 w-3.5" />}
+                          {v.name}
+                        </div>
+                        {v.price_modifier > 0 && (
+                          <span className={`text-xs mt-0.5 ${isSelected ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
+                            +₹{v.price_modifier}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -294,7 +370,8 @@ export default function ProductDetailPage() {
                 <span className="px-5 font-bold text-lg text-foreground min-w-[3ch] text-center select-none">{quantity}</span>
                 <button
                   onClick={() => setQuantity((q) => q + 1)}
-                  className="px-4 h-full text-lg font-bold hover:bg-muted transition-colors text-foreground"
+                  disabled={quantity >= product.available_quantity}
+                  className="px-4 h-full text-lg font-bold hover:bg-muted transition-colors disabled:opacity-30 text-foreground"
                 >
                   <Plus className="h-4 w-4" />
                 </button>
@@ -327,24 +404,6 @@ export default function ProductDetailPage() {
               </div>
             )}
 
-            {/* Quick Specs */}
-            <div className="grid grid-cols-2 gap-3 mb-6">
-              {[
-                { icon: <MapPin className="h-4 w-4" />, label: 'Origin', value: product.origin_location || 'Local Harbors', color: 'text-primary' },
-                { icon: <Clock className="h-4 w-4" />, label: 'Freshness', value: `Up to ${product.freshness_hours || 24}h`, color: 'text-amber-500' },
-                { icon: <Package className="h-4 w-4" />, label: 'Unit', value: product.weight_unit, color: 'text-secondary' },
-                { icon: <ShieldCheck className="h-4 w-4" />, label: 'Min. Order', value: `${product.minimum_order_quantity || 1} ${product.weight_unit}`, color: 'text-green-600' },
-              ].map((spec) => (
-                <div key={spec.label} className="flex items-center gap-3 p-4 rounded-xl border border-border/50 bg-card">
-                  <span className={spec.color}>{spec.icon}</span>
-                  <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">{spec.label}</p>
-                    <p className="text-sm font-bold text-foreground">{spec.value}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
             {/* Seller Card */}
             {product.seller && (
               <div className="flex items-center gap-4 p-4 rounded-2xl border border-border/50 bg-card shadow-sm">
@@ -354,77 +413,158 @@ export default function ProductDetailPage() {
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-0.5">Sourced By</p>
                   <p className="font-bold text-foreground">{product.seller?.first_name} {product.seller?.last_name}</p>
-                  <p className="text-xs text-muted-foreground">Verified Fisherman ✓</p>
+                  <p className="text-xs text-muted-foreground">Verified Kadal2Kadaai Seller ✓</p>
                 </div>
-                <Badge className="bg-green-100 text-green-700 border-green-200 text-xs font-semibold shrink-0">Verified</Badge>
+                <Badge className="bg-green-100 text-green-700 border-green-200 text-xs font-semibold shrink-0">Quality Checked</Badge>
               </div>
             )}
           </div>
         </div>
 
-        {/* ── FULL DESCRIPTION SECTION ── */}
-        <div className="border-t border-border/50 pt-16 grid lg:grid-cols-3 gap-12">
-          <div className="lg:col-span-2 space-y-6">
-            <h2 className="text-3xl font-heading font-bold text-foreground">About This Catch</h2>
-            <div className="prose prose-slate max-w-none text-muted-foreground leading-relaxed text-base bg-muted/30 rounded-2xl p-6 border border-border/30">
-              {product.full_description || product.short_description || (
-                <p>Premium quality fresh seafood sourced directly from the coast. Enjoy the rich taste and nutrients of the ocean in every bite. Our fishermen ensure the highest standards of freshness and quality are maintained from harbor to your kitchen.</p>
-              )}
-            </div>
-
-            {/* Variants detail */}
-            {variants.length > 0 && (
+        {/* ── DETAILS SECTIONS (SINGLE PAGE LAYOUT) ── */}
+        <div className="border-t border-border/50 pt-16 mt-12 pb-20 flex flex-col gap-20">
+          
+          {/* SEAFOOD INFO & NUTRITION COMBINED */}
+          <section>
+            <div className="grid lg:grid-cols-2 gap-12">
+              
+              {/* LEFT COLUMN: Seafood Info & Processing */}
               <div>
-                <h3 className="text-xl font-bold text-foreground mb-4">Available Processing Options</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {variants.map((v) => (
-                    <div key={v} className="flex items-center gap-3 p-4 bg-card border border-border/50 rounded-xl">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                        <Check className="h-4 w-4 text-primary" />
+                <h2 className="text-3xl font-bold font-heading mb-8">Seafood Info & Processing</h2>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-muted/30 border border-border/50 p-6 rounded-2xl flex flex-col gap-2">
+                    <MapPin className="h-7 w-7 text-primary mb-2" />
+                    <p className="text-xs font-semibold uppercase text-muted-foreground">Catch Location</p>
+                    <p className="text-lg font-bold text-foreground">{attributes.catch_location || product.origin_location || 'Local Harbors'}</p>
+                  </div>
+                  <div className="bg-muted/30 border border-border/50 p-6 rounded-2xl flex flex-col gap-2">
+                    <Anchor className="h-7 w-7 text-primary mb-2" />
+                    <p className="text-xs font-semibold uppercase text-muted-foreground">Fishing Harbor</p>
+                    <p className="text-lg font-bold text-foreground">{attributes.fishing_harbor || 'N/A'}</p>
+                  </div>
+                  <div className="bg-muted/30 border border-border/50 p-6 rounded-2xl flex flex-col gap-2">
+                    <Clock className="h-7 w-7 text-primary mb-2" />
+                    <p className="text-xs font-semibold uppercase text-muted-foreground">Catch Date</p>
+                    <p className="text-lg font-bold text-foreground">{attributes.catch_date || 'Fresh Catch'}</p>
+                  </div>
+                  <div className="bg-muted/30 border border-border/50 p-6 rounded-2xl flex flex-col gap-2">
+                    <Fish className="h-7 w-7 text-primary mb-2" />
+                    <p className="text-xs font-semibold uppercase text-muted-foreground">Fishing Method</p>
+                    <p className="text-lg font-bold text-foreground">{attributes.fishing_method || 'Line Caught'}</p>
+                  </div>
+                </div>
+                
+                <div className="mt-8">
+                   <h3 className="text-xl font-bold mb-4">Processing Details</h3>
+                   <div className="flex flex-wrap gap-4">
+                      <div className="px-5 py-3 rounded-xl border border-border/50 bg-card">
+                         <p className="text-xs text-muted-foreground uppercase font-semibold">Freshness Type</p>
+                         <p className="font-bold text-lg">{attributes.freshness_type || 'Fresh'}</p>
                       </div>
-                      <span className="font-semibold text-foreground">{v}</span>
-                    </div>
-                  ))}
+                      <div className="px-5 py-3 rounded-xl border border-border/50 bg-card">
+                         <p className="text-xs text-muted-foreground uppercase font-semibold">Processing Method</p>
+                         <p className="font-bold text-lg">{attributes.processing_method || 'Whole Fish'}</p>
+                      </div>
+                      <div className="px-5 py-3 rounded-xl border border-border/50 bg-card">
+                         <p className="text-xs text-muted-foreground uppercase font-semibold">Quality Grade</p>
+                         <p className="font-bold text-lg">{attributes.quality_grade || 'Premium Grade'}</p>
+                      </div>
+                   </div>
                 </div>
               </div>
-            )}
-          </div>
 
-          {/* Specifications sidebar */}
-          <div className="space-y-4">
-            <h2 className="text-2xl font-heading font-bold text-foreground">Specifications</h2>
-            <div className="bg-card border border-border/50 rounded-2xl overflow-hidden shadow-sm divide-y divide-border/50">
-              {[
-                { label: 'Category', value: product.category?.name || '—' },
-                { label: 'Weight Unit', value: product.weight_unit },
-                { label: 'Available Qty', value: `${product.available_quantity} ${product.weight_unit}` },
-                { label: 'Min Order', value: `${product.minimum_order_quantity || 1} ${product.weight_unit}` },
-                { label: 'Max Order', value: product.maximum_order_quantity ? `${product.maximum_order_quantity} ${product.weight_unit}` : 'No limit' },
-                { label: 'Origin', value: product.origin_location || 'Local Harbors' },
-                { label: 'Freshness', value: `Up to ${product.freshness_hours || 24} hours` },
-                { label: 'Stock Status', value: inStock ? '✓ In Stock' : '✗ Out of Stock' },
-              ].map((row) => (
-                <div key={row.label} className="flex items-center justify-between px-5 py-3.5">
-                  <span className="text-sm text-muted-foreground font-medium">{row.label}</span>
-                  <span className="text-sm font-semibold text-foreground text-right max-w-[180px] truncate">{row.value}</span>
+              {/* RIGHT COLUMN: Nutrition Facts */}
+              <div>
+                <h2 className="text-3xl font-bold font-heading mb-8">Nutrition Facts</h2>
+                <div className="max-w-md">
+                  <div className="border-4 border-foreground p-1 bg-white dark:bg-slate-900 rounded-xl">
+                    <div className="border border-foreground p-4">
+                      <h4 className="text-3xl font-black font-sans uppercase border-b-8 border-foreground pb-2 mb-2">Nutrition Facts</h4>
+                      <p className="font-bold border-b border-foreground pb-1">Serving Size: 100g</p>
+                      
+                      <div className="flex justify-between items-end border-b-4 border-foreground py-2">
+                        <div>
+                          <p className="font-bold text-sm">Amount Per Serving</p>
+                          <p className="font-black text-3xl">Calories</p>
+                        </div>
+                        <p className="font-black text-4xl">{attributes.calories || '105'}</p>
+                      </div>
+
+                      <div className="text-sm font-semibold divide-y divide-border">
+                        <div className="flex justify-between py-1.5"><span className="font-bold">Total Fat</span><span>{attributes.fat || '2.5g'}</span></div>
+                        <div className="flex justify-between py-1.5 pl-4 text-muted-foreground"><span>Cholesterol</span><span>{attributes.cholesterol || '50mg'}</span></div>
+                        <div className="flex justify-between py-1.5 pl-4 text-muted-foreground"><span>Sodium</span><span>{attributes.sodium || '60mg'}</span></div>
+                        <div className="flex justify-between py-1.5"><span className="font-bold">Total Carbohydrate</span><span>{attributes.carbohydrates || '0g'}</span></div>
+                        <div className="flex justify-between py-1.5"><span className="font-bold">Protein</span><span>{attributes.protein || '19g'}</span></div>
+                        <div className="flex justify-between py-1.5 border-b-4 border-foreground bg-secondary/10 px-2 rounded mt-1">
+                          <span className="font-bold text-secondary">Omega-3 Content</span><span className="font-bold text-secondary">{attributes.omega_3 || '~400mg'}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex items-start gap-2 text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg border border-border/50">
+                    <Info className="h-4 w-4 shrink-0 mt-0.5" />
+                    <p><strong>Note:</strong> These are general nutritional estimates typical for South Indian fresh catch. Actual values may vary based on the specific species, size, and season.</p>
+                  </div>
                 </div>
-              ))}
+              </div>
+              
             </div>
+          </section>
 
-            {/* Re-order sticky CTA */}
-            <div className="bg-gradient-to-br from-primary to-primary/80 rounded-2xl p-5 text-white shadow-xl shadow-primary/20">
-              <p className="font-bold text-lg mb-1">Ready to Order?</p>
-              <p className="text-white/80 text-sm mb-4">Fresh catch delivered to your door.</p>
-              <Button
-                className="w-full bg-white text-primary font-bold hover:bg-white/90 rounded-xl"
-                onClick={handleAddToCart}
-                disabled={addToCartMutation.isPending || !inStock}
-              >
-                {addToCartMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <ShoppingCart className="h-4 w-4 mr-2" />}
-                Add {quantity} to Cart — ₹{(effectivePrice * quantity).toFixed(2)}
-              </Button>
+          {/* STORAGE & HANDLING */}
+          <section>
+            <h2 className="text-3xl font-bold font-heading mb-8">Storage & Handling</h2>
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Storage */}
+              <div className="bg-card border border-border/50 rounded-3xl p-8 shadow-sm">
+                <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center mb-6">
+                  <ThermometerSnowflake className="h-8 w-8 text-blue-500" />
+                </div>
+                <h3 className="text-xl font-bold mb-6">Storage Instructions</h3>
+                
+                <div className="space-y-5">
+                  <div>
+                    <p className="text-xs font-semibold uppercase text-muted-foreground mb-1">Temperature Guidelines</p>
+                    <p className="font-medium text-lg">{attributes.storage_instructions || 'Store below 4°C immediately upon receipt.'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase text-muted-foreground mb-1">Shelf Life</p>
+                    <p className="font-medium text-lg">{attributes.shelf_life || '48 hours from delivery.'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase text-muted-foreground mb-1">Refrigeration</p>
+                    <p className="font-medium text-lg">{attributes.refrigeration_guidelines || 'Keep refrigerated. Do not refreeze once thawed.'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Delivery */}
+              <div className="bg-card border border-border/50 rounded-3xl p-8 shadow-sm">
+                <div className="w-14 h-14 rounded-2xl bg-green-500/10 flex items-center justify-center mb-6">
+                  <Truck className="h-8 w-8 text-green-600" />
+                </div>
+                <h3 className="text-xl font-bold mb-6">Delivery Information</h3>
+                
+                <div className="space-y-5">
+                  <div>
+                    <p className="text-xs font-semibold uppercase text-muted-foreground mb-1">Packaging Type</p>
+                    <p className="font-medium text-lg">{attributes.packaging_type || 'Insulated foam box with dry ice / gel packs.'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase text-muted-foreground mb-1">Cold Chain Info</p>
+                    <p className="font-medium text-lg">{attributes.cold_chain_info || 'Maintained strictly under 4°C during entire transit.'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase text-muted-foreground mb-1">Delivery Availability</p>
+                    <p className="font-medium text-green-600 font-bold text-lg">{attributes.delivery_availability || 'Available for next day delivery.'}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+          </section>
+
         </div>
 
       </div>

@@ -61,10 +61,8 @@ export default function AdminLoginPage() {
         <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-32 h-32 rounded-full bg-accent-500/10 blur-2xl"></div>
         
         <div className="mb-8 text-center relative z-10">
-          <div className="mx-auto w-16 h-16 bg-primary-500/20 rounded-full flex items-center justify-center mb-4">
-            <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-            </svg>
+          <div className="mx-auto w-24 h-24 mb-4">
+            <img src="/logo.jpeg" alt="Kadal2Kadaai Logo" className="w-full h-full rounded-full object-cover shadow-lg" />
           </div>
           <h1 className="text-2xl font-bold text-white mb-2">Operations Portal</h1>
           <p className="text-muted-foreground text-sm">Secure login for Kadal2Kadaai staff</p>

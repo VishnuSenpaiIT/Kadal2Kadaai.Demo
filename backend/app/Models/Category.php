@@ -30,6 +30,13 @@ class Category extends Model
         'is_active' => 'boolean',
     ];
 
+    protected function image(): \Illuminate\Database\Eloquent\Casts\Attribute
+    {
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+            get: fn (?string $value) => $value && str_starts_with($value, '/storage') ? url($value) : $value,
+        );
+    }
+
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'parent_id');

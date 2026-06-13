@@ -48,10 +48,14 @@ class ProductController extends Controller
             'is_featured'            => 'boolean',
             'is_popular'             => 'boolean',
             'variants'               => 'nullable|array',
-            'variants.*'             => 'string|max:100',
+            'variants.*.name'        => 'required|string|max:100',
+            'variants.*.price_modifier' => 'nullable|numeric',
+            'variants.*.shipping_modifier' => 'nullable|numeric',
+            'variants.*.max_distance' => 'nullable|numeric',
             'tags'                   => 'nullable|array',
             'tags.*'                 => 'string',
             'image'                  => 'nullable|image|max:5120',
+            'attributes'             => 'nullable|array',
         ]);
 
         $product = Product::create(\Arr::except($validated, ['tags', 'image']));
@@ -106,6 +110,7 @@ class ProductController extends Controller
             'is_popular' => 'boolean',
             'tags' => 'nullable|array',
             'tags.*' => 'exists:tags,id',
+            'attributes' => 'nullable|array',
         ]);
 
         $product->update($validated);

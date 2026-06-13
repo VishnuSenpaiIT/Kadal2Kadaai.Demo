@@ -200,6 +200,51 @@ export default function Homepage() {
           </div>
         </div>
       </section>
+
+      {/* ═══════════════════════════════════════════════════
+          CATEGORIES SECTION
+          ═══════════════════════════════════════════════════ */}
+      <section className="py-16 bg-slate-50 dark:bg-slate-900/50">
+        <div className="w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-heading font-black text-foreground mb-4">Shop by Category</h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Browse our wide selection of fresh seafood sorted by category for your convenience.</p>
+          </div>
+
+          {!categories || categories.length === 0 ? (
+            <div className="text-center text-muted-foreground py-12">No categories available.</div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+              {categories.map((category) => (
+                <Link key={category.id} href={`/categories/${category.slug}`} className="group block">
+                  <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform group-hover:-translate-y-1">
+                    <div className="aspect-[4/3] w-full relative bg-slate-100 dark:bg-slate-800">
+                      {category.image_url || category.image ? (
+                        <img 
+                          src={category.image_url || category.image} 
+                          alt={category.name} 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-slate-100 dark:bg-slate-800">
+                          <Anchor className="w-12 h-12 opacity-20" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </div>
+                    <div className="p-5 text-center">
+                      <h3 className="font-heading font-bold text-lg text-foreground group-hover:text-primary transition-colors">{category.name}</h3>
+                      {category.products_count !== undefined && (
+                        <p className="text-sm text-muted-foreground mt-1">{category.products_count} items</p>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
     </div>
   );
 }

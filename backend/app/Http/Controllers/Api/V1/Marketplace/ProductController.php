@@ -65,7 +65,6 @@ class ProductController extends Controller
                 'seller.sellerProfile',
                 'images',
                 'tags',
-                'inventory',
             ])
             ->firstOrFail();
 

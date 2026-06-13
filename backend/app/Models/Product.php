@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Product extends Model
 {
@@ -40,12 +41,12 @@ class Product extends Model
         'view_count',
         'meta_title',
         'meta_description',
+        'attributes',
     ];
 
     protected $casts = [
         'is_featured' => 'boolean',
         'is_popular' => 'boolean',
-        'variants' => 'array',
         'price' => 'float',
         'sale_price' => 'float',
         'minimum_order_quantity' => 'float',
@@ -54,7 +55,33 @@ class Product extends Model
         'reserved_quantity' => 'float',
         'product_status' => \App\Enums\ProductStatus::class,
         'stock_status' => \App\Enums\StockStatus::class,
+        'attributes' => 'array',
     ];
+
+    protected function variants(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                if (!$value) return [];
+                $arr = json_decode($value, true);
+                if (!is_array($arr)) return [];
+                
+                // Upgrade legacy string array to object array on the fly
+                return array_map(function ($item) {
+                    if (is_string($item)) {
+                        return [
+                            'name' => $item,
+                            'price_modifier' => 0,
+                            'shipping_modifier' => 0,
+                            'max_distance' => null,
+                        ];
+                    }
+                    return $item;
+                }, $arr);
+            },
+            set: fn ($value) => json_encode($value),
+        );
+    }
 
     public function seller(): BelongsTo
     {
