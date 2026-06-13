@@ -41,7 +41,8 @@ Before you start, make sure you have the following installed on your machine:
    ```
 3. Set up your environment file:
    - Copy the `.env.example` file and rename the copy to `.env`.
-   - Open `.env` and make sure your database credentials are correct. Usually, for local setups (like XAMPP), it looks like this:
+   - By default, the application is configured to use **SQLite** (a local file-based database) which requires zero database server setup.
+   - If you want to use MySQL instead, uncomment and configure the MySQL section in `.env` (e.g., via XAMPP):
      ```env
      DB_CONNECTION=mysql
      DB_HOST=127.0.0.1
@@ -54,10 +55,12 @@ Before you start, make sure you have the following installed on your machine:
    ```bash
    php artisan key:generate
    ```
-5. **Start your MySQL server** (e.g., open XAMPP and start MySQL). Create a database named `kadal2kadaai` using phpMyAdmin or your terminal.
-6. Run the database migrations to build the tables:
+5. **Start your Database**:
+   - **SQLite (Recommended for zero-setup)**: The first time you run migrations (next step), Laravel will ask if you'd like to create the SQLite database file (`database/database.sqlite`). Select **Yes**.
+   - **MySQL**: Ensure your MySQL server is running (e.g., start MySQL in XAMPP) and create a database named `kadal2kadaai` manually first.
+6. Run the database migrations to build the tables and seed default data:
    ```bash
-   php artisan migrate
+   php artisan migrate --seed
    ```
 7. Start the Laravel backend server:
    ```bash

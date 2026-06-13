@@ -20,6 +20,7 @@ export interface CartItem {
   quantity: number;
   unit_price: number;
   total_price: number;
+  selected_variant?: string | null;
   product: CartProduct;
 }
 
@@ -46,7 +47,7 @@ export function useCart() {
 export function useAddToCart() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (payload: { product_id: string; quantity: number }) => {
+    mutationFn: async (payload: { product_id: string; quantity: number; selected_variant?: string | null }) => {
       const res = await apiClient.post('/v1/cart/items', payload);
       return (res as unknown as { data: Cart }).data;
     },

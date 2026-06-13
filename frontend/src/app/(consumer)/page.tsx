@@ -11,6 +11,7 @@ import { Ship, Clock, ShieldCheck, ArrowRight, Loader2, ChevronLeft, ChevronRigh
 import { motion, AnimatePresence } from 'framer-motion';
 import { useProducts } from '@/shared/api/hooks/useProducts';
 import { useCategories } from '@/shared/api/hooks/useCategories';
+import { useLocation } from '@/providers/LocationProvider';
 
 // High quality generated placeholder images
 const HERO_IMAGES = [
@@ -31,8 +32,14 @@ export default function Homepage() {
   }, []);
   
   const { data: categories } = useCategories();
+  const { location } = useLocation();
   const queryCategory = activeTab === 'all' ? undefined : activeTab;
-  const { data: productsData, isLoading } = useProducts(queryCategory ? { category: queryCategory } : undefined);
+  
+  const filters: any = {};
+  if (queryCategory) filters.category = queryCategory;
+  if (location.pincode) filters.pincode = location.pincode;
+
+  const { data: productsData, isLoading } = useProducts(Object.keys(filters).length > 0 ? filters : undefined);
   const products = productsData?.data || [];
 
   const tabs = [

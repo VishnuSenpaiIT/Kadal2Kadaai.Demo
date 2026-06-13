@@ -3,6 +3,7 @@ import { Inter, Outfit, Geist } from 'next/font/google';
 import { QueryProvider } from '@/providers/QueryProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import { AuthProvider } from '@/providers/AuthProvider';
+import { LocationProvider } from '@/providers/LocationProvider';
 import './globals.css';
 import { cn } from "@/lib/utils";
 
@@ -42,10 +43,12 @@ export default function RootLayout({
         >
           <QueryProvider>
             <AuthProvider>
-              <div className="flex flex-col min-h-screen">
-                {children}
-                <Toaster richColors position="top-right" />
-              </div>
+              <LocationProvider>
+                <div className="flex flex-col min-h-screen">
+                  {children}
+                  <Toaster richColors position="top-right" />
+                </div>
+              </LocationProvider>
             </AuthProvider>
           </QueryProvider>
         </ThemeProvider>

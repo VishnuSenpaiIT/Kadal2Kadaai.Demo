@@ -88,6 +88,8 @@ export interface CreateProductPayload {
   attributes?: ProductAttributes;
   tags?: string[];
   image?: File | null;
+  origin_harbor_id?: number | string | null;
+  max_transit_hours?: number | string | null;
 }
 
 export function useCreateProduct() {
@@ -101,7 +103,7 @@ export function useCreateProduct() {
       const scalarFields: (keyof CreateProductPayload)[] = [
         'seller_id', 'category_id', 'name', 'slug', 'price',
         'available_quantity', 'weight_unit', 'stock_status', 'product_status',
-        'short_description',
+        'short_description', 'origin_harbor_id', 'max_transit_hours'
       ];
 
       for (const key of scalarFields) {

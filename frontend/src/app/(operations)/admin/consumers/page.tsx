@@ -26,8 +26,8 @@ export default function AdminConsumersPage() {
   });
 
   const consumers = responseData?.data?.data || [];
-  const totalConsumers = responseData?.meta?.total_consumers || 0;
-  const totalLoggedInConsumers = responseData?.meta?.total_logged_in_consumers || 0;
+  const totalConsumers = responseData?.data?.meta?.total_consumers || 0;
+  const totalLoggedInConsumers = responseData?.data?.meta?.total_logged_in_consumers || 0;
 
   return (
     <div className="space-y-6">

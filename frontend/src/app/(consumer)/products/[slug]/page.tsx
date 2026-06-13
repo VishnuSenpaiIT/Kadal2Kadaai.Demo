@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import { useAddToCart } from '@/shared/api/hooks/useCart';
 import { toast } from 'sonner';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface ProductVariant {
   name: string;
@@ -61,6 +63,7 @@ export default function ProductDetailPage() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+  const [isAdded, setIsAdded] = useState(false);
 
   const addToCartMutation = useAddToCart();
 
@@ -77,9 +80,13 @@ export default function ProductDetailPage() {
   const handleAddToCart = () => {
     if (!product) return;
     addToCartMutation.mutate(
-      { product_id: product.id, quantity },
+      { product_id: product.id, quantity, selected_variant: selectedVariant?.name },
       {
-        onSuccess: () => toast.success(`${product.name} added to cart!`),
+        onSuccess: () => {
+          setIsAdded(true);
+          setTimeout(() => setIsAdded(false), 2000);
+          toast.success(`${product.name} added to cart!`);
+        },
         onError: () => toast.error('Please log in to add items to cart'),
       }
     );
@@ -141,13 +148,13 @@ export default function ProductDetailPage() {
   const stockText = inStock ? (isLowStock ? `Only ${product.available_quantity} Left` : 'In Stock') : 'Out of Stock';
   
   // Base pricing
-  const basePrice = product.price;
-  const baseSalePrice = product.sale_price;
+  const basePrice = Number(product.price || 0);
+  const baseSalePrice = product.sale_price ? Number(product.sale_price) : null;
   
   // Dynamic Pricing based on selected variant
-  const variantPriceModifier = selectedVariant?.price_modifier || 0;
+  const variantPriceModifier = Number(selectedVariant?.price_modifier || 0);
   const displayBasePrice = basePrice + variantPriceModifier;
-  const displaySalePrice = baseSalePrice ? baseSalePrice + variantPriceModifier : null;
+  const displaySalePrice = baseSalePrice !== null ? baseSalePrice + variantPriceModifier : null;
   
   const effectivePrice = displaySalePrice ?? displayBasePrice;
   const discount = displaySalePrice
@@ -380,15 +387,51 @@ export default function ProductDetailPage() {
               {/* Add to Cart Button */}
               <Button
                 size="lg"
-                className="flex-1 h-14 text-base font-bold gap-2 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30 rounded-xl transition-all duration-200 hover:scale-[1.02]"
-                onClick={handleAddToCart}
-                disabled={addToCartMutation.isPending || !inStock}
-              >
-                {addToCartMutation.isPending ? (
-                  <><Loader2 className="h-5 w-5 animate-spin" /> Adding...</>
-                ) : (
-                  <><ShoppingCart className="h-5 w-5" /> {inStock ? 'Add to Cart' : 'Out of Stock'}</>
+                className={cn(
+                  "flex-1 h-14 text-base font-bold shadow-lg rounded-xl transition-all duration-200 hover:scale-[1.02]",
+                  isAdded 
+                    ? "bg-green-600 hover:bg-green-700 text-white shadow-green-600/30" 
+                    : "bg-primary hover:bg-primary/90 text-white shadow-primary/30"
                 )}
+                onClick={handleAddToCart}
+                disabled={addToCartMutation.isPending || !inStock || isAdded}
+              >
+                <AnimatePresence mode="wait">
+                  {isAdded ? (
+                    <motion.div
+                      key="added"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      transition={{ duration: 0.15 }}
+                      className="flex items-center gap-2"
+                    >
+                      <Check className="h-5 w-5" /> Added!
+                    </motion.div>
+                  ) : addToCartMutation.isPending ? (
+                    <motion.div
+                      key="loading"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.15 }}
+                      className="flex items-center gap-2"
+                    >
+                      <Loader2 className="h-5 w-5 animate-spin" /> Adding...
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="idle"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.15 }}
+                      className="flex items-center gap-2"
+                    >
+                      <ShoppingCart className="h-5 w-5" /> {inStock ? 'Add to Cart' : 'Out of Stock'}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </Button>
             </div>
 

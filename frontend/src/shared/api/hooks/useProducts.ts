@@ -8,6 +8,7 @@ export interface UseProductsFilters {
   page?: number;
   per_page?: number;
   sort?: 'popular' | 'newest' | 'price_asc' | 'price_desc';
+  pincode?: string | null;
 }
 
 export function useProducts(filters?: UseProductsFilters) {
@@ -20,6 +21,7 @@ export function useProducts(filters?: UseProductsFilters) {
       if (filters?.page)     params.page      = filters.page;
       if (filters?.per_page) params.per_page  = filters.per_page;
       if (filters?.sort)     params.sort      = filters.sort;
+      if (filters?.pincode)  params.pincode   = filters.pincode;
 
       const { data } = await apiClient.get('/v1/marketplace/products', { params });
       // Backend returns: { success, message, data: { current_page, data: [...], ... } }
@@ -41,23 +43,27 @@ export function useProduct(slug: string) {
   });
 }
 
-export function useFeaturedProducts() {
+export function useFeaturedProducts(pincode?: string | null) {
   return useQuery<Product[]>({
-    queryKey: ['products', 'featured'],
+    queryKey: ['products', 'featured', pincode],
     queryFn: async () => {
-      const { data } = await apiClient.get('/v1/marketplace/products/featured');
-      return data.data as Product[];
+      const { data } = await apiClient.get('/v1/marketplace/products', {
+        params: { featured: true, per_page: 8, pincode }
+      });
+      return data.data.data as Product[];
     },
     staleTime: 60_000,
   });
 }
 
-export function usePopularProducts() {
+export function usePopularProducts(pincode?: string | null) {
   return useQuery<Product[]>({
-    queryKey: ['products', 'popular'],
+    queryKey: ['products', 'popular', pincode],
     queryFn: async () => {
-      const { data } = await apiClient.get('/v1/marketplace/products/popular');
-      return data.data as Product[];
+      const { data } = await apiClient.get('/v1/marketplace/products', {
+        params: { popular: true, per_page: 8, pincode }
+      });
+      return data.data.data as Product[];
     },
     staleTime: 60_000,
   });

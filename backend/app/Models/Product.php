@@ -42,6 +42,8 @@ class Product extends Model
         'meta_title',
         'meta_description',
         'attributes',
+        'origin_harbor_id',
+        'max_transit_hours',
     ];
 
     protected $casts = [
@@ -91,6 +93,11 @@ class Product extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function originHarbor(): BelongsTo
+    {
+        return $this->belongsTo(Harbor::class, 'origin_harbor_id');
     }
 
     public function images(): HasMany

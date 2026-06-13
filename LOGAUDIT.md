@@ -110,6 +110,44 @@ The project has undergone a major platform decision to consolidate the Admin App
 
 # CHANGE HISTORY
 
+## 2026-06-13 08:35 UTC
+
+### Module
+Manual Merge / Price Bug Fix / Cart Variant Integration
+
+### Action Type
+DevOps / Manual Merge / Bug Fix
+
+### Files Created
+- backend/database/migrations/2026_06_13_090000_add_selected_variant_to_cart_items_table.php
+
+### Files Modified
+- frontend/src/components/layout/consumer/Header.tsx
+- frontend/src/components/layout/Footer.tsx
+- frontend/src/components/layout/Header.tsx
+- frontend/src/components/layout/consumer/Footer.tsx
+- frontend/src/app/(operations)/admin/consumers/page.tsx
+- frontend/src/app/(consumer)/products/[slug]/page.tsx
+- frontend/src/shared/api/hooks/useCart.ts
+- frontend/src/app/(consumer)/cart/page.tsx
+- backend/app/Models/CartItem.php
+- backend/app/Http/Controllers/Api/V1/Consumer/CartController.php
+- LOGAUDIT.md
+
+### Description
+1. Manually merged k2k-main changes into mainBranch, incorporating the friend's mobile Hamburger drawer navigation and brand text styling ("KADAL TO KADAI") while fully preserving mainBranch location provider and geo-routing logic.
+2. Replaced wavy top SVG border from consumer Footer and logo images in admin headers with clean "K2K" text logos.
+3. Fixed price modifier string concatenation issue (e.g. ₹900100) on details page by adding Number() casts to basePrice, salePrice, and modifier.
+4. Created a database migration to add `selected_variant` column to the `cart_items` table, allowing selected variant options to be sent from the details page, processed dynamically by the backend CartController, and displayed as a badge under the product name in the consumer cart page.
+
+### Result
+Site compiles and builds successfully. Variant pricing computes correctly, and cart displays selected product options.
+
+### Status
+COMPLETED
+
+---
+
 ## 2026-06-09 02:38 UTC
 
 ### Module

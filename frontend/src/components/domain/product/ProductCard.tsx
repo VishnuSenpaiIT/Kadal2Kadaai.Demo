@@ -4,9 +4,9 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Anchor, ShoppingCart, Loader2 } from 'lucide-react';
+import { Anchor, ShoppingCart, Loader2, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAddToCart } from '@/shared/api/hooks/useCart';
 import Link from 'next/link';
 import { assetUrl } from '@/lib/asset-url';
@@ -38,12 +38,18 @@ export function ProductCard({
 }: ProductCardProps) {
   const addToCartMutation = useAddToCart();
   const resolvedImage = assetUrl(image);
+  const [isAdded, setIsAdded] = useState(false);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     addToCartMutation.mutate({
       product_id: id,
       quantity: 1,
+    }, {
+      onSuccess: () => {
+        setIsAdded(true);
+        setTimeout(() => setIsAdded(false), 2000);
+      }
     });
   };
 
@@ -98,12 +104,54 @@ export function ProductCard({
 
         <CardFooter className="p-4 pt-0 z-10 bg-card relative">
           <Button 
-            className="w-full bg-primary hover:bg-primary-600 text-white rounded-lg h-10 font-semibold text-sm shadow-md shadow-primary/10 transition-colors" 
-            disabled={!isAvailable || addToCartMutation.isPending}
+            className={cn(
+              "w-full rounded-lg h-10 font-semibold text-sm shadow-md transition-colors",
+              isAdded 
+                ? "bg-green-600 hover:bg-green-700 text-white shadow-green-600/20" 
+                : "bg-primary hover:bg-primary-600 text-white shadow-primary/10"
+            )}
+            disabled={!isAvailable || addToCartMutation.isPending || isAdded}
             onClick={handleAddToCart}
           >
-            {addToCartMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ShoppingCart className="w-4 h-4 mr-2" />}
-            {addToCartMutation.isPending ? 'Adding...' : 'Add to Cart'}
+            <AnimatePresence mode="wait">
+              {isAdded ? (
+                <motion.div
+                  key="added"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.15 }}
+                  className="flex items-center"
+                >
+                  <Check className="w-4 h-4 mr-2" />
+                  Added!
+                </motion.div>
+              ) : addToCartMutation.isPending ? (
+                <motion.div
+                  key="loading"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="flex items-center"
+                >
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Adding...
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="idle"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="flex items-center"
+                >
+                  <ShoppingCart className="w-4 h-4 mr-2" />
+                  Add to Cart
+                </motion.div>
+              )}
+            </AnimatePresence>
           </Button>
         </CardFooter>
       </Card>

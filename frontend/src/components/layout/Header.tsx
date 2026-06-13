@@ -12,7 +12,7 @@ export function Header() {
         <div className="flex items-center gap-2">
           <MobileNav />
           <Link href="/" className="flex items-center gap-2">
-            <img src="/logo.jpeg" alt="Kadal2Kadaai Logo" className="w-8 h-8 rounded object-cover" />
+            <div className="bg-primary text-primary-foreground font-bold p-1 rounded text-xs">K2K</div>
             <span className="font-heading font-bold text-xl hidden sm:inline-block">Kadal2Kadaai</span>
           </Link>
         </div>

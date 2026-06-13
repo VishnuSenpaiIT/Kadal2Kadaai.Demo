@@ -10,7 +10,7 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-white">
-              <img src="/logo.jpeg" alt="Kadal2Kadaai Logo" className="w-8 h-8 rounded object-cover" />
+              <div className="bg-primary font-bold p-1 rounded text-xs text-white">K2K</div>
               <span className="font-heading font-bold text-xl">Kadal2Kadaai</span>
             </div>
             <p className="text-sm leading-relaxed max-w-xs">

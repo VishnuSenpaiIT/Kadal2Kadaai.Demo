@@ -33,8 +33,9 @@ class CartController extends Controller
     public function addItem(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'product_id' => 'required|uuid|exists:products,id',
-            'quantity'   => 'required|numeric|min:0.001',
+            'product_id'       => 'required|uuid|exists:products,id',
+            'quantity'         => 'required|numeric|min:0.001',
+            'selected_variant' => 'nullable|string',
         ]);
 
         $product = Product::findOrFail($validated['product_id']);
@@ -46,10 +47,25 @@ class CartController extends Controller
             );
         }
 
+        $priceModifier = 0;
+        if (!empty($validated['selected_variant'])) {
+            $variants = $product->variants; // Array of upgraded variant objects
+            foreach ($variants as $v) {
+                if (isset($v['name']) && $v['name'] === $validated['selected_variant']) {
+                    $priceModifier = (float)($v['price_modifier'] ?? 0);
+                    break;
+                }
+            }
+        }
+
+        $unitPrice = (float)$product->price + $priceModifier;
         $cart = $this->getOrCreateCart($request->user()->id);
 
-        // Check if product already in cart
-        $existing = $cart->items()->where('product_id', $product->id)->first();
+        // Check if product with same variant is already in cart
+        $existing = $cart->items()
+            ->where('product_id', $product->id)
+            ->where('selected_variant', $validated['selected_variant'] ?? null)
+            ->first();
 
         if ($existing) {
             $newQty = $existing->quantity + $validated['quantity'];
@@ -61,15 +77,16 @@ class CartController extends Controller
             }
             $existing->update([
                 'quantity'    => $newQty,
-                'total_price' => $newQty * $product->price,
+                'total_price' => $newQty * $existing->unit_price,
             ]);
         } else {
             $cart->items()->create([
-                'product_id' => $product->id,
-                'seller_id'  => $product->seller_id,
-                'quantity'   => $validated['quantity'],
-                'unit_price' => $product->price,
-                'total_price'=> $validated['quantity'] * $product->price,
+                'product_id'       => $product->id,
+                'selected_variant' => $validated['selected_variant'] ?? null,
+                'seller_id'        => $product->seller_id,
+                'quantity'         => $validated['quantity'],
+                'unit_price'       => $unitPrice,
+                'total_price'      => $validated['quantity'] * $unitPrice,
             ]);
         }
 
@@ -162,12 +179,13 @@ class CartController extends Controller
             'subtotal'    => (float) $cart->subtotal,
             'total_items' => $cart->total_items,
             'items'       => $cart->items->map(fn($item) => [
-                'id'          => $item->id,
-                'product_id'  => $item->product_id,
-                'quantity'    => (float) $item->quantity,
-                'unit_price'  => (float) $item->unit_price,
-                'total_price' => (float) $item->total_price,
-                'product'     => [
+                'id'               => $item->id,
+                'product_id'       => $item->product_id,
+                'quantity'         => (float) $item->quantity,
+                'unit_price'       => (float) $item->unit_price,
+                'total_price'      => (float) $item->total_price,
+                'selected_variant' => $item->selected_variant,
+                'product'          => [
                     'id'           => $item->product->id,
                     'name'         => $item->product->name,
                     'slug'         => $item->product->slug,

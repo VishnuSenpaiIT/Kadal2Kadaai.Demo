@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useCategories } from '@/shared/api/hooks/useCategories';
+import { useHarbors } from '@/shared/api/hooks/useHarbors';
 import { useCreateProduct, CreateProductPayload, ProductVariant, ProductAttributes } from '@/shared/api/hooks/useAdminProducts';
 import { useAuth } from '@/providers/AuthProvider';
 import { Plus, Loader2, Upload, X, Tag, CheckSquare } from 'lucide-react';
@@ -27,6 +28,7 @@ const PRESET_VARIANTS = [
 export function AddProductDialog() {
   const [open, setOpen] = useState(false);
   const { data: categories } = useCategories();
+  const { data: harbors } = useHarbors();
   const { mutate: createProduct, isPending } = useCreateProduct();
   const { user } = useAuth();
 
@@ -57,6 +59,8 @@ export function AddProductDialog() {
     stock_status: 'IN_STOCK',
     product_status: 'PUBLISHED',
     short_description: '',
+    origin_harbor_id: '',
+    max_transit_hours: '',
   });
 
   const [attributes, setAttributes] = useState<ProductAttributes>({});
@@ -112,7 +116,7 @@ export function AddProductDialog() {
   };
 
   const reset = () => {
-    setFormData({ name: '', category_id: '', price: '', available_quantity: '', weight_unit: 'kg', stock_status: 'IN_STOCK', product_status: 'PUBLISHED', short_description: '' });
+    setFormData({ name: '', category_id: '', price: '', available_quantity: '', weight_unit: 'kg', stock_status: 'IN_STOCK', product_status: 'PUBLISHED', short_description: '', origin_harbor_id: '', max_transit_hours: '' });
     setTags([]);
     setTagInput('');
     setVariants([]);
@@ -137,6 +141,8 @@ export function AddProductDialog() {
       stock_status: formData.stock_status,
       product_status: formData.product_status,
       short_description: formData.short_description,
+      origin_harbor_id: formData.origin_harbor_id ? parseInt(formData.origin_harbor_id) : null,
+      max_transit_hours: formData.max_transit_hours ? parseInt(formData.max_transit_hours) : null,
       variants,
       attributes,
       tags,
@@ -431,7 +437,20 @@ export function AddProductDialog() {
                   <Input value={attributes.catch_location || ''} onChange={e => setAttributes({...attributes, catch_location: e.target.value})} placeholder="Bay of Bengal" />
                 </div>
                 <div className="grid gap-2">
-                  <Label>Fishing Harbor</Label>
+                  <Label>Origin Harbor (Geo-Routing)</Label>
+                  <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring" value={formData.origin_harbor_id} onChange={e => setFormData({...formData, origin_harbor_id: e.target.value})}>
+                    <option value="">Select Harbor...</option>
+                    {harbors?.map((harbor) => (
+                      <option key={harbor.id} value={harbor.id}>{harbor.name} ({harbor.city || harbor.pincode})</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="grid gap-2">
+                  <Label>Max Transit Time (Hours)</Label>
+                  <Input type="number" min="0" value={formData.max_transit_hours} onChange={e => setFormData({...formData, max_transit_hours: e.target.value})} placeholder="e.g. 12" />
+                </div>
+                <div className="grid gap-2">
+                  <Label>Fishing Harbor (Metadata)</Label>
                   <Input value={attributes.fishing_harbor || ''} onChange={e => setAttributes({...attributes, fishing_harbor: e.target.value})} placeholder="Kasimedu" />
                 </div>
                 <div className="grid gap-2">

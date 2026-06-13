@@ -56,6 +56,8 @@ class ProductController extends Controller
             'tags.*'                 => 'string',
             'image'                  => 'nullable|image|max:5120',
             'attributes'             => 'nullable|array',
+            'origin_harbor_id'       => 'nullable|exists:harbors,id',
+            'max_transit_hours'      => 'nullable|integer|min:0',
         ]);
 
         $product = Product::create(\Arr::except($validated, ['tags', 'image']));
@@ -111,6 +113,8 @@ class ProductController extends Controller
             'tags' => 'nullable|array',
             'tags.*' => 'exists:tags,id',
             'attributes' => 'nullable|array',
+            'origin_harbor_id' => 'nullable|exists:harbors,id',
+            'max_transit_hours' => 'nullable|integer|min:0',
         ]);
 
         $product->update($validated);

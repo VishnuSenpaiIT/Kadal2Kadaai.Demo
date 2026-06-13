@@ -83,6 +83,13 @@ export default function CartPage() {
                         <Link href={`/products/${item.product.slug}`} className="font-heading font-bold text-lg text-foreground hover:text-primary transition-colors block mb-1">
                           {item.product.name}
                         </Link>
+                        {item.selected_variant && (
+                          <div className="mb-1">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
+                              {item.selected_variant}
+                            </span>
+                          </div>
+                        )}
                         <div className="text-sm font-medium text-muted-foreground/80">
                           ₹{item.unit_price} / {item.product.weight_unit}
                         </div>

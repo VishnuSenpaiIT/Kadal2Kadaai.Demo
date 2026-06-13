@@ -10,11 +10,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Search, Filter, Loader2, Anchor } from 'lucide-react';
 import { useProducts } from '@/shared/api/hooks/useProducts';
 import { useCategories } from '@/shared/api/hooks/useCategories';
+import { useLocation } from '@/providers/LocationProvider';
 
 export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState<string | undefined>();
   const [sort, setSort] = useState<'popular' | 'newest' | 'price_asc' | 'price_desc'>('popular');
+
+  const { location } = useLocation();
 
   const { data: categories } = useCategories();
   const { data: productsData, isLoading } = useProducts({
@@ -22,6 +25,7 @@ export default function ProductsPage() {
     category: activeCategory,
     sort,
     per_page: 24,
+    pincode: location.pincode || undefined,
   });
 
   const products = productsData?.data || [];
