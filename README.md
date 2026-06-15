@@ -84,7 +84,7 @@ Currently, the **Operations Portal (Admin and Seller)** is fully built, utilizin
 
 The application has also been configured for cloud deployment, with the frontend hosted on Vercel (TypeScript build errors resolved) and the backend containerized via Docker for deployment on Render.
 
-All codebase changes have been forcefully synced with the official GitHub repository, and a comprehensive [HOWTORUN.md](./HOWTORUN.md) guide has been provided for streamlined local deployments.
+All codebase changes are actively synced with the official GitHub repository, maintaining the latest local state on the `main` branch. A comprehensive [HOWTORUN.md](./HOWTORUN.md) guide has been provided for streamlined local deployments.
 
 ---
 
