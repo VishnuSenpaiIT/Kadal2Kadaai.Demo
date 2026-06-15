@@ -1,91 +1,129 @@
-# Kadal2Kadaai 🐟
+<div align="center">
 
-> A production-grade multi-vendor fish marketplace platform connecting Consumers, Fishermen, Fish Vendors, Delivery Partners, and Administrators.
+# 🌊 Kadal2Kadaai 🐟
+
+**A production-grade multi-vendor fish marketplace platform connecting Consumers, Fishermen, Fish Vendors, Delivery Partners, and Administrators.**
+
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=nextdotjs)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com/)
+[![PHP](https://img.shields.io/badge/PHP-8.3-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://www.php.net/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 
 ---
 
-## Architecture Overview
+</div>
 
-```
-Kadal2Kadaai/
-├── frontend/          # Next.js 15 + TypeScript + Tailwind + ShadCN
-├── backend/           # Laravel 12 + PHP 8.3 + REST API
-├── docs/              # Architecture, API, DB, Deployment docs
-└── docker-compose.dev.yml  # Local dev infrastructure
+## 🏗 Architecture Overview
+
+The system is decoupled into an API backend and a frontend application, built to scale across web and mobile.
+
+```mermaid
+graph TD
+    subgraph Frontend
+        C[Consumer App \n Next.js]
+        O[Operations Portal \n Next.js]
+        B[B2B Wholesale \n Next.js]
+    end
+
+    subgraph API Layer
+        API[Laravel 12 API]
+    end
+
+    subgraph Infrastructure
+        DB[(PostgreSQL 16)]
+        Cache[(Redis 7)]
+        Storage[Cloudflare R2]
+    end
+
+    C <-->|REST / Echo| API
+    O <-->|REST / Echo| API
+    B <-->|REST / Echo| API
+
+    API <--> DB
+    API <--> Cache
+    API <--> Storage
 ```
 
-## Technology Stack
+## 🚀 Technology Stack
 
 | Layer | Technology |
 |---|---|
-| Frontend | Next.js 15, TypeScript, Tailwind CSS, ShadCN UI, TanStack Query |
-| Backend | Laravel 12, PHP 8.3, REST API |
-| Database | PostgreSQL 16 |
-| Cache & Queue | Redis 7 |
-| Storage | Cloudflare R2 |
-| Payments | Razorpay |
-| Authentication | Laravel Sanctum, OTP, Google OAuth |
-| Frontend Host | Vercel |
-| Backend Host | Hetzner VPS |
-| CDN / Proxy | Cloudflare |
+| 🎨 **Frontend** | Next.js 15, TypeScript, Tailwind CSS, ShadCN UI, TanStack Query |
+| ⚙️ **Backend** | Laravel 12, PHP 8.3, REST API |
+| 🗄️ **Database** | PostgreSQL 16 |
+| ⚡ **Cache & Queue** | Redis 7 |
+| ☁️ **Storage** | Cloudflare R2 |
+| 💳 **Payments** | Razorpay |
+| 🔐 **Authentication**| Laravel Sanctum, OTP, Google OAuth |
 
-## Quick Start
+## 🛠 Quick Start
 
-### Prerequisites
-- Node.js 20+
-- PHP 8.3+
-- Composer 2+
-- PostgreSQL 16
-- Redis 7
+> [!TIP]
+> Make sure you have the following installed: **Node.js 20+**, **PHP 8.3+**, **Composer 2+**, **PostgreSQL 16**, **Redis 7**.
 
 ### Local Development
 
+1️⃣ **Start Infrastructure**
 ```bash
-# Start infrastructure
 docker-compose -f docker-compose.dev.yml up -d
+```
 
-# Backend
+2️⃣ **Backend Setup**
+```bash
 cd backend
 cp .env.example .env
 composer install
 php artisan key:generate
 php artisan migrate --seed
 php artisan serve
+```
 
-# Frontend
+3️⃣ **Frontend Setup**
+```bash
 cd frontend
 cp .env.local.example .env.local
 npm install
 npm run dev
 ```
 
-## Documentation
+## 📚 Documentation
 
-- [Architecture](./docs/architecture.md)
-- [Database Schema](./docs/database-schema.md)
-- [API Standards](./docs/api-standards.md)
-- [Coding Standards](./docs/coding-standards.md)
-- [Deployment Guide](./docs/deployment.md)
-- [Environment Variables](./docs/environment.md)
-- [Security Checklist](./docs/security.md)
+Navigate to the `docs` directory for detailed architecture, schema, and API guides:
 
-## Applications & Portals
+- 📐 [Architecture](./docs/architecture.md)
+- 🗂️ [Database Schema](./docs/database-schema.md)
+- 🔌 [API Standards](./docs/api-standards.md)
+- 💻 [Coding Standards](./docs/coding-standards.md)
+- 🚀 [Deployment Guide](./docs/deployment.md)
+- 🔒 [Security Checklist](./docs/security.md)
 
-- **Consumer Marketplace** — Browse, order, track (Public Interface)
-- **KadalOperations Portal** — Unified enterprise portal replacing individual admin and seller dashboards. Manages platform, inventory, orders, earnings, and analytics via Role-Based Access Control (RBAC).
-- **Delivery Portal** (Planned) — Assignments, routing, proof
-- **B2B Marketplace** (Future) — Wholesale and bulk transactions
+## 🌐 Applications & Portals
 
-## Development Status
+* 🛍️ **Consumer Marketplace** — Browse, order, and track fresh catches.
+* 🛡️ **KadalOperations Portal** — Unified enterprise portal managing the platform, inventory, and analytics via RBAC.
+* 🚚 **Delivery Portal** _(Planned)_ — Assignments, routing, and proof of delivery.
+* 🏢 **B2B Marketplace** _(Future)_ — Wholesale and bulk transactions.
 
-This repository has completed its **Foundation Phase**, **Authentication Phase**, **Localhost Boot Phase**, **UI Phases 1-6**, **Phase 8 Certification**, **Phase 9 Architecture**, and **Phase 10: Live Consumer Marketplace UI**.
+## 📊 Development Status
 
-Currently, the **Operations Portal (Admin and Seller)** is fully built, utilizing real-time API hooks and connected directly to the Laravel backend. The system is functional from Consumer Checkout to Seller Operations and Admin Oversight.
+> [!IMPORTANT]
+> All codebase changes are actively synced with the official GitHub repository, maintaining the latest local state on the `main` branch. A comprehensive [HOWTORUN.md](./HOWTORUN.md) guide has been provided for streamlined local deployments.
 
-The application has also been configured for cloud deployment, with the frontend hosted on Vercel (TypeScript build errors resolved) and the backend containerized via Docker for deployment on Render.
+**Phase Progress**
+- ✅ Foundation Phase
+- ✅ Authentication Phase
+- ✅ Localhost Boot Phase
+- ✅ UI Phases 1-6
+- ✅ Phase 8 Certification
+- ✅ Phase 9 Architecture
+- 🟢 **Phase 10: Live Consumer Marketplace UI** (Active)
 
-All codebase changes are actively synced with the official GitHub repository, maintaining the latest local state on the `main` branch. A comprehensive [HOWTORUN.md](./HOWTORUN.md) guide has been provided for streamlined local deployments.
+Currently, the **Operations Portal (Admin and Seller)** is fully built, utilizing real-time API hooks and connected directly to the Laravel backend. The application is configured for cloud deployment (Vercel + Docker on Render).
 
 ---
-
-*Built with ❤️ for the fishing community*
+<div align="center">
+<i>Built with ❤️ for the fishing community.</i>
+</div>
