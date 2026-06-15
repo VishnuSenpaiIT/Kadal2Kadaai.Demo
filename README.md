@@ -4,13 +4,14 @@
 
 **A production-grade multi-vendor fish marketplace platform connecting Consumers, Fishermen, Fish Vendors, Delivery Partners, and Administrators.**
 
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=nextdotjs)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.2-black?style=for-the-badge&logo=nextdotjs)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Laravel](https://img.shields.io/badge/Laravel-13.8-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com/)
 [![PHP](https://img.shields.io/badge/PHP-8.3-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://www.php.net/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Redis](https://img.shields.io/badge/Redis-7-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/)
 
 ---
 
@@ -18,46 +19,54 @@
 
 ## 🏗 Architecture Overview
 
-The system is decoupled into an API backend and a frontend application, built to scale across web and mobile.
+The platform uses a decoupled frontend/backend architecture, globally distributed via Cloudflare and Vercel, with a robust Laravel API hosted on Hetzner VPS.
 
 ```mermaid
 graph TD
-    subgraph Frontend
-        C[Consumer App \n Next.js]
-        O[Operations Portal \n Next.js]
-        B[B2B Wholesale \n Next.js]
+    subgraph Clients
+        B[Browser \n Next.js]
+        M[Mobile \n Future]
+        A[Admin Panel]
     end
 
-    subgraph API Layer
-        API[Laravel 12 API]
+    CF[Cloudflare CDN / WAF \n DDoS Protection & Edge Cache]
+
+    subgraph Hosting Layer
+        V[Vercel \n Frontend - Next.js]
+        H[Hetzner VPS \n Backend - Laravel API]
     end
 
-    subgraph Infrastructure
+    subgraph Data & Storage Layer
         DB[(PostgreSQL 16)]
-        Cache[(Redis 7)]
-        Storage[Cloudflare R2]
+        R[(Redis 7)]
+        S[Cloudflare R2 \n Object Storage]
     end
 
-    C <-->|REST / Echo| API
-    O <-->|REST / Echo| API
-    B <-->|REST / Echo| API
+    B --> CF
+    M --> CF
+    A --> CF
 
-    API <--> DB
-    API <--> Cache
-    API <--> Storage
+    CF --> V
+    CF --> H
+
+    V <-->|Axios REST Interceptors \n & Laravel Echo| H
+
+    H <--> DB
+    H <--> R
+    H <--> S
 ```
 
-## 🚀 Technology Stack
+## 🚀 Actual Technology Stack
 
 | Layer | Technology |
 |---|---|
-| 🎨 **Frontend** | Next.js 15, TypeScript, Tailwind CSS, ShadCN UI, TanStack Query |
-| ⚙️ **Backend** | Laravel 12, PHP 8.3, REST API |
-| 🗄️ **Database** | PostgreSQL 16 |
-| ⚡ **Cache & Queue** | Redis 7 |
-| ☁️ **Storage** | Cloudflare R2 |
+| 🎨 **Frontend** | Next.js 16.2.7, React 19.2.4, TypeScript, Tailwind CSS 4, ShadCN UI, TanStack Query v5 |
+| ⚙️ **Backend** | Laravel 13.8, PHP 8.3, REST API |
+| 🗄️ **Database** | PostgreSQL 16 (UUIDs, Soft Deletes, Audit logging) |
+| ⚡ **Cache & Queue** | Redis 7 (Laravel Horizon, Session state) |
+| ☁️ **Storage** | Cloudflare R2 (S3-compatible API for images & documents) |
 | 💳 **Payments** | Razorpay |
-| 🔐 **Authentication**| Laravel Sanctum, OTP, Google OAuth |
+| 🔐 **Authentication**| Laravel Sanctum (Token-based), OTP, Google OAuth, Spatie RBAC |
 
 ## 🛠 Quick Start
 
@@ -103,9 +112,7 @@ Navigate to the `docs` directory for detailed architecture, schema, and API guid
 ## 🌐 Applications & Portals
 
 * 🛍️ **Consumer Marketplace** — Browse, order, and track fresh catches.
-* 🛡️ **KadalOperations Portal** — Unified enterprise portal managing the platform, inventory, and analytics via RBAC.
-* 🚚 **Delivery Portal** _(Planned)_ — Assignments, routing, and proof of delivery.
-* 🏢 **B2B Marketplace** _(Future)_ — Wholesale and bulk transactions.
+* 🛡️ **Admin Operations Portal** — Unified enterprise portal managing the platform, inventory, and analytics via RBAC.
 
 ## 📊 Development Status
 
