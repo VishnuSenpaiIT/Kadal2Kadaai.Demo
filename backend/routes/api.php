@@ -71,6 +71,8 @@ Route::prefix('v1')->middleware([\App\Http\Middleware\VisitorTrackingMiddleware:
 
         Route::get('/search', [\App\Http\Controllers\Api\V1\Marketplace\SearchController::class, 'search']);
         Route::get('/settings', [\App\Http\Controllers\Api\V1\Marketplace\SettingController::class, 'index']);
+        
+        Route::get('/products/{id}/reviews', [\App\Http\Controllers\API\ReviewController::class, 'productReviews']);
     });
 
     // ──────────────────────────────────────────────────────────────────────────
@@ -104,6 +106,9 @@ Route::prefix('v1')->middleware([\App\Http\Middleware\VisitorTrackingMiddleware:
 
         // Checkout
         Route::post('/checkout', [\App\Http\Controllers\Api\V1\Consumer\OrderController::class, 'checkout']);
+
+        // Reviews
+        Route::post('/reviews', [\App\Http\Controllers\API\ReviewController::class, 'store']);
 
         // ──────────────────────────────────────────────────────────────────────
         // Seller Routes
@@ -164,6 +169,10 @@ Route::prefix('v1')->middleware([\App\Http\Middleware\VisitorTrackingMiddleware:
 
             // Harbors
             Route::apiResource('harbors', \App\Http\Controllers\Api\V1\Admin\HarborController::class);
+
+            // Reviews
+            Route::get('/reviews', [\App\Http\Controllers\API\ReviewController::class, 'index']);
+            Route::patch('/reviews/{id}/status', [\App\Http\Controllers\API\ReviewController::class, 'updateStatus']);
         });
     });
 });

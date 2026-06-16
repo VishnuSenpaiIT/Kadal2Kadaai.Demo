@@ -125,6 +125,12 @@ class User extends Authenticatable
         return $this->hasMany(Delivery::class, 'partner_id');
     }
 
+    /** Reviews submitted by this user */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
     // ─── Helpers ──────────────────────────────────────────────────────
 
     public function isActive(): bool

@@ -17,6 +17,7 @@ import { useAddToCart } from '@/shared/api/hooks/useCart';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { ProductReviews } from '@/components/domain/reviews/ProductReviews';
 
 interface ProductVariant {
   name: string;
@@ -606,6 +607,11 @@ export default function ProductDetailPage() {
                 </div>
               </div>
             </div>
+          </section>
+
+          {/* REVIEWS SECTION */}
+          <section>
+            <ProductReviews productId={product.id} />
           </section>
 
         </div>

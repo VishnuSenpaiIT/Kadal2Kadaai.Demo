@@ -115,6 +115,11 @@ class Product extends Model
         return $this->hasMany(InventoryTransaction::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
     public function scopeActive($query)
     {
         return $query->where('product_status', \App\Enums\ProductStatus::PUBLISHED->value);

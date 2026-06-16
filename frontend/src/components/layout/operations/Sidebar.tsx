@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/providers/AuthProvider';
-import { Home, Package, ShoppingBag, Users, Settings, BarChart2, Anchor, ShieldCheck, Shield } from 'lucide-react';
+import { Home, Package, ShoppingBag, Users, Settings, BarChart2, Anchor, ShieldCheck, Shield, MessageSquare } from 'lucide-react';
 
 export function OperationsSidebar() {
   const pathname = usePathname();
@@ -82,6 +82,10 @@ export function OperationsSidebar() {
           <Link href="/admin/categories" className={getLinkClasses('/admin/categories')}>
             <Package className={getIconClasses('/admin/categories')} />
             Categories
+          </Link>
+          <Link href="/admin/reviews" className={getLinkClasses('/admin/reviews')}>
+            <MessageSquare className={getIconClasses('/admin/reviews')} />
+            Reviews & Feedback
           </Link>
         </div>
 
