@@ -8,7 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Search, Eye, Filter } from 'lucide-react';
 
+import { useRouter } from 'next/navigation';
+
 export default function AdminOrdersPage() {
+  const router = useRouter();
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
   const [page, setPage] = useState(1);
@@ -76,7 +79,11 @@ export default function AdminOrdersPage() {
                 <tr><td colSpan={7} className="px-6 py-12 text-center text-muted-foreground">No orders found matching your criteria.</td></tr>
               ) : (
                 data?.data?.map((order: any) => (
-                  <tr key={order.id} className="hover:bg-muted/30">
+                  <tr 
+                    key={order.id} 
+                    onClick={() => router.push(`/admin/orders/${order.id}`)}
+                    className="hover:bg-muted/50 cursor-pointer transition-colors"
+                  >
                     <td className="px-6 py-4 font-medium text-slate-900">#{order.order_number}</td>
                     <td className="px-6 py-4 text-muted-foreground">{new Date(order.created_at).toLocaleDateString()}</td>
                     <td className="px-6 py-4">

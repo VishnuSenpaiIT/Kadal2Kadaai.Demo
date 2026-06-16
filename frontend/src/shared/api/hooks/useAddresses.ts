@@ -46,3 +46,16 @@ export function useDeleteAddress() {
     },
   });
 }
+
+export function useSetDefaultAddress() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const res = await apiClient.put(`/v1/addresses/${id}`, { is_default: true });
+      return (res as unknown as { data: Address }).data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['addresses'] });
+    },
+  });
+}

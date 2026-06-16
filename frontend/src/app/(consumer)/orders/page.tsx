@@ -8,9 +8,12 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, Package, ChevronRight, Search } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
+import { useRouter } from 'next/navigation';
 
 export default function OrdersPage() {
   const { data, isLoading } = useOrders(1);
+
+  const router = useRouter();
 
   if (isLoading) {
     return (
@@ -41,7 +44,11 @@ export default function OrdersPage() {
         {orders.length > 0 ? (
           <div className="space-y-4">
             {orders.map(order => (
-              <div key={order.id} className="bg-card border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+              <div 
+                key={order.id} 
+                onClick={() => router.push(`/orders/${order.id}`)}
+                className="bg-card border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer hover:border-primary/50"
+              >
                 <div className="bg-muted/40 px-6 py-4 border-b flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-sm">
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-8">
                     <div>
@@ -89,7 +96,7 @@ export default function OrdersPage() {
                         <div className="flex flex-wrap gap-2 mt-1">
                           {order.items.map((item: any) => (
                             <Badge key={item.id} variant="secondary" className="font-normal">
-                              {item.quantity}x {item.product_snapshot?.name || 'Product'}
+                              {Number(item.quantity)}x {item.product_snapshot?.name || 'Product'}
                             </Badge>
                           ))}
                         </div>

@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/lib/api-client';
 
 export interface AdminOrder {
@@ -7,8 +7,9 @@ export interface AdminOrder {
   status: string;
   total: string;
   created_at: string;
-  consumer: { id: string; first_name: string; last_name: string };
+  consumer: { id: string; first_name: string; last_name: string; email?: string; contact_number?: string };
   seller: { id: string; first_name: string; last_name: string };
+  address?: any;
   items: any[];
 }
 
@@ -32,7 +33,21 @@ export function useAdminOrder(id: string) {
     enabled: !!id,
     queryFn: async () => {
       const res = await apiClient.get(`/v1/admin/orders/${id}`);
-      return (res as unknown as { data: { data: AdminOrder } }).data.data;
+      return (res as unknown as { data: AdminOrder }).data;
+    },
+  });
+}
+
+export function useUpdateAdminOrderStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+      const res = await apiClient.patch(`/v1/admin/orders/${id}/status`, { status });
+      return res;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'orders', variables.id] });
     },
   });
 }

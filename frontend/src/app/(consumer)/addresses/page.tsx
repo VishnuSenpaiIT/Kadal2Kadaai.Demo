@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useAddresses, useCreateAddress, useDeleteAddress } from '@/shared/api/hooks/useAddresses';
+import { useAddresses, useCreateAddress, useDeleteAddress, useSetDefaultAddress } from '@/shared/api/hooks/useAddresses';
 import { Container } from '@/components/layout/shared/Container';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +11,7 @@ export default function AddressesPage() {
   const { data: addresses, isLoading } = useAddresses();
   const createAddress = useCreateAddress();
   const deleteAddress = useDeleteAddress();
+  const setDefaultAddress = useSetDefaultAddress();
 
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -99,12 +100,16 @@ export default function AddressesPage() {
             {addresses && addresses.length > 0 ? (
               <div className="grid sm:grid-cols-2 gap-4">
                 {addresses.map((address) => (
-                  <div key={address.id} className="bg-card border rounded-xl p-6 shadow-sm flex flex-col relative">
+                  <div 
+                    key={address.id} 
+                    onClick={() => { if (!address.is_default) setDefaultAddress.mutate(address.id) }}
+                    className={`bg-card border rounded-xl p-6 shadow-sm flex flex-col relative transition-all ${!address.is_default ? 'cursor-pointer hover:border-primary/50 hover:shadow-md' : 'border-primary ring-1 ring-primary'}`}
+                  >
                     {address.is_default && (
-                      <span className="absolute top-4 right-4 bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded">Default</span>
+                      <span className="absolute top-4 right-4 bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded shadow-sm">Default</span>
                     )}
                     <div className="flex items-center gap-2 mb-3">
-                      <Home className="h-5 w-5 text-muted-foreground" />
+                      <Home className={`h-5 w-5 ${address.is_default ? 'text-primary' : 'text-muted-foreground'}`} />
                       <h3 className="font-bold">{address.label}</h3>
                     </div>
                     <p className="text-muted-foreground text-sm flex-1">
@@ -112,12 +117,15 @@ export default function AddressesPage() {
                       {address.landmark && <>{address.landmark}<br/></>}
                       {address.city}, {address.state} - {address.pincode}
                     </p>
-                    <div className="mt-4 pt-4 border-t flex justify-end">
+                    <div className="mt-4 pt-4 border-t flex justify-between items-center">
+                      <div className="text-xs text-muted-foreground">
+                        {!address.is_default && setDefaultAddress.isPending ? 'Setting as default...' : !address.is_default && 'Click to select as default'}
+                      </div>
                       <Button 
                         variant="ghost" 
                         size="sm" 
-                        className="text-destructive hover:bg-destructive/10"
-                        onClick={() => deleteAddress.mutate(address.id)}
+                        className="text-destructive hover:bg-destructive/10 z-10"
+                        onClick={(e) => { e.stopPropagation(); deleteAddress.mutate(address.id); }}
                         disabled={deleteAddress.isPending}
                       >
                         <Trash2 className="h-4 w-4 mr-2" /> Remove

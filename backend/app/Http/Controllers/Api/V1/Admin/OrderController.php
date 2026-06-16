@@ -34,4 +34,20 @@ class OrderController extends Controller
         
         return response()->json(['success' => true, 'message' => 'Order retrieved', 'data' => $order]);
     }
+
+    public function updateStatus(Request $request, string $id)
+    {
+        $request->validate([
+            'status' => 'required|string|in:pending_seller_approval,approved,preparing,packed,ready_for_dispatch,delivered,cancelled,rejected',
+        ]);
+
+        $order = Order::findOrFail($id);
+        $order->update(['status' => $request->status]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Order status updated successfully',
+            'data'    => $order
+        ]);
+    }
 }

@@ -100,6 +100,12 @@ Before you start, make sure you have the following installed on your machine:
 - **Admin Operations Portal:** [http://localhost:3000/admin/login](http://localhost:3000/admin/login)
 - **Backend API:** [http://localhost:8000](http://localhost:8000)
 
-**Prebuilt Admin Credentials:**
-- Email: `k2k-admin@gmail.com`
-- Password: `admin123`
+**Prebuilt Admin Credentials (for Admin Portal):**
+- Email: `admin@kadal.local` | Password: `Admin@12345`
+- Email: `k2k-admin@gmail.com` | Password: `admin123`
+
+**Prebuilt Consumer Credentials (for Consumer Website):**
+- Email: `customer@kadal.local` | Password: `Customer@12345`
+
+**Prebuilt Seller Credentials:**
+- Email: `seller@kadal.local` | Password: `Seller@12345`
