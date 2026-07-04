@@ -106,6 +106,7 @@ Route::prefix('v1')->middleware([\App\Http\Middleware\VisitorTrackingMiddleware:
         // Checkout
         Route::post('/checkout', [\App\Http\Controllers\Api\V1\Consumer\OrderController::class, 'checkout']);
         Route::post('/shipping/calculate', [\App\Http\Controllers\Api\V1\ShippingCalculationController::class, 'calculate']);
+        Route::get('/shipping/google-maps-key', [\App\Http\Controllers\Api\V1\ShippingCalculationController::class, 'getGoogleMapsKey']);
 
         // ──────────────────────────────────────────────────────────────────────
         // Seller Routes

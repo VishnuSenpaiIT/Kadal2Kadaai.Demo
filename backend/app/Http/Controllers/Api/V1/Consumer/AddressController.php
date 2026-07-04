@@ -23,13 +23,21 @@ class AddressController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'label'     => 'nullable|string|max:50',
-            'street'    => 'required|string',
-            'city'      => 'required|string|max:100',
-            'state'     => 'required|string|max:100',
-            'pincode'   => 'required|string|max:10',
-            'landmark'  => 'nullable|string',
-            'is_default'=> 'boolean',
+            'full_name'             => 'required|string|max:255',
+            'mobile_number'         => 'required|string|max:50',
+            'house_flat_number'     => 'required|string|max:100',
+            'street_name'           => 'required|string|max:255',
+            'area_locality'         => 'required|string|max:255',
+            'landmark'              => 'nullable|string|max:255',
+            'city'                  => 'required|string|max:100',
+            'district'              => 'required|string|max:100',
+            'state'                 => 'required|string|max:100',
+            'pincode'               => 'required|string|max:20',
+            'latitude'              => 'required|numeric|between:-90,90',
+            'longitude'             => 'required|numeric|between:-180,180',
+            'address_type'          => 'required|string|in:Home,Work,Other',
+            'delivery_instructions' => 'nullable|string|max:5000',
+            'is_default'            => 'boolean',
         ]);
 
         $user = $request->user();
@@ -53,13 +61,21 @@ class AddressController extends Controller
         $address = $request->user()->addresses()->findOrFail($id);
 
         $validated = $request->validate([
-            'label'     => 'nullable|string|max:50',
-            'street'    => 'sometimes|string',
-            'city'      => 'sometimes|string|max:100',
-            'state'     => 'sometimes|string|max:100',
-            'pincode'   => 'sometimes|string|max:10',
-            'landmark'  => 'nullable|string',
-            'is_default'=> 'boolean',
+            'full_name'             => 'sometimes|required|string|max:255',
+            'mobile_number'         => 'sometimes|required|string|max:50',
+            'house_flat_number'     => 'sometimes|required|string|max:100',
+            'street_name'           => 'sometimes|required|string|max:255',
+            'area_locality'         => 'sometimes|required|string|max:255',
+            'landmark'              => 'nullable|string|max:255',
+            'city'                  => 'sometimes|required|string|max:100',
+            'district'              => 'sometimes|required|string|max:100',
+            'state'                 => 'sometimes|required|string|max:100',
+            'pincode'               => 'sometimes|required|string|max:20',
+            'latitude'              => 'sometimes|required|numeric|between:-90,90',
+            'longitude'             => 'sometimes|required|numeric|between:-180,180',
+            'address_type'          => 'sometimes|required|string|in:Home,Work,Other',
+            'delivery_instructions' => 'nullable|string|max:5000',
+            'is_default'            => 'boolean',
         ]);
 
         if (!empty($validated['is_default'])) {

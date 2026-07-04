@@ -97,8 +97,21 @@ class ShippingCalculationController extends Controller
             'harbour'         => [
                 'id'           => $harbour->id,
                 'harbour_name' => $harbour->harbour_name,
-                'address'      => $harbour->address,
+                'address'      => $harbour->address_line_1,
             ]
         ], 'Shipping calculated successfully');
+    }
+
+    /**
+     * Get the Google Maps API Key for customer components.
+     */
+    public function getGoogleMapsKey(Request $request): JsonResponse
+    {
+        $settings = ShippingSetting::first();
+        $key = $settings?->google_maps_api_key ?: env('GOOGLE_MAPS_API_KEY');
+        
+        return $this->successResponse([
+            'google_maps_api_key' => $key
+        ], 'Maps configuration retrieved');
     }
 }

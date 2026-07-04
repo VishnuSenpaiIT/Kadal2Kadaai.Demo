@@ -70,13 +70,20 @@ class SampleOrderSeeder extends Seeder
 
             // Create an address
             Address::firstOrCreate(
-                ['user_id' => $consumer->id, 'label' => 'Home'],
+                ['user_id' => $consumer->id, 'address_type' => 'Home'],
                 [
                     'id' => (string) Str::uuid(),
-                    'street' => (10 + $idx) . ' Beach Rd',
+                    'full_name' => $consumer->name,
+                    'mobile_number' => '9876543210',
+                    'house_flat_number' => (10 + $idx),
+                    'street_name' => 'Beach Rd',
+                    'area_locality' => 'Royapuram',
                     'city' => 'Chennai',
+                    'district' => 'Chennai',
                     'state' => 'Tamil Nadu',
-                    'pincode' => '600001',
+                    'pincode' => '600013',
+                    'latitude' => 13.1137,
+                    'longitude' => 80.2954,
                     'is_default' => true
                 ]
             );
@@ -87,13 +94,20 @@ class SampleOrderSeeder extends Seeder
         if ($customerUser) {
             $consumers[] = $customerUser;
             Address::firstOrCreate(
-                ['user_id' => $customerUser->id, 'label' => 'Home'],
+                ['user_id' => $customerUser->id, 'address_type' => 'Home'],
                 [
                     'id' => (string) Str::uuid(),
-                    'street' => '24 Marina Drive',
+                    'full_name' => 'Demo Customer',
+                    'mobile_number' => '9876543211',
+                    'house_flat_number' => '24',
+                    'street_name' => 'Marina Drive',
+                    'area_locality' => 'Mylapore',
                     'city' => 'Chennai',
+                    'district' => 'Chennai',
                     'state' => 'Tamil Nadu',
-                    'pincode' => '600005',
+                    'pincode' => '600004',
+                    'latitude' => 13.0330,
+                    'longitude' => 80.2785,
                     'is_default' => true
                 ]
             );

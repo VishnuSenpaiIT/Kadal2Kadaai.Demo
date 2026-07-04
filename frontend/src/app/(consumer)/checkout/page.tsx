@@ -133,16 +133,19 @@ export default function CheckoutPage() {
                       onClick={() => setSelectedAddressId(address.id)}
                     >
                       <div className="flex items-center justify-between mb-3">
-                        <span className="font-bold text-lg text-foreground">{address.label}</span>
+                        <span className="font-bold text-lg text-foreground">{address.address_type}</span>
                         <div className={`h-6 w-6 rounded-full border-2 flex items-center justify-center ${selectedAddressId === address.id ? 'border-primary bg-primary' : 'border-muted-foreground/30'}`}>
                           {selectedAddressId === address.id && <CheckCircle2 className="h-4 w-4 text-white" />}
                         </div>
                       </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {address.street},<br />
-                        {address.city}, {address.state}<br />
-                        {address.pincode}
-                      </p>
+                      <div className="text-sm text-muted-foreground space-y-1">
+                        <p className="font-bold text-foreground text-sm">{address.full_name}</p>
+                        <p className="text-xs font-semibold">📞 {address.mobile_number}</p>
+                        <p className="leading-relaxed text-xs mt-1">
+                          {address.house_flat_number}, {address.street_name}<br />
+                          {address.area_locality}, {address.city}, {address.state} - {address.pincode}
+                        </p>
+                      </div>
                     </div>
                   ))}
                 </div>
