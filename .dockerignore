@@ -1,0 +1,35 @@
+# Frontend — not needed for backend Docker build
+frontend/
+
+# Git and CI
+.git/
+.github/
+.gitignore
+
+# Documentation
+docs/
+*.md
+
+# Root-level dev files
+docker-compose*.yml
+restore_hero.cjs
+update_marquees.cjs
+extracted_view_file.txt
+
+# Backend: vendor and generated files (re-installed by composer inside Docker)
+backend/vendor/
+backend/bootstrap/cache/
+backend/storage/logs/
+backend/storage/framework/cache/
+backend/storage/framework/sessions/
+backend/storage/framework/views/
+backend/.env
+backend/.env.*
+backend/*.sqlite
+backend/*.sqlite-wal
+backend/*.sqlite-shm
+backend/composer.phar
+
+# OS
+.DS_Store
+Thumbs.db

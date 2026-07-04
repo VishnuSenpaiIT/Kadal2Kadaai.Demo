@@ -1,0 +1,79 @@
+Created At: 2026-06-18T13:39:07Z
+Completed At: 2026-06-18T13:39:08Z
+File Path: `file:///e:/k2k/Kadal2Kadaai.Demo.18-06/frontend/src/app/%28consumer%29/page.tsx`
+Total Lines: 442
+Total Bytes: 27029
+Showing lines 1 to 140
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: 'use client';
+2: 
+3: import React, { useState, useEffect } from 'react';
+4: import Link from 'next/link';
+5: import Image from 'next/image';
+6: import { Container } from '@/components/layout/shared/Container';
+7: import { Grid } from '@/components/layout/shared/Grid';
+8: import { Button } from '@/components/ui/button';
+9: import { ProductCard } from '@/components/domain/product/ProductCard';
+10: import { Ship, Clock, ShieldCheck, ArrowRight, Loader2, ChevronLeft, ChevronRight, Anchor, Heart, ShoppingCart, Star, Flame, Award } from 'lucide-react';
+11: import { motion, AnimatePresence } from 'framer-motion';
+12: import { useProducts } from '@/shared/api/hooks/useProducts';
+13: import { useCategories } from '@/shared/api/hooks/useCategories';
+14: import { useLocation } from '@/providers/LocationProvider';
+15: import { useAddToCart } from '@/shared/api/hooks/useCart';
+16: import { toast } from 'sonner';
+17: import { assetUrl } from '@/lib/asset-url';
+18: 
+19: const slideshowImages = [
+20:   '/heroimg1.webp',
+21:   '/heroimg2.jpg',
+22:   '/heroimg3.webp',
+23:   '/heroimg5.jpg',
+24: ];
+25: 
+26: export default function Homepage() {
+27:   const [activeTab, setActiveTab] = useState('all');
+28:   const [wishlistedIds, setWishlistedIds] = useState<string[]>([]);
+29:   const [currentImgIndex, setCurrentImgIndex] = useState(0);
+30: 
+31:   useEffect(() => {
+32:     // Preload images dynamically to prevent browser decoding lag
+33:     slideshowImages.forEach((src) => {
+34:       const img = new window.Image();
+35:       img.src = src;
+36
+<truncated 3153 bytes>
+                 transition={{
+108:                   opacity: { duration: 1.0, ease: "easeInOut" },
+109:                   scale: { duration: 2.2, ease: "linear" }, // Slow, high-end Ken Burns zoom
+110:                 }}
+111:                 style={{
+112:                   zIndex: isActive ? 10 : 0,
+113:                   pointerEvents: "none",
+114:                 }}
+115:               >
+116:                 <img
+117:                   src={src}
+118:                   alt={`Fish journey - step ${index + 1}`}
+119:                   loading="eager"
+120:                   className="w-full h-full object-cover"
+121:                 />
+122:               </motion.div>
+123:             );
+124:           })}
+125:           {/* Subtle Dark Overlay (45% opacity) to guarantee text readability */}
+126:           <div className="absolute inset-0 bg-black/45 z-20 pointer-events-none" />
+127:         </div>
+128: 
+129:         {/* Centered Hero Content */}
+130:         <div className="relative z-30 w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 flex flex-col items-center justify-center text-center">
+131:           <div className="flex flex-col items-center justify-center min-h-[50vh] max-w-4xl py-6">
+132:             
+133:             {/* Text and CTA */}
+134:             <motion.div 
+135:               initial={{ opacity: 0, y: 30 }}
+136:               animate={{ opacity: 1, y: 0 }}
+137:               transition={{ duration: 1.0, ease: "easeOut" }}
+138:               className="text-white space-y-6 flex flex-col items-center justify-center text-center"
+139:             >
+140:               <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] font-black leading-[1.15] tracking-tight uppercase bg-gradient-to-r from-white via-sky-200 to-sky-400 bg-clip-text text-transparent filter drop-shadow-sm">
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
