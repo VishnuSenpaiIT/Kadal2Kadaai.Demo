@@ -32,7 +32,7 @@ export default function ContactPage() {
             <div>
               <h3 className="font-semibold text-lg">Customer Support</h3>
               <p className="text-muted-foreground">Mon-Sat: 8:00 AM - 8:00 PM</p>
-              <p className="text-primary font-medium mt-1">+91 98765 43210</p>
+              <p className="text-primary font-medium mt-1">+91 73059 29555</p>
             </div>
             
             <div>
@@ -44,7 +44,7 @@ export default function ContactPage() {
             <div>
               <h3 className="font-semibold text-lg">Headquarters</h3>
               <p className="text-muted-foreground">
-                123 Coastal Road, Marina Beach Area<br />
+                No. 12, Beach Road, Marina District<br />
                 Chennai, Tamil Nadu 600001<br />
                 India
               </p>
