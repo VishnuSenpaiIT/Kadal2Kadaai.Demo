@@ -72,7 +72,9 @@ class Product extends Model
         static::saving(function ($product) {
             if ($product->discount_type && $product->discount_value !== null) {
                 if ($product->discount_type === 'percentage') {
-                    $product->sale_price = round($product->price * (1 - $product->discount_value / 100), 2);
+                    // Fix 11: Cap percentage discount at 100% to prevent negative sale_price
+                    $clampedPercent = min(100, max(0, (float) $product->discount_value));
+                    $product->sale_price = max(0, round($product->price * (1 - $clampedPercent / 100), 2));
                 } elseif ($product->discount_type === 'flat') {
                     $product->sale_price = max(0, round($product->price - $product->discount_value, 2));
                 }
@@ -119,10 +121,6 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function originHarbor(): BelongsTo
-    {
-        return $this->belongsTo(Harbour::class, 'origin_harbor_id');
-    }
 
     public function images(): HasMany
     {

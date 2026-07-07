@@ -6,7 +6,6 @@ namespace App\Http\Controllers\Api\V1\Consumer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
-use App\Models\CartItem;
 use App\Models\Product;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -29,6 +28,7 @@ class CartController extends Controller
 
     /**
      * Add an item to the cart.
+     * Fix 5: Enforces minimum_order_quantity and maximum_order_quantity.
      */
     public function addItem(Request $request): JsonResponse
     {
@@ -40,6 +40,24 @@ class CartController extends Controller
 
         $product = Product::findOrFail($validated['product_id']);
 
+        // Fix 5: Enforce minimum/maximum order quantity
+        $minQty = $product->minimum_order_quantity ?? 0.001;
+        $maxQty = $product->maximum_order_quantity;
+
+        if ($validated['quantity'] < $minQty) {
+            return $this->errorResponse(
+                "Minimum order quantity is {$minQty} {$product->weight_unit}",
+                422
+            );
+        }
+
+        if ($maxQty !== null && $validated['quantity'] > $maxQty) {
+            return $this->errorResponse(
+                "Maximum order quantity is {$maxQty} {$product->weight_unit}",
+                422
+            );
+        }
+
         if ($product->available_quantity < $validated['quantity']) {
             return $this->errorResponse(
                 "Only {$product->available_quantity} {$product->weight_unit} available",
@@ -49,7 +67,7 @@ class CartController extends Controller
 
         $priceModifier = 0;
         if (!empty($validated['selected_variant'])) {
-            $variants = $product->variants; // Array of upgraded variant objects
+            $variants = $product->variants;
             foreach ($variants as $v) {
                 if (isset($v['name']) && $v['name'] === $validated['selected_variant']) {
                     $priceModifier = (float)($v['price_modifier'] ?? 0);
@@ -70,12 +88,22 @@ class CartController extends Controller
 
         if ($existing) {
             $newQty = $existing->quantity + $validated['quantity'];
+
+            // Fix 5: Enforce max quantity on combined total
+            if ($maxQty !== null && $newQty > $maxQty) {
+                return $this->errorResponse(
+                    "Cannot add more. Maximum order quantity is {$maxQty} {$product->weight_unit}",
+                    422
+                );
+            }
+
             if ($newQty > $product->available_quantity) {
                 return $this->errorResponse(
                     "Cannot add more. Only {$product->available_quantity} {$product->weight_unit} available",
                     422
                 );
             }
+
             $existing->update([
                 'quantity'    => $newQty,
                 'total_price' => $newQty * $existing->unit_price,
@@ -99,6 +127,7 @@ class CartController extends Controller
 
     /**
      * Update quantity of a specific cart item.
+     * Fix 5: Enforces minimum_order_quantity and maximum_order_quantity.
      */
     public function updateItem(Request $request, string $itemId): JsonResponse
     {
@@ -109,6 +138,24 @@ class CartController extends Controller
         $cart = $this->getOrCreateCart($request->user()->id);
         $item = $cart->items()->where('id', $itemId)->firstOrFail();
         $product = $item->product;
+
+        // Fix 5: Enforce min/max quantity on update
+        $minQty = $product->minimum_order_quantity ?? 0.001;
+        $maxQty = $product->maximum_order_quantity;
+
+        if ($validated['quantity'] < $minQty) {
+            return $this->errorResponse(
+                "Minimum order quantity is {$minQty} {$product->weight_unit}",
+                422
+            );
+        }
+
+        if ($maxQty !== null && $validated['quantity'] > $maxQty) {
+            return $this->errorResponse(
+                "Maximum order quantity is {$maxQty} {$product->weight_unit}",
+                422
+            );
+        }
 
         if ($validated['quantity'] > $product->available_quantity) {
             return $this->errorResponse(
@@ -168,8 +215,8 @@ class CartController extends Controller
     private function recalculateCart(Cart $cart): void
     {
         $cart->refresh();
-        $subtotal    = $cart->items->sum('total_price');
-        $totalItems  = $cart->items->count();
+        $subtotal   = $cart->items->sum('total_price');
+        $totalItems = $cart->items->count();
         $cart->update(['subtotal' => $subtotal, 'total_items' => $totalItems]);
     }
 

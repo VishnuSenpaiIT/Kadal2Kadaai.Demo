@@ -66,12 +66,14 @@ class OrderController extends Controller
 
     /**
      * Checkout: convert the active cart into an order.
+     * Fix 4: Uses DB::transaction with lockForUpdate() to prevent inventory race conditions.
+     * Fix 5: Re-validates min/max order quantities at checkout time.
+     * Fix 8: Tax is now included in total calculations consistently.
      */
     public function checkout(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'address_id' => 'required|uuid|exists:addresses,id',
-            'harbour_id' => 'nullable|exists:harbours,id',
             'notes'      => 'nullable|string|max:500',
         ]);
 
@@ -92,79 +94,80 @@ class OrderController extends Controller
             return $this->errorResponse('Cart is empty. Add items before checking out.', 422);
         }
 
-        // Validate stock for all items
+        // Fix 5: Pre-flight validation of min/max order quantities before entering transaction
         foreach ($cart->items as $item) {
             $product = $item->product;
-            if (!$product || $product->available_quantity < $item->quantity) {
+            if (!$product) {
+                return $this->errorResponse("A product in your cart is no longer available.", 422);
+            }
+
+            $minQty = $product->minimum_order_quantity ?? 0.001;
+            $maxQty = $product->maximum_order_quantity;
+
+            if ($item->quantity < $minQty) {
                 return $this->errorResponse(
-                    "Insufficient stock for: {$product?->name}. Available: {$product?->available_quantity} {$product?->weight_unit}",
+                    "Minimum order quantity for {$product->name} is {$minQty} {$product->weight_unit}.",
+                    422
+                );
+            }
+
+            if ($maxQty !== null && $item->quantity > $maxQty) {
+                return $this->errorResponse(
+                    "Maximum order quantity for {$product->name} is {$maxQty} {$product->weight_unit}.",
                     422
                 );
             }
         }
 
-        // Group items by seller (create one order per seller)
-        $itemsBySeller = $cart->items->groupBy('seller_id');
-        $orders        = [];
+        $orders = [];
 
-        DB::transaction(function () use ($itemsBySeller, $user, $address, $validated, $cart, &$orders) {
+        // Fix 4: All stock checks and mutations happen inside the transaction.
+        // lockForUpdate() on each product prevents overselling under concurrent checkouts.
+        DB::transaction(function () use ($cart, $user, $address, $validated, &$orders) {
+            // Group items by seller (create one order per seller)
+            $itemsBySeller = $cart->items->groupBy('seller_id');
+
             foreach ($itemsBySeller as $sellerId => $items) {
                 $subtotal = $items->sum('total_price');
-                $tax      = round($subtotal * 0.05, 2); // 5% tax placeholder
-                
-                // Calculate dynamic delivery fee
-                $harbour = null;
-                if (!empty($validated['harbour_id'])) {
-                    $harbour = \App\Models\Harbour::where('status', true)->find($validated['harbour_id']);
-                } else {
-                    $settings = \App\Models\ShippingSetting::first();
-                    if ($settings && $settings->default_harbour_id) {
-                        $harbour = \App\Models\Harbour::where('status', true)->find($settings->default_harbour_id);
-                    }
-                    if (!$harbour) {
-                        $harbour = \App\Models\Harbour::where('status', true)->first();
-                    }
-                }
+                // Fix 8: 5% tax is calculated consistently
+                $tax = round($subtotal * 0.05, 2);
 
-                $delivery = 50.00; // default/fallback
-                if ($harbour && $address->latitude !== null && $address->longitude !== null) {
-                    $geoService = app(\App\Services\GeoRoutingService::class);
-                    $distance = $geoService->calculateDistance($harbour, (float)$address->latitude, (float)$address->longitude);
-                    if ($distance !== null) {
-                        $range = \App\Models\ShippingDistanceRange::where('status', true)
-                            ->where('from_distance', '<=', $distance)
-                            ->where('to_distance', '>=', $distance)
-                            ->first();
-                        if ($range) {
-                            $delivery = (float) $range->shipping_price;
-                        }
-                    }
-                }
-                
-                $total    = $subtotal + $tax + $delivery;
+                // Flat shipping rate logic: ₹50 flat, free shipping for orders ₹1000 and above
+                $delivery = ($subtotal >= 1000.0) ? 0.0 : 50.00;
+
+                $total = $subtotal + $tax + $delivery;
 
                 $order = Order::create([
-                    'order_number'   => $this->generateOrderNumber(),
-                    'consumer_id'    => $user->id,
-                    'seller_id'      => $sellerId,
-                    'address_id'     => $address->id,
-                    'status'         => OrderStatus::PendingSellerApproval->value,
-                    'subtotal'       => $subtotal,
-                    'tax_amount'     => $tax,
-                    'delivery_fee'   => $delivery,
-                    'discount_amount'=> 0,
-                    'total'          => $total,
-                    'notes'          => $validated['notes'] ?? null,
+                    'order_number'    => $this->generateOrderNumber(),
+                    'consumer_id'     => $user->id,
+                    'seller_id'       => $sellerId,
+                    'address_id'      => $address->id,
+                    'status'          => OrderStatus::PendingSellerApproval->value,
+                    'subtotal'        => $subtotal,
+                    'tax_amount'      => $tax,
+                    'delivery_fee'    => $delivery,
+                    'discount_amount' => 0,
+                    'total'           => $total,
+                    'notes'           => $validated['notes'] ?? null,
                 ]);
 
                 foreach ($items as $item) {
+                    // Fix 4: Lock the product row to prevent concurrent overselling
+                    $product = \App\Models\Product::lockForUpdate()->findOrFail($item->product_id);
+
+                    if ($product->available_quantity < $item->quantity) {
+                        throw new \Exception(
+                            "Insufficient stock for: {$product->name}. Only {$product->available_quantity} {$product->weight_unit} available."
+                        );
+                    }
+
                     $variantObj = null;
                     if ($item->selected_variant) {
-                        foreach ($item->product->variants as $v) {
+                        foreach ($product->variants as $v) {
                             if (isset($v['name']) && $v['name'] === $item->selected_variant) {
                                 $variantObj = [
-                                    'name' => $v['name'],
-                                    'price_modifier' => $v['price_modifier'] ?? 0,
+                                    'name'            => $v['name'],
+                                    'price_modifier'  => $v['price_modifier'] ?? 0,
                                 ];
                                 break;
                             }
@@ -172,22 +175,22 @@ class OrderController extends Controller
                     }
 
                     OrderItem::create([
-                        'order_id'        => $order->id,
-                        'product_id'      => $item->product_id,
-                        'quantity'        => $item->quantity,
-                        'unit_price'      => $item->unit_price,
-                        'total_price'     => $item->total_price,
-                        'product_snapshot'=> [
-                            'name'        => $item->product->name,
-                            'price'       => $item->product->price,
-                            'weight_unit' => $item->product->weight_unit,
-                            'category'    => $item->product->category?->name,
+                        'order_id'         => $order->id,
+                        'product_id'       => $item->product_id,
+                        'quantity'         => $item->quantity,
+                        'unit_price'       => $item->unit_price,
+                        'total_price'      => $item->total_price,
+                        'product_snapshot' => [
+                            'name'             => $product->name,
+                            'price'            => $product->price,
+                            'weight_unit'      => $product->weight_unit,
+                            'category'         => $product->category?->name,
                             'selected_variant' => $variantObj,
                         ],
                     ]);
 
-                    // Use InventoryService to properly reserve stock
-                    $this->inventoryService->reserveStock($item->product, $item->quantity);
+                    // Fix 4: Use InventoryService to reserve stock (runs after lock is acquired)
+                    $this->inventoryService->reserveStock($product, $item->quantity);
                 }
 
                 $orders[] = $order->load(['items', 'address', 'seller:id,first_name,last_name']);
@@ -207,7 +210,7 @@ class OrderController extends Controller
                 $totalSpending = collect($orders)->sum('total');
                 $user->consumerProfile->increment('lifetime_orders', count($orders));
                 $user->consumerProfile->increment('lifetime_spending', $totalSpending);
-                
+
                 // Give 1 loyalty point per 100 spent
                 $points = floor($totalSpending / 100);
                 if ($points > 0) {
@@ -254,8 +257,13 @@ class OrderController extends Controller
         return $this->successResponse($order->fresh(), 'Order cancelled');
     }
 
+    /**
+     * Generate a unique-enough order number.
+     * Uses random(8) + date for lower collision probability.
+     * A unique DB constraint on order_number provides the final safety net.
+     */
     private function generateOrderNumber(): string
     {
-        return 'ORD-' . strtoupper(Str::random(4)) . '-' . date('Ymd');
+        return 'ORD-' . strtoupper(Str::random(8)) . '-' . date('Ymd');
     }
 }

@@ -3,11 +3,23 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\Inventory\InventoryService;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Enums\OrderStatus;
 
 class OrderController extends Controller
 {
+    use ApiResponse;
+
+    protected InventoryService $inventoryService;
+
+    public function __construct(InventoryService $inventoryService)
+    {
+        $this->inventoryService = $inventoryService;
+    }
+
     public function index(Request $request)
     {
         $orders = Order::with([
@@ -23,7 +35,7 @@ class OrderController extends Controller
             ->latest()
             ->paginate($request->get('per_page', 20));
 
-        return response()->json(['success' => true, 'message' => 'Orders retrieved', 'data' => $orders]);
+        return $this->successResponse($orders, 'Orders retrieved');
     }
 
     public function show(string $id)
@@ -34,23 +46,46 @@ class OrderController extends Controller
             'seller:id,first_name,last_name',
             'address',
         ])->findOrFail($id);
-        
-        return response()->json(['success' => true, 'message' => 'Order retrieved', 'data' => $order]);
+
+        return $this->successResponse($order, 'Order retrieved');
     }
 
+    /**
+     * Fix 7: Admin updateStatus now syncs inventory:
+     *  - 'cancelled'  → releases reserved stock back to available
+     *  - 'delivered'  → fulfills (deducts) reserved stock permanently
+     *  - Other statuses → no inventory change
+     */
     public function updateStatus(Request $request, string $id)
     {
         $request->validate([
             'status' => 'required|string|in:pending_seller_approval,approved,processing,ready_for_delivery,out_for_delivery,delivered,cancelled,rejected,refunded',
         ]);
 
-        $order = Order::findOrFail($id);
-        $order->update(['status' => $request->status]);
+        $order = Order::with('items.product')->findOrFail($id);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Order status updated successfully',
-            'data'    => $order
-        ]);
+        $previousStatus = $order->status;
+        $newStatus = $request->status;
+
+        $order->update(['status' => $newStatus]);
+
+        // Fix 7: Sync inventory based on terminal status transitions
+        if (in_array($newStatus, ['cancelled', 'rejected']) && !$previousStatus->isTerminal()) {
+            // Restore reserved stock back to available
+            foreach ($order->items as $item) {
+                if ($item->product) {
+                    $this->inventoryService->releaseStock($item->product, $item->quantity);
+                }
+            }
+        } elseif ($newStatus === 'delivered' && $previousStatus !== OrderStatus::Delivered) {
+            // Permanently deduct reserved stock (order fulfilled)
+            foreach ($order->items as $item) {
+                if ($item->product) {
+                    $this->inventoryService->fulfillStock($item->product, $item->quantity);
+                }
+            }
+        }
+
+        return $this->successResponse($order->fresh(), 'Order status updated successfully');
     }
 }

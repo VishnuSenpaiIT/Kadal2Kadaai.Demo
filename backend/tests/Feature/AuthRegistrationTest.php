@@ -22,6 +22,7 @@ class AuthRegistrationTest extends TestCase
             'password' => 'Test@1234!',
             'password_confirmation' => 'Test@1234!',
             'contact_number' => '9876543210',
+            'state' => 'Tamil Nadu',
             'district' => 'Chennai',
             'pincode' => '600001',
         ]);

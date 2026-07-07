@@ -64,7 +64,7 @@ class ProductController extends Controller
             'tags.*'                 => 'string',
             'image'                  => 'nullable|image|max:5120',
             'attributes'             => 'nullable|array',
-            'origin_harbor_id'       => 'nullable|exists:harbours,id',
+            'origin_harbor_id'       => 'nullable|integer',
             'max_transit_hours'      => 'nullable|integer|min:0',
         ]);
 
@@ -111,7 +111,11 @@ class ProductController extends Controller
             'price' => 'sometimes|numeric|min:0',
             'sale_price' => 'nullable|numeric|min:0',
             'discount_type' => 'nullable|string|in:percentage,flat',
-            'discount_value' => 'nullable|numeric|min:0',
+            'discount_value' => ['nullable', 'numeric', 'min:0', function ($attribute, $value, $fail) use ($request) {
+                if ($request->input('discount_type') === 'percentage' && $value > 100) {
+                    $fail('Percentage discount cannot exceed 100%.');
+                }
+            }],
             'weight_unit' => 'sometimes|string',
             'minimum_order_quantity' => 'nullable|numeric|min:0',
             'maximum_order_quantity' => 'nullable|numeric|min:0',
@@ -128,16 +132,24 @@ class ProductController extends Controller
             'variants.*.shipping_modifier' => 'nullable|numeric',
             'variants.*.max_distance' => 'nullable|numeric',
             'tags' => 'nullable|array',
-            'tags.*' => 'exists:tags,id',
+            'tags.*' => 'string',
             'attributes' => 'nullable|array',
-            'origin_harbor_id' => 'nullable|exists:harbours,id',
+            'origin_harbor_id' => 'nullable|integer',
             'max_transit_hours' => 'nullable|integer|min:0',
         ]);
 
-        $product->update($validated);
+        $product->update(\Arr::except($validated, ['tags']));
 
         if ($request->has('tags')) {
-            $product->tags()->sync($request->input('tags'));
+            $tagIds = [];
+            foreach ((array) $request->input('tags') as $tagName) {
+                $tag = \App\Models\Tag::firstOrCreate(
+                    ['name' => $tagName],
+                    ['slug' => \Illuminate\Support\Str::slug($tagName)]
+                );
+                $tagIds[] = $tag->id;
+            }
+            $product->tags()->sync($tagIds);
         }
 
         $product->load(['seller', 'category', 'tags', 'images']);
