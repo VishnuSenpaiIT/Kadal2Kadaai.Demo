@@ -85,7 +85,7 @@ export default function AdminProductsPage() {
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/10">
-                <TableHead className="w-[50px]"><input type="checkbox" className="rounded border-input" /></TableHead>
+                <TableHead className="w-[50px]"></TableHead>
                 <TableHead>Product Name</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead>Price</TableHead>

@@ -58,6 +58,8 @@ export function AddProductDialog() {
     weight_unit: 'kg',
     stock_status: 'IN_STOCK',
     product_status: 'PUBLISHED',
+    is_top_selling: false,
+    is_todays_purchase: false,
     short_description: '',
     origin_harbor_id: '',
     max_transit_hours: '',
@@ -116,7 +118,7 @@ export function AddProductDialog() {
   };
 
   const reset = () => {
-    setFormData({ name: '', category_id: '', price: '', available_quantity: '', weight_unit: 'kg', stock_status: 'IN_STOCK', product_status: 'PUBLISHED', short_description: '', origin_harbor_id: '', max_transit_hours: '' });
+    setFormData({ name: '', category_id: '', price: '', available_quantity: '', weight_unit: 'kg', stock_status: 'IN_STOCK', product_status: 'PUBLISHED', is_top_selling: false, is_todays_purchase: false, short_description: '', origin_harbor_id: '', max_transit_hours: '' });
     setTags([]);
     setTagInput('');
     setVariants([]);
@@ -140,6 +142,8 @@ export function AddProductDialog() {
       weight_unit: formData.weight_unit,
       stock_status: formData.stock_status,
       product_status: formData.product_status,
+      is_top_selling: formData.is_top_selling,
+      is_todays_purchase: formData.is_todays_purchase,
       short_description: formData.short_description,
       origin_harbor_id: formData.origin_harbor_id ? parseInt(formData.origin_harbor_id) : null,
       max_transit_hours: formData.max_transit_hours ? parseInt(formData.max_transit_hours) : null,
@@ -298,6 +302,56 @@ export function AddProductDialog() {
                     <option value="PUBLISHED">Published</option>
                   </select>
                 </div>
+              </div>
+              
+              {/* ── FEATURED SECTIONS ── */}
+              <div className="pt-2 flex flex-col gap-3">
+                <Label className="text-sm font-semibold text-slate-800">Featured Placement</Label>
+                <div className="flex items-center gap-6">
+                  <label className="flex items-center gap-2 cursor-pointer text-sm">
+                    <input 
+                      type="checkbox" 
+                      className="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+                      checked={formData.is_top_selling} 
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        setFormData({ 
+                          ...formData, 
+                          is_top_selling: checked, 
+                          ...(checked ? { is_todays_purchase: false } : {}) 
+                        });
+                      }} 
+                    />
+                    <span className="font-medium">Top Selling</span>
+                  </label>
+                  
+                  <label className="flex items-center gap-2 cursor-pointer text-sm">
+                    <input 
+                      type="checkbox" 
+                      className="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+                      checked={formData.is_todays_purchase} 
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        setFormData({ 
+                          ...formData, 
+                          is_todays_purchase: checked, 
+                          ...(checked ? { is_top_selling: false } : {}) 
+                        });
+                      }} 
+                    />
+                    <span className="font-medium">Today's Purchases</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* ── AVAILABILITY (UI ONLY) ── */}
+              <div className="pt-2 flex flex-col gap-2">
+                <Label className="text-sm font-semibold text-slate-800">Availability</Label>
+                <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+                  <option value="chennai">Exclusive for Chennai</option>
+                  <option value="outside">Exclusive for Outside Regions</option>
+                  <option value="both">Available for Chennai & Outside Regions</option>
+                </select>
               </div>
 
               {/* ── CUSTOM TAGS ── */}

@@ -79,9 +79,7 @@ export default function AdminCategoriesPage() {
             <table className="w-full text-sm text-left">
               <thead className="bg-slate-100 text-xs uppercase text-slate-600 border-b">
                 <tr>
-                  <th className="px-6 py-4 w-12 text-center">
-                    <input type="checkbox" className="rounded border-slate-300" />
-                  </th>
+                  <th className="px-6 py-4 w-12 text-center"></th>
                   <th className="px-6 py-4 w-16 text-center">Image</th>
                   <th className="px-6 py-4">Category Name</th>
                   <th className="px-6 py-4">Slug</th>

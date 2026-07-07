@@ -53,6 +53,8 @@ class ProductController extends Controller
             'product_status'         => 'required|string',
             'is_featured'            => 'boolean',
             'is_popular'             => 'boolean',
+            'is_top_selling'         => 'boolean',
+            'is_todays_purchase'     => 'boolean',
             'variants'               => 'nullable|array',
             'variants.*.name'        => 'required|string|max:100',
             'variants.*.price_modifier' => 'nullable|numeric',
@@ -118,6 +120,8 @@ class ProductController extends Controller
             'product_status' => 'sometimes|string',
             'is_featured' => 'boolean',
             'is_popular' => 'boolean',
+            'is_top_selling' => 'boolean',
+            'is_todays_purchase' => 'boolean',
             'variants' => 'nullable|array',
             'variants.*.name' => 'required|string|max:100',
             'variants.*.price_modifier' => 'nullable|numeric',
@@ -155,10 +159,12 @@ class ProductController extends Controller
             'product_status' => 'sometimes|string',
             'is_featured' => 'sometimes|boolean',
             'is_popular' => 'sometimes|boolean',
+            'is_top_selling' => 'sometimes|boolean',
+            'is_todays_purchase' => 'sometimes|boolean',
         ]);
 
         $product = Product::findOrFail($id);
-        $product->update($request->only(['product_status', 'is_featured', 'is_popular']));
+        $product->update($request->only(['product_status', 'is_featured', 'is_popular', 'is_top_selling', 'is_todays_purchase']));
 
         return $this->success($product, 'Product status updated successfully');
     }

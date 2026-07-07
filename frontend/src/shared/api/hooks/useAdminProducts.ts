@@ -17,6 +17,8 @@ export interface AdminProduct {
   seller: { id: string; first_name: string; last_name: string };
   is_featured: boolean;
   is_popular: boolean;
+  is_top_selling: boolean;
+  is_todays_purchase: boolean;
 }
 
 export function useAdminProducts(page = 1, perPage = 20, search = '') {
@@ -87,6 +89,8 @@ export interface CreateProductPayload {
   weight_unit: string;
   stock_status: string;
   product_status: string;
+  is_top_selling?: boolean;
+  is_todays_purchase?: boolean;
   short_description?: string;
   variants?: ProductVariant[];
   attributes?: ProductAttributes;
@@ -108,13 +112,18 @@ export function useCreateProduct() {
         'seller_id', 'category_id', 'name', 'slug', 'price',
         'discount_type', 'discount_value',
         'available_quantity', 'weight_unit', 'stock_status', 'product_status',
+        'is_top_selling', 'is_todays_purchase',
         'short_description', 'origin_harbor_id', 'max_transit_hours'
       ];
 
       for (const key of scalarFields) {
         const value = payload[key];
         if (value !== undefined && value !== null) {
-          formData.append(key, String(value));
+          if (typeof value === 'boolean') {
+            formData.append(key, value ? '1' : '0');
+          } else {
+            formData.append(key, String(value));
+          }
         }
       }
 

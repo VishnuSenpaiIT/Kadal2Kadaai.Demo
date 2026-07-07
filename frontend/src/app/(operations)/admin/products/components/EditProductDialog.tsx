@@ -32,6 +32,8 @@ export function EditProductDialog({ product }: { product: AdminProduct }) {
     available_quantity: '',
     weight_unit: 'kg',
     product_status: 'PUBLISHED',
+    is_top_selling: false,
+    is_todays_purchase: false,
   });
 
   const [variants, setVariants] = useState<ProductVariant[]>([]);
@@ -51,6 +53,8 @@ export function EditProductDialog({ product }: { product: AdminProduct }) {
         available_quantity: product.available_quantity?.toString() || '0',
         weight_unit: product.weight_unit || 'kg',
         product_status: product.product_status || 'PUBLISHED',
+        is_top_selling: !!product.is_top_selling,
+        is_todays_purchase: !!product.is_todays_purchase,
       });
       setVariants((product as any).variants || []);
     }
@@ -76,6 +80,8 @@ export function EditProductDialog({ product }: { product: AdminProduct }) {
       available_quantity: parseFloat(formData.available_quantity),
       weight_unit: formData.weight_unit,
       product_status: formData.product_status,
+      is_top_selling: formData.is_top_selling,
+      is_todays_purchase: formData.is_todays_purchase,
       variants: variants,
     };
 
@@ -158,6 +164,56 @@ export function EditProductDialog({ product }: { product: AdminProduct }) {
                 </select>
               </div>
             </div>
+          </div>
+          
+          {/* ── FEATURED SECTIONS ── */}
+          <div className="pt-2 flex flex-col gap-3">
+            <Label className="text-sm font-semibold text-slate-800">Featured Placement</Label>
+            <div className="flex items-center gap-6">
+              <label className="flex items-center gap-2 cursor-pointer text-sm">
+                <input 
+                  type="checkbox" 
+                  className="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+                  checked={formData.is_top_selling} 
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setFormData({ 
+                      ...formData, 
+                      is_top_selling: checked, 
+                      ...(checked ? { is_todays_purchase: false } : {}) 
+                    });
+                  }} 
+                />
+                <span className="font-medium">Top Selling</span>
+              </label>
+              
+              <label className="flex items-center gap-2 cursor-pointer text-sm">
+                <input 
+                  type="checkbox" 
+                  className="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+                  checked={formData.is_todays_purchase} 
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setFormData({ 
+                      ...formData, 
+                      is_todays_purchase: checked, 
+                      ...(checked ? { is_top_selling: false } : {}) 
+                    });
+                  }} 
+                />
+                <span className="font-medium">Today's Purchases</span>
+              </label>
+            </div>
+          </div>
+
+          {/* ── AVAILABILITY (UI ONLY) ── */}
+          <div className="pt-2 flex flex-col gap-2">
+            <Label className="text-sm font-semibold text-slate-800">Availability</Label>
+            <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+              <option value="chennai">Exclusive for Chennai</option>
+              <option value="outside">Exclusive for Outside Regions</option>
+              <option value="both">Available for Chennai & Outside Regions</option>
+            </select>
           </div>
 
           <div className="space-y-4 pt-4 border-t border-border">
