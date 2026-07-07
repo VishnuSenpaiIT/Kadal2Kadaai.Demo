@@ -47,28 +47,23 @@ export default function CheckoutPage() {
     
     const address = addresses.find((addr: any) => addr.id === selectedAddressId);
     if (address) {
-      if (address.latitude !== null && address.longitude !== null) {
-        setIsCalculating(true);
-        calculateShipping.mutate({
-          latitude: Number(address.latitude),
-          longitude: Number(address.longitude),
-          subtotal: Number(cart.subtotal)
-        }, {
-          onSuccess: (data) => {
-            setShippingData(data);
-            setIsCalculating(false);
-            setError('');
-          },
-          onError: (err: any) => {
-            setShippingData(null);
-            setIsCalculating(false);
-            setError(err.response?.data?.message || err.message || 'Selected address is outside our delivery range.');
-          }
-        });
-      } else {
-        setShippingData(null);
-        setError('Selected address coordinates are missing. Please edit the address or add a new address with coordinates.');
-      }
+      setIsCalculating(true);
+      calculateShipping.mutate({
+        latitude: Number(address.latitude || 0),
+        longitude: Number(address.longitude || 0),
+        subtotal: Number(cart.subtotal)
+      }, {
+        onSuccess: (data) => {
+          setShippingData(data);
+          setIsCalculating(false);
+          setError('');
+        },
+        onError: (err: any) => {
+          setShippingData(null);
+          setIsCalculating(false);
+          setError(err.response?.data?.message || err.message || 'Failed to calculate delivery charges.');
+        }
+      });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAddressId, addresses, cart?.subtotal]);
@@ -94,7 +89,6 @@ export default function CheckoutPage() {
     setError('');
     checkout.mutate({ 
       address_id: selectedAddressId, 
-      harbour_id: shippingData?.harbour?.id || null,
       notes 
     }, {
       onSuccess: () => {
