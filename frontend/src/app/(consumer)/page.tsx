@@ -84,6 +84,8 @@ export default function Homepage() {
 
   const { data: productsData, isLoading } = useProducts(Object.keys(filters).length > 0 ? filters : undefined);
   const products = productsData?.data || [];
+  const topSellingProducts = products.filter((p: any) => p.is_top_selling);
+  const todaysPurchaseProducts = products.filter((p: any) => p.is_todays_purchase);
 
   const tabs = [
     { id: 'all', label: "Today's Local Catch" },
@@ -260,7 +262,7 @@ export default function Homepage() {
             {/* Smooth infinite marquee loop */}
             <div className="animate-marquee group-hover/marquee:[animation-play-state:paused] flex gap-6 px-3">
               {/* Double the products array to create a seamless loop */}
-              {[...(products || []), ...(products || [])].map((product, idx) => (
+              {[...(topSellingProducts || []), ...(topSellingProducts || [])].map((product, idx) => (
                 <div key={`top-selling-${product.id}-${idx}`} className="w-[280px] sm:w-[300px] md:w-[320px] flex-shrink-0">
                   <ProductCard 
                     id={product.id.toString()} 
@@ -307,7 +309,7 @@ export default function Homepage() {
               style={{ display: 'flex', width: 'max-content', animation: 'marquee 35s linear infinite reverse' }}
             >
               {/* Simulate "Today's Purchase" by taking a slice and duplicating it */}
-              {[...([...(products || [])].reverse()), ...([...(products || [])].reverse())].map((product, idx) => (
+              {[...([...(todaysPurchaseProducts || [])].reverse()), ...([...(todaysPurchaseProducts || [])].reverse())].map((product, idx) => (
                 <div key={`today-purchase-${product.id}-${idx}`} className="w-[280px] sm:w-[300px] md:w-[320px] flex-shrink-0">
                   <div className="relative">
                     {/* Add Popularity Indicator */}
