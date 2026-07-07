@@ -17,21 +17,21 @@ import { toast } from 'sonner';
 const STATUS_PIPELINE = [
   {
     value: 'processing',
-    label: 'Packed',
+    label: 'Packed / Preparing',
     sublabel: 'Order is packed & ready',
     icon: <Package className="w-7 h-7" />,
     color: 'purple',
   },
   {
     value: 'out_for_delivery',
-    label: 'Delivered',
-    sublabel: 'Out for delivery',
+    label: 'Out for Delivery',
+    sublabel: 'On the way to customer',
     icon: <Truck className="w-7 h-7" />,
     color: 'sky',
   },
   {
     value: 'delivered',
-    label: 'Reached',
+    label: 'Delivered',
     sublabel: 'Arrived at customer',
     icon: <PackageCheck className="w-7 h-7" />,
     color: 'emerald',

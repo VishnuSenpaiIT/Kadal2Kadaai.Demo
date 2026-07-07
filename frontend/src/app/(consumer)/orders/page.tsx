@@ -84,9 +84,9 @@ export default function OrdersPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="font-bold text-lg">Status: <span className="capitalize">{order.status.replace(/_/g, ' ')}</span></h3>
-                      {order.status === 'PENDING_SELLER_APPROVAL' && <Badge className="bg-yellow-500">Processing</Badge>}
-                      {order.status === 'DELIVERED' && <Badge className="bg-green-500">Completed</Badge>}
-                      {order.status === 'CANCELLED_BY_CONSUMER' && <Badge variant="destructive">Cancelled</Badge>}
+                      {order.status === 'pending_seller_approval' && <Badge className="bg-yellow-500">Processing</Badge>}
+                      {order.status === 'delivered' && <Badge className="bg-green-500">Completed</Badge>}
+                      {['cancelled', 'rejected'].includes(order.status) && <Badge variant="destructive">Cancelled</Badge>}
                     </div>
                     <div className="text-muted-foreground">
                       <p className="mb-2">

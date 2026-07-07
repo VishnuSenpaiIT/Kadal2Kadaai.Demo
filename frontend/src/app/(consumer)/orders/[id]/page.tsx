@@ -163,7 +163,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
     );
   }
 
-  const isCancellable = order.status === 'PENDING_SELLER_APPROVAL' || order.status === 'APPROVED';
+  const isCancellable = order.status === 'pending_seller_approval' || order.status === 'approved';
 
   const handleCancel = () => {
     cancelOrder.mutate({ id: order.id, reason: cancelReason }, {
@@ -305,8 +305,8 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                       <tr key={item.id} className="hover:bg-slate-50/50">
                         <td className="px-4 py-4 align-top">
                           <Badge variant="outline" className={`whitespace-nowrap capitalize ${
-                            order.status === 'DELIVERED' ? 'border-green-500 text-green-700 bg-green-50' : 
-                            order.status === 'CANCELLED' ? 'border-red-500 text-red-700 bg-red-50' : 
+                            order.status === 'delivered' ? 'border-green-500 text-green-700 bg-green-50' : 
+                            ['cancelled', 'rejected'].includes(order.status) ? 'border-red-500 text-red-700 bg-red-50' : 
                             'border-blue-500 text-blue-700 bg-blue-50'
                           }`}>
                             {order.status.replace(/_/g, ' ')}
