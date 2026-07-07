@@ -145,6 +145,7 @@ function ProductsContent() {
                     slug={product.slug}
                     name={product.name} 
                     price={product.price} 
+                    salePrice={product.sale_price}
                     weight={product.weight_unit || "1kg"} 
                     category={product.category?.name || "Uncategorized"}
                     image={product.images?.[0]?.image_url}

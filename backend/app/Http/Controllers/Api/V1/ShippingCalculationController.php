@@ -114,4 +114,36 @@ class ShippingCalculationController extends Controller
             'google_maps_api_key' => $key
         ], 'Maps configuration retrieved');
     }
+
+    /**
+     * Proxy geocoding requests to Google Maps API to bypass referer restrictions on REST calls.
+     */
+    public function geocode(Request $request): JsonResponse
+    {
+        $settings = ShippingSetting::first();
+        $key = $settings?->google_maps_api_key ?: env('GOOGLE_MAPS_API_KEY');
+
+        if (!$key) {
+            return response()->json([
+                'status' => 'ERROR',
+                'error_message' => 'Google Maps API key is not configured on the server.'
+            ], 422);
+        }
+
+        $params = [
+            'key' => $key
+        ];
+
+        if ($request->has('address')) {
+            $params['address'] = $request->query('address');
+        }
+
+        if ($request->has('latlng')) {
+            $params['latlng'] = $request->query('latlng');
+        }
+
+        $response = \Illuminate\Support\Facades\Http::get('https://maps.googleapis.com/maps/api/geocode/json', $params);
+
+        return response()->json($response->json(), $response->status());
+    }
 }
