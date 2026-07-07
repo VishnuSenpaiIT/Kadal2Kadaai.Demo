@@ -21,7 +21,7 @@ class ShippingSettingController extends Controller
     {
         $settings = ShippingSetting::firstOrCreate([]);
         
-        $key = $settings->google_maps_api_key;
+        $key = $settings->google_maps_api_key ?: env('GOOGLE_MAPS_API_KEY');
         $maskedKey = null;
 
         if ($key) {
@@ -68,7 +68,7 @@ class ShippingSettingController extends Controller
         $settings->update($updateData);
 
         // Return masked response
-        $key = $settings->google_maps_api_key;
+        $key = $settings->google_maps_api_key ?: env('GOOGLE_MAPS_API_KEY');
         $maskedKey = null;
 
         if ($key) {

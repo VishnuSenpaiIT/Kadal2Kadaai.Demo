@@ -6,8 +6,6 @@ namespace App\Http\Controllers\Api\V1\Marketplace;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
-use App\Models\Harbour;
-use App\Services\GeoRoutingService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -50,35 +48,6 @@ class ProductController extends Controller
 
         if ($request->boolean('popular')) {
             $query->popular();
-        }
-
-        // Geo-Routing Filter
-        if ($request->filled('pincode')) {
-            $pincode = $request->pincode;
-            $geoService = app(GeoRoutingService::class);
-            
-            $harbors = Harbour::all();
-            $harborTransitTimes = [];
-
-            foreach($harbors as $harbor) {
-                $hours = $geoService->getTransitTimeInHours($harbor, $pincode);
-                if ($hours !== null) {
-                    $harborTransitTimes[$harbor->id] = $hours;
-                }
-            }
-
-            $query->where(function($q) use ($harborTransitTimes) {
-                // Products without a harbor restriction are shown to everyone
-                $q->whereNull('origin_harbor_id');
-                
-                // Products with a harbor are only shown if transit time is within their max_transit_hours
-                foreach ($harborTransitTimes as $harborId => $hours) {
-                    $q->orWhere(function($subQ) use ($harborId, $hours) {
-                        $subQ->where('origin_harbor_id', $harborId)
-                             ->where('max_transit_hours', '>=', $hours);
-                    });
-                }
-            });
         }
 
         // Sort

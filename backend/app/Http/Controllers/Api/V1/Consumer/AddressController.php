@@ -90,6 +90,15 @@ class AddressController extends Controller
     public function destroy(Request $request, string $id): JsonResponse
     {
         $address = $request->user()->addresses()->findOrFail($id);
+
+        // Fix 10: Prevent deletion if this address is referenced by any orders
+        if (\App\Models\Order::where('address_id', $address->id)->exists()) {
+            return $this->errorResponse(
+                'This address cannot be deleted because it is linked to one or more orders. You can add a new address instead.',
+                422
+            );
+        }
+
         $address->delete();
 
         // Assign a new default if needed

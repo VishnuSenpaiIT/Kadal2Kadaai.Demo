@@ -96,10 +96,6 @@ export function OperationsSidebar() {
             <Settings className={getIconClasses('/admin/settings')} />
             System Settings
           </Link>
-          <Link href="/admin/settings/shipping" className={getLinkClasses('/admin/settings/shipping')}>
-            <Anchor className={getIconClasses('/admin/settings/shipping')} />
-            Shipping
-          </Link>
           <button 
             onClick={() => {
               localStorage.removeItem('api_token');

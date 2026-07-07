@@ -58,16 +58,6 @@ export default function AdminSettingsPage() {
         <p className="text-muted-foreground mt-1">Manage public information and site configuration.</p>
       </div>
 
-      {/* Sub-navigation Tabs */}
-      <div className="flex border-b border-border/80">
-        <button className="px-6 py-3 font-semibold text-primary border-b-2 border-primary relative">
-          General Settings
-        </button>
-        <Link href="/admin/settings/shipping" className="px-6 py-3 font-semibold text-muted-foreground hover:text-foreground transition-all relative border-b-2 border-transparent">
-          Shipping Settings
-        </Link>
-      </div>
-
       <div className="bg-card rounded-xl border shadow-sm p-6 space-y-8">
         <div className="space-y-4">
           <h2 className="text-xl font-semibold border-b pb-2">Footer Configuration</h2>

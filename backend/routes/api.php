@@ -22,9 +22,7 @@ Route::get('/health', function () {
     ]);
 });
 
-Route::get('/logs', function() {
-    return file_get_contents(storage_path('logs/laravel.log'));
-});
+// SECURITY: Log endpoint removed — never expose logs publicly.
 
 Route::prefix('v1')->middleware([\App\Http\Middleware\VisitorTrackingMiddleware::class])->group(function () {
 
@@ -169,8 +167,7 @@ Route::prefix('v1')->middleware([\App\Http\Middleware\VisitorTrackingMiddleware:
             Route::get('/orders/{id}', [\App\Http\Controllers\Api\V1\Admin\OrderController::class, 'show']);
             Route::patch('/orders/{id}/status', [\App\Http\Controllers\Api\V1\Admin\OrderController::class, 'updateStatus']);
 
-            // Harbours & Shipping settings
-            Route::apiResource('harbours', \App\Http\Controllers\Api\V1\Admin\HarbourController::class);
+            // Shipping settings (simplified range and settings)
             Route::apiResource('shipping-ranges', \App\Http\Controllers\Api\V1\Admin\ShippingRangeController::class);
             Route::get('shipping-settings', [\App\Http\Controllers\Api\V1\Admin\ShippingSettingController::class, 'show']);
             Route::put('shipping-settings', [\App\Http\Controllers\Api\V1\Admin\ShippingSettingController::class, 'update']);

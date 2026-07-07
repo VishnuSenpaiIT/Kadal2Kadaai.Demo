@@ -6,6 +6,7 @@ import { useCart } from '@/shared/api/hooks/useCart';
 import { useAddresses } from '@/shared/api/hooks/useAddresses';
 import { useCheckout } from '@/shared/api/hooks/useOrders';
 import { useCalculateShipping } from '@/shared/api/hooks/useShippingCalculation';
+import { useAuth } from '@/providers/AuthProvider';
 import { Container } from '@/components/layout/shared/Container';
 import { Button } from '@/components/ui/button';
 import { Loader2, MapPin, AlertCircle, ArrowRight, ShieldCheck, CheckCircle2, Anchor } from 'lucide-react';
@@ -13,6 +14,8 @@ import Link from 'next/link';
 
 export default function CheckoutPage() {
   const router = useRouter();
+  // Fix 15: Auth guard — redirect unauthenticated users before rendering anything
+  const { isAuthenticated, isInitialized } = useAuth();
   const { data: cart, isLoading: isCartLoading } = useCart();
   const { data: addresses, isLoading: isAddressesLoading } = useAddresses();
   const checkout = useCheckout();
@@ -24,6 +27,13 @@ export default function CheckoutPage() {
   const [shippingData, setShippingData] = useState<any>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const calculateShipping = useCalculateShipping();
+
+  // Fix 15: Redirect unauthenticated users to login
+  useEffect(() => {
+    if (isInitialized && !isAuthenticated) {
+      router.replace('/login?redirect=/checkout');
+    }
+  }, [isInitialized, isAuthenticated, router]);
 
   useEffect(() => {
     if (!selectedAddressId || !addresses || !cart) return;
@@ -53,6 +63,7 @@ export default function CheckoutPage() {
         setError('Selected address coordinates are missing. Please edit the address or add a new address with coordinates.');
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAddressId, addresses, cart?.subtotal]);
 
   if (isCartLoading || isAddressesLoading) {
@@ -94,7 +105,10 @@ export default function CheckoutPage() {
   };
 
   const deliveryFee = shippingData ? Number(shippingData.shipping_charge) : 0;
-  const total = shippingData ? Number(shippingData.total_amount) : Number(cart.subtotal);
+  // Fix 8: Use tax_amount from API response for accurate total matching order creation
+  const taxAmount = shippingData ? Number(shippingData.tax_amount) : 0;
+  const subtotal = shippingData ? Number(shippingData.subtotal) : Number(cart?.subtotal ?? 0);
+  const total = shippingData ? Number(shippingData.total_amount) : Number(cart?.subtotal ?? 0);
 
   return (
     <div className="py-12 lg:py-20 bg-background min-h-screen relative overflow-hidden">
@@ -190,7 +204,7 @@ export default function CheckoutPage() {
               <div className="space-y-5 mb-8">
                 <div className="flex justify-between text-muted-foreground font-medium">
                   <span>Subtotal ({cart.total_items} items)</span>
-                  <span className="text-foreground font-bold">₹{cart.subtotal}</span>
+                  <span className="text-foreground font-bold">₹{subtotal.toFixed(2)}</span>
                 </div>
                 
                 {isCalculating ? (
@@ -200,20 +214,14 @@ export default function CheckoutPage() {
                   </div>
                 ) : shippingData ? (
                   <>
-                    <div className="flex justify-between text-muted-foreground text-xs border-t border-dashed pt-2">
-                      <span className="flex items-center gap-1 font-semibold text-muted-foreground/80">
-                        <Anchor className="w-3.5 h-3.5" />
-                        Harbour:
-                      </span>
-                      <span className="text-foreground font-medium">{shippingData.harbour.harbour_name}</span>
-                    </div>
-                    <div className="flex justify-between text-muted-foreground text-xs">
-                      <span className="font-semibold text-muted-foreground/80">Distance:</span>
-                      <span className="text-foreground font-medium">{shippingData.distance} km</span>
-                    </div>
+                    {/* Fix 8: Show tax line so total matches what backend charges */}
                     <div className="flex justify-between text-muted-foreground font-medium border-t border-dashed pt-2">
+                      <span>Tax (5%)</span>
+                      <span className="text-foreground font-bold">₹{taxAmount.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-muted-foreground font-medium">
                       <span>Delivery Fee</span>
-                      <span className="text-foreground font-bold">₹{deliveryFee}</span>
+                      <span className="text-foreground font-bold">₹{deliveryFee.toFixed(2)}</span>
                     </div>
                   </>
                 ) : (
