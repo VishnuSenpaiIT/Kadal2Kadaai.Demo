@@ -76,16 +76,20 @@ export function ProductCard({
               <Anchor className="h-12 w-12 text-primary/20 dark:text-primary/40 group-hover:scale-110 transition-transform duration-700 z-10 relative" />
             )}
             
-            <div className="absolute top-3 left-3 z-20 flex flex-col gap-1.5 items-start">
+            <div className="absolute top-3 left-3 z-20">
               <Badge className="bg-white/90 dark:bg-slate-800/90 text-slate-900 dark:text-slate-100 backdrop-blur-md shadow-sm border border-border/50 font-semibold uppercase tracking-wider text-[9px] px-2 py-0.5">
                 {category}
               </Badge>
-              {salePrice && salePrice < price && (
-                <Badge className="bg-error-600 hover:bg-error-700 text-white font-bold text-[9px] px-2 py-0.5 shadow-md border-none uppercase tracking-wide">
-                  {Math.round(((price - salePrice) / price) * 100)}% OFF
-                </Badge>
-              )}
             </div>
+
+            {salePrice && salePrice < price && (
+              <div className="absolute top-3 right-3 z-20">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-rose-500 to-red-600 text-white flex flex-col items-center justify-center shadow-[0_4px_12px_rgba(225,29,72,0.4)] border border-rose-500/20 transform hover:scale-110 transition-transform duration-300">
+                  <span className="text-[12px] font-black leading-none">{Math.round(((price - salePrice) / price) * 100)}%</span>
+                  <span className="text-[8px] font-black leading-none tracking-wider uppercase mt-0.5">OFF</span>
+                </div>
+              </div>
+            )}
             
             {!isAvailable && (
               <div className="absolute inset-0 bg-background/60 backdrop-blur-[2px] flex items-center justify-center z-30">
@@ -107,22 +111,37 @@ export function ProductCard({
             <div>
               <h4 className="font-semibold text-sm md:text-base text-foreground line-clamp-2 group-hover:text-primary dark:group-hover:text-primary-400 transition-colors leading-snug" title={name}>{name}</h4>
             </div>
-            <div className="mt-2 flex items-end justify-between">
-              <div>
-                <p className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider mb-0.5">Per {weight}</p>
+            <div className="mt-3 flex items-end justify-between">
+              <div className="w-full">
+                <p className="text-[10px] sm:text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                  Price Per {weight}
+                </p>
                 {salePrice && salePrice < price ? (
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-lg sm:text-xl font-bold text-error-600 dark:text-error-400">
-                      {currency}{salePrice}
-                    </span>
-                    <span className="text-xs text-muted-foreground line-through">
-                      {currency}{price}
-                    </span>
+                  <div className="space-y-1">
+                    <div className="flex items-center flex-wrap gap-2">
+                      <span className="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400">
+                        {currency}{salePrice}
+                      </span>
+                      <span className="text-xs sm:text-sm text-muted-foreground line-through">
+                        {currency}{price}
+                      </span>
+                      <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-200/50 dark:border-emerald-500/20">
+                        {Math.round(((price - salePrice) / price) * 100)}% OFF
+                      </span>
+                    </div>
+                    <p className="text-[9px] text-muted-foreground/60 italic font-medium">
+                      (Includes all taxes)
+                    </p>
                   </div>
                 ) : (
-                  <p className="text-lg sm:text-xl font-bold text-primary dark:text-primary-400">
-                    {currency}{price}
-                  </p>
+                  <div className="space-y-1">
+                    <p className="text-xl sm:text-2xl font-black text-primary dark:text-primary-400">
+                      {currency}{price}
+                    </p>
+                    <p className="text-[9px] text-muted-foreground/60 italic font-medium">
+                      (Includes all taxes)
+                    </p>
+                  </div>
                 )}
               </div>
             </div>

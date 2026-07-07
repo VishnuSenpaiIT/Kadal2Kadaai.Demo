@@ -72,6 +72,7 @@ Route::prefix('v1')->middleware([\App\Http\Middleware\VisitorTrackingMiddleware:
         Route::get('/search', [\App\Http\Controllers\Api\V1\Marketplace\SearchController::class, 'search']);
         Route::get('/settings', [\App\Http\Controllers\Api\V1\Marketplace\SettingController::class, 'index']);
         Route::get('/banners', [\App\Http\Controllers\Api\V1\Admin\HomepageBannerController::class, 'publicIndex']);
+        Route::get('/shipping/geocode', [\App\Http\Controllers\Api\V1\ShippingCalculationController::class, 'geocode']);
     });
 
     // ──────────────────────────────────────────────────────────────────────────

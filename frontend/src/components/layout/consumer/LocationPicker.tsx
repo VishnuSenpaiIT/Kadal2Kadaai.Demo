@@ -27,13 +27,8 @@ export function LocationPicker() {
 
     setIsLoading(true);
     try {
-      const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-      if (!apiKey) {
-        throw new Error("Google Maps API Key is missing");
-      }
-
-      // Append ", India" to ensure we get Indian pincodes mostly
-      const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${pincode},+India&key=${apiKey}`;
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+      const url = `${baseUrl}/v1/marketplace/shipping/geocode?address=${encodeURIComponent(pincode + ', India')}`;
       const res = await fetch(url);
       const data = await res.json();
 
@@ -86,8 +81,8 @@ export function LocationPicker() {
       async (position) => {
         const { latitude, longitude } = position.coords;
         try {
-          const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-          const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`;
+          const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+          const url = `${baseUrl}/v1/marketplace/shipping/geocode?latlng=${latitude},${longitude}`;
           const res = await fetch(url);
           const data = await res.json();
 
@@ -179,15 +174,20 @@ export function LocationPicker() {
             </div>
           </div>
 
-          <Button 
-            variant="outline" 
-            className="w-full flex items-center gap-2"
-            onClick={useCurrentLocation}
-            disabled={isLoading}
-          >
-            <Navigation className="h-4 w-4" />
-            Use my current location
-          </Button>
+          <div className="space-y-1.5">
+            <Button 
+              variant="outline" 
+              className="w-full flex items-center gap-2"
+              onClick={useCurrentLocation}
+              disabled={isLoading}
+            >
+              <Navigation className="h-4 w-4" />
+              Use my current location
+            </Button>
+            <p className="text-[10px] text-center text-muted-foreground font-semibold">
+              We need a precise location, this is for delivery.
+            </p>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

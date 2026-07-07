@@ -307,9 +307,9 @@ export default function ProductDetailPage() {
               <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-2">Price per {product.weight_unit}</p>
               {displaySalePrice !== null ? (
                 <div className="flex items-baseline gap-3">
-                  <span className="text-4xl font-black text-error-600">₹{displaySalePrice}</span>
+                  <span className="text-4xl font-black text-emerald-600 dark:text-emerald-400">₹{displaySalePrice}</span>
                   <span className="text-lg text-muted-foreground line-through">₹{displayBasePrice}</span>
-                  <Badge className="bg-error-500 hover:bg-error-600 text-white font-bold ml-2">
+                  <Badge className="bg-rose-600 hover:bg-rose-700 text-white font-bold ml-2 border-none">
                     {Math.round(((displayBasePrice - displaySalePrice) / displayBasePrice) * 100)}% OFF
                   </Badge>
                 </div>
