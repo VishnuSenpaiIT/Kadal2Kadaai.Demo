@@ -35,12 +35,12 @@ export default function CheckoutPage() {
     }
   }, [isInitialized, isAuthenticated, router]);
 
-  // Redirect to cart if empty
+  // Redirect to cart if empty (only if checkout is not in progress or completed)
   useEffect(() => {
-    if (!isCartLoading && (!cart || cart.items.length === 0)) {
+    if (!isCartLoading && (!cart || cart.items.length === 0) && !checkout.isPending && !checkout.isSuccess) {
       router.push('/cart');
     }
-  }, [cart, isCartLoading, router]);
+  }, [cart, isCartLoading, checkout.isPending, checkout.isSuccess, router]);
 
   useEffect(() => {
     if (!selectedAddressId || !addresses || !cart) return;
