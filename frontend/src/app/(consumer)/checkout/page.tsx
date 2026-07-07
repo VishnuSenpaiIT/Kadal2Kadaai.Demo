@@ -35,6 +35,13 @@ export default function CheckoutPage() {
     }
   }, [isInitialized, isAuthenticated, router]);
 
+  // Redirect to cart if empty
+  useEffect(() => {
+    if (!isCartLoading && (!cart || cart.items.length === 0)) {
+      router.push('/cart');
+    }
+  }, [cart, isCartLoading, router]);
+
   useEffect(() => {
     if (!selectedAddressId || !addresses || !cart) return;
     
@@ -66,18 +73,13 @@ export default function CheckoutPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAddressId, addresses, cart?.subtotal]);
 
-  if (isCartLoading || isAddressesLoading) {
+  if (isCartLoading || isAddressesLoading || !cart || cart.items.length === 0) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
         <p className="text-muted-foreground font-medium animate-pulse">Loading secure checkout...</p>
       </div>
     );
-  }
-
-  if (!cart || cart.items.length === 0) {
-    router.push('/cart');
-    return null;
   }
 
   const handleCheckout = () => {
