@@ -4,13 +4,12 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Anchor, ShoppingCart, Loader2, Check, ArrowRight } from 'lucide-react';
+import { Anchor, ShoppingCart, Loader2, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAddToCart } from '@/shared/api/hooks/useCart';
 import Link from 'next/link';
 import { assetUrl } from '@/lib/asset-url';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 export interface ProductCardProps {
   id: string;
@@ -42,7 +41,6 @@ export function ProductCard({
   const addToCartMutation = useAddToCart();
   const resolvedImage = assetUrl(image);
   const [isAdded, setIsAdded] = useState(false);
-  const [successModalOpen, setSuccessModalOpen] = useState(false);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -52,7 +50,6 @@ export function ProductCard({
     }, {
       onSuccess: () => {
         setIsAdded(true);
-        setSuccessModalOpen(true);
         setTimeout(() => setIsAdded(false), 2000);
       }
     });
@@ -204,63 +201,6 @@ export function ProductCard({
           </Button>
         </CardFooter>
       </Card>
-
-      <Dialog open={successModalOpen} onOpenChange={setSuccessModalOpen}>
-        <DialogContent className="sm:max-w-sm p-6 rounded-3xl border border-slate-200/80 bg-white/95 backdrop-blur-md shadow-2xl">
-          <DialogHeader className="text-center pb-2 flex flex-col items-center">
-            <div className="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 mb-2">
-              <Check className="w-6 h-6" />
-            </div>
-            <DialogTitle className="text-xl font-heading font-black text-slate-900 leading-none">
-              Added to Net! 🎣
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="flex items-center gap-4 bg-slate-50 border border-slate-100 p-4 rounded-2xl my-2">
-            <div className="w-16 h-16 rounded-xl bg-white border overflow-hidden shrink-0 flex items-center justify-center shadow-sm">
-              {resolvedImage ? (
-                <img src={resolvedImage} alt={name} className="w-full h-full object-contain p-1" />
-              ) : (
-                <Anchor className="w-8 h-8 text-primary/30" />
-              )}
-            </div>
-            <div className="flex-1 min-w-0">
-              <h5 className="font-heading font-bold text-sm text-slate-900 truncate leading-snug">{name}</h5>
-              <p className="text-xs text-muted-foreground mt-0.5 font-semibold">Quantity: 1 item</p>
-              <p className="text-sm font-black text-emerald-600 mt-1">₹{salePrice || price}</p>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 gap-2 pt-2">
-            <Button
-              className="w-full bg-gradient-to-r from-primary to-secondary text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 shadow-md shadow-primary/20 hover:shadow-lg transition-all"
-              onClick={() => {
-                setSuccessModalOpen(false);
-                window.location.href = '/checkout';
-              }}
-            >
-              Checkout Now <ArrowRight className="w-4 h-4" />
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full border-slate-200 hover:bg-slate-50 text-slate-700 font-bold h-12 rounded-xl"
-              onClick={() => {
-                setSuccessModalOpen(false);
-                window.location.href = '/cart';
-              }}
-            >
-              View Net (Cart)
-            </Button>
-            <Button
-              variant="ghost"
-              className="w-full text-slate-500 hover:text-slate-700 font-medium h-10 rounded-xl"
-              onClick={() => setSuccessModalOpen(false)}
-            >
-              Continue Shopping
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </motion.div>
   );
 }
