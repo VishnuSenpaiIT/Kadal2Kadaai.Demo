@@ -16,7 +16,7 @@ import {
   ShoppingCart, 
   Loader2, 
   Calendar, 
-  DollarSign, 
+  IndianRupee, 
   CheckCircle2, 
   Truck, 
   ArrowRight,
@@ -153,7 +153,7 @@ export default function AdminDashboardPage() {
                 <p className="text-[10px] text-muted-foreground">10% Platform Commission</p>
               </div>
               <div className="p-3 bg-emerald-50 rounded-xl dark:bg-emerald-950/30 text-emerald-500">
-                <DollarSign className="h-6 w-6" />
+                <IndianRupee className="h-6 w-6" />
               </div>
             </CardContent>
           </Card>

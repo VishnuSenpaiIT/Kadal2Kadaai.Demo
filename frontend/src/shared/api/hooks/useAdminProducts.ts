@@ -155,7 +155,9 @@ export function useCreateProduct() {
       }
 
       const { data } = await apiClient.post('/v1/admin/products', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
       return data.data;
     },
