@@ -55,8 +55,8 @@ export default function AddressesPage() {
     district: '',
     state: '',
     pincode: '',
-    latitude: '' as string | number,
-    longitude: '' as string | number,
+    latitude: '13.0827' as string | number,
+    longitude: '80.2707' as string | number,
     address_type: 'Home' as 'Home' | 'Work' | 'Other',
     delivery_instructions: '',
   });
@@ -73,12 +73,13 @@ export default function AddressesPage() {
       district: '',
       state: '',
       pincode: '',
-      latitude: '',
-      longitude: '',
+      latitude: '13.0827',
+      longitude: '80.2707',
       address_type: 'Home',
       delivery_instructions: '',
     });
   };
+
 
   const handleOpenAddForm = () => {
     setEditingAddress(null);
@@ -231,26 +232,24 @@ export default function AddressesPage() {
                   </div>
 
                   {/* Coordinates & Google Maps Picker */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="hidden grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="lat">Latitude *</Label>
+                      <Label htmlFor="lat">Latitude</Label>
                       <Input
                         id="lat"
                         type="number"
                         step="0.000001"
-                        required
                         value={formData.latitude}
                         onChange={e => setFormData({ ...formData, latitude: e.target.value })}
                         placeholder="e.g. 13.0827"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="lng">Longitude *</Label>
+                      <Label htmlFor="lng">Longitude</Label>
                       <Input
                         id="lng"
                         type="number"
                         step="0.000001"
-                        required
                         value={formData.longitude}
                         onChange={e => setFormData({ ...formData, longitude: e.target.value })}
                         placeholder="e.g. 80.2707"
@@ -348,13 +347,13 @@ export default function AddressesPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="district">District *</Label>
+                      <Label htmlFor="district">Locality *</Label>
                       <Input
                         id="district"
                         required
                         value={formData.district}
                         onChange={e => setFormData({ ...formData, district: e.target.value })}
-                        placeholder="e.g. Chennai"
+                        placeholder="e.g. Anna Nagar, Adyar"
                       />
                     </div>
                     <div className="space-y-2">
