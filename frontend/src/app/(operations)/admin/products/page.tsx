@@ -33,7 +33,7 @@ const ProductImage = ({ src, alt }: { src: string | null, alt: string }) => {
     <img
       src={src}
       alt={alt}
-      className="h-10 w-10 rounded-md object-cover border border-border shrink-0"
+      className="h-10 w-10 rounded-md object-cover border border-border shrink-0 transition-transform duration-300 ease-in-out hover:scale-125 hover:z-50 relative cursor-pointer"
       onError={() => setError(true)}
     />
   );

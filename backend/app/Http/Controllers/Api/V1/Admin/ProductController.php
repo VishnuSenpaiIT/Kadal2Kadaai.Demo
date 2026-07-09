@@ -62,7 +62,7 @@ class ProductController extends Controller
             'variants.*.max_distance' => 'nullable|numeric',
             'tags'                   => 'nullable|array',
             'tags.*'                 => 'string',
-            'image'                  => 'nullable|image|max:5120',
+            'image'                  => 'nullable|file|max:5120',
             'attributes'             => 'nullable|array',
             'origin_harbor_id'       => 'nullable|integer',
             'max_transit_hours'      => 'nullable|integer|min:0',

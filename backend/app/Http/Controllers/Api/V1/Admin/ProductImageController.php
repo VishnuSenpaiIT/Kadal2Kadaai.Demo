@@ -19,7 +19,7 @@ class ProductImageController extends Controller
     public function store(Request $request, string $productId)
     {
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'image' => 'required|file|max:5120',
         ]);
 
         $product = Product::findOrFail($productId);

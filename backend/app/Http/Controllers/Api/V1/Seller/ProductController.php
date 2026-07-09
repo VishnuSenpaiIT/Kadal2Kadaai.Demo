@@ -114,7 +114,7 @@ class ProductController extends Controller
         $product = Product::where('seller_id', $seller->id)->findOrFail($id);
 
         $request->validate([
-            'image' => 'required|image|max:5120', // 5MB max
+            'image' => 'required|file|max:5120', // 5MB max
         ]);
 
         $url = $this->imageUploadService->uploadProductImage($request->file('image'));
