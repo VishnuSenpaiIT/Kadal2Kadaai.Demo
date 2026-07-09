@@ -6,23 +6,17 @@ export interface ShippingCalculationRequest {
   latitude: number;
   longitude: number;
   subtotal?: number;
+  address_id?: string;
 }
 
 export interface ShippingCalculationResponse {
-  distance: number;
   shipping_charge: number;
+  tax_amount: number;
+  subtotal: number;
   total_amount: number;
-  matched_range: {
-    id: number;
-    from_distance: number;
-    to_distance: number;
-    shipping_price: number;
-  };
-  harbour: {
-    id: number;
-    harbour_name: string;
-    address: string | null;
-  };
+  free_shipping_threshold: number;
+  is_free_shipping: boolean;
+  area_name?: string;
 }
 
 export function useCalculateShipping() {

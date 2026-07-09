@@ -71,16 +71,12 @@ graph TD
 ## 🛠 Quick Start
 
 > [!TIP]
-> Make sure you have the following installed: **Node.js 20+**, **PHP 8.3+**, **Composer 2+**, **PostgreSQL 16**, **Redis 7**.
+> Make sure you have the following installed: **Node.js 20+**, **PHP 8.3+**, **Composer 2+**, **PostgreSQL 16** (or SQLite for zero-setup), **Redis 7**.
+> See [HOWTORUN.md](./HOWTORUN.md) for detailed local setup instructions.
 
 ### Local Development
 
-1️⃣ **Start Infrastructure**
-```bash
-docker-compose -f docker-compose.dev.yml up -d
-```
-
-2️⃣ **Backend Setup**
+1️⃣ **Backend Setup**
 ```bash
 cd backend
 cp .env.example .env
@@ -90,7 +86,7 @@ php artisan migrate --seed
 php artisan serve
 ```
 
-3️⃣ **Frontend Setup**
+2️⃣ **Frontend Setup**
 ```bash
 cd frontend
 cp .env.local.example .env.local

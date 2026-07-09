@@ -71,6 +71,7 @@ Route::prefix('v1')->middleware([\App\Http\Middleware\VisitorTrackingMiddleware:
         Route::get('/settings', [\App\Http\Controllers\Api\V1\Marketplace\SettingController::class, 'index']);
         Route::get('/banners', [\App\Http\Controllers\Api\V1\Admin\HomepageBannerController::class, 'publicIndex']);
         Route::get('/shipping/geocode', [\App\Http\Controllers\Api\V1\ShippingCalculationController::class, 'geocode']);
+        Route::get('/shipping/places-autocomplete', [\App\Http\Controllers\Api\V1\ShippingCalculationController::class, 'placesAutocomplete']);
     });
 
     // ──────────────────────────────────────────────────────────────────────────
@@ -171,6 +172,9 @@ Route::prefix('v1')->middleware([\App\Http\Middleware\VisitorTrackingMiddleware:
             Route::apiResource('shipping-ranges', \App\Http\Controllers\Api\V1\Admin\ShippingRangeController::class);
             Route::get('shipping-settings', [\App\Http\Controllers\Api\V1\Admin\ShippingSettingController::class, 'show']);
             Route::put('shipping-settings', [\App\Http\Controllers\Api\V1\Admin\ShippingSettingController::class, 'update']);
+
+            // Areas (Area Master) — manage serviceable Chennai localities and shipping prices
+            Route::apiResource('areas', \App\Http\Controllers\Api\V1\Admin\AreaController::class);
         });
     });
 });

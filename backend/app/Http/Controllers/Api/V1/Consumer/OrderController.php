@@ -132,8 +132,19 @@ class OrderController extends Controller
                 // Fix 8: 5% tax is calculated consistently
                 $tax = round($subtotal * 0.05, 2);
 
-                // Flat shipping rate logic: ₹50 flat, free shipping for orders ₹1000 and above
-                $delivery = ($subtotal >= 1000.0) ? 0.0 : 50.00;
+                // Location-based shipping rate calculation
+                $delivery = null;
+                if ($address && !empty($address->area_locality)) {
+                    $matchedArea = \App\Models\Area::whereRaw('LOWER(name) = ?', [strtolower(trim($address->area_locality))])->first();
+                    if ($matchedArea) {
+                        $delivery = (float) $matchedArea->shipping_price;
+                    }
+                }
+
+                // Fallback to original flat shipping rate logic if no match found
+                if ($delivery === null) {
+                    $delivery = ($subtotal >= 1000.0) ? 0.0 : 50.00;
+                }
 
                 $total = $subtotal + $tax + $delivery;
 
