@@ -76,5 +76,17 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             ProductSeeder::class,
         ]);
+
+        // Seed default serviceable Chennai areas with custom shipping prices
+        \App\Models\Area::firstOrCreate(['name' => 'Anna Nagar'],  ['shipping_price' => 10.00]);
+        \App\Models\Area::firstOrCreate(['name' => 'Adyar'],       ['shipping_price' => 20.00]);
+        \App\Models\Area::firstOrCreate(['name' => 'Velachery'],   ['shipping_price' => 30.00]);
+        \App\Models\Area::firstOrCreate(['name' => 'T. Nagar'],    ['shipping_price' => 15.00]);
+        \App\Models\Area::firstOrCreate(['name' => 'Mylapore'],    ['shipping_price' => 25.00]);
+        \App\Models\Area::firstOrCreate(['name' => 'Nungambakkam'], ['shipping_price' => 18.00]);
+        \App\Models\Area::firstOrCreate(['name' => 'Porur'],       ['shipping_price' => 35.00]);
+        \App\Models\Area::firstOrCreate(['name' => 'Chromepet'],   ['shipping_price' => 40.00]);
+        \App\Models\Area::firstOrCreate(['name' => 'Tambaram'],    ['shipping_price' => 45.00]);
+        \App\Models\Area::firstOrCreate(['name' => 'Perambur'],    ['shipping_price' => 22.00]);
     }
 }

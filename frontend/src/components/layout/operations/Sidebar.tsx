@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/providers/AuthProvider';
-import { Home, Package, ShoppingBag, Users, Settings, BarChart2, Anchor, ShieldCheck, Shield, Percent } from 'lucide-react';
+import { Home, Package, ShoppingBag, Users, Settings, BarChart2, Anchor, ShieldCheck, Shield, Percent, MapPin } from 'lucide-react';
 
 export function OperationsSidebar() {
   const pathname = usePathname();
@@ -82,6 +82,10 @@ export function OperationsSidebar() {
           <Link href="/admin/categories" className={getLinkClasses('/admin/categories')}>
             <Package className={getIconClasses('/admin/categories')} />
             Categories
+          </Link>
+          <Link href="/admin/areas" className={getLinkClasses('/admin/areas')}>
+            <MapPin className={getIconClasses('/admin/areas')} />
+            Area Master
           </Link>
           <Link href="/admin/discounts" className={getLinkClasses('/admin/discounts')}>
             <Percent className={getIconClasses('/admin/discounts')} />

@@ -51,7 +51,8 @@ export default function CheckoutPage() {
       calculateShipping.mutate({
         latitude: Number(address.latitude || 0),
         longitude: Number(address.longitude || 0),
-        subtotal: Number(cart.subtotal)
+        subtotal: Number(cart.subtotal),
+        address_id: selectedAddressId
       }, {
         onSuccess: (data) => {
           setShippingData(data);
@@ -222,7 +223,7 @@ export default function CheckoutPage() {
                   </>
                 ) : (
                   <div className="text-xs text-amber-600 font-semibold bg-amber-50 p-3 rounded-lg border border-amber-100">
-                    Select a delivery location to calculate shipping.
+                    Add address to show the shipping fees.
                   </div>
                 )}
               </div>
