@@ -60,6 +60,15 @@ export default function AdminDiscountsPage() {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [discountType, setDiscountType] = useState<'percentage' | 'flat' | 'none'>('none');
   const [discountValue, setDiscountValue] = useState<string>('');
+  const [discountStartDate, setDiscountStartDate] = useState<string>('');
+  const [discountStartTime, setDiscountStartTime] = useState<string>('');
+  const [discountEndDate, setDiscountEndDate] = useState<string>('');
+  const [startHour, setStartHour] = useState('12');
+  const [startMinute, setStartMinute] = useState('00');
+  const [startAmPm, setStartAmPm] = useState('AM');
+  const [endHour, setEndHour] = useState('12');
+  const [endMinute, setEndMinute] = useState('00');
+  const [endAmPm, setEndAmPm] = useState('AM');
 
   const [bannerModalOpen, setBannerModalOpen] = useState(false);
   const [editingBanner, setEditingBanner] = useState<AdminBanner | null>(null);
@@ -77,6 +86,39 @@ export default function AdminDiscountsPage() {
     setSelectedProduct(product);
     setDiscountType((product.discount_type as 'percentage' | 'flat') || 'none');
     setDiscountValue(product.discount_value ? String(product.discount_value) : '');
+    
+    if (product.discount_start_date) {
+      const start = new Date(product.discount_start_date + (!product.discount_start_date.endsWith('Z') ? 'Z' : ''));
+      setDiscountStartDate(start.getFullYear() + '-' + String(start.getMonth() + 1).padStart(2, '0') + '-' + String(start.getDate()).padStart(2, '0'));
+      let h = start.getHours();
+      setStartAmPm(h >= 12 ? 'PM' : 'AM');
+      h = h % 12;
+      h = h ? h : 12;
+      setStartHour(String(h).padStart(2, '0'));
+      setStartMinute(String(start.getMinutes()).padStart(2, '0'));
+    } else {
+      setDiscountStartDate('');
+      setStartHour('12');
+      setStartMinute('00');
+      setStartAmPm('AM');
+    }
+
+    if (product.discount_end_date) {
+      const end = new Date(product.discount_end_date + (!product.discount_end_date.endsWith('Z') ? 'Z' : ''));
+      setDiscountEndDate(end.getFullYear() + '-' + String(end.getMonth() + 1).padStart(2, '0') + '-' + String(end.getDate()).padStart(2, '0'));
+      let h = end.getHours();
+      setEndAmPm(h >= 12 ? 'PM' : 'AM');
+      h = h % 12;
+      h = h ? h : 12;
+      setEndHour(String(h).padStart(2, '0'));
+      setEndMinute(String(end.getMinutes()).padStart(2, '0'));
+    } else {
+      setDiscountEndDate('');
+      setEndHour('12');
+      setEndMinute('00');
+      setEndAmPm('AM');
+    }
+
     setDiscountModalOpen(true);
   };
 
@@ -88,6 +130,8 @@ export default function AdminDiscountsPage() {
     if (discountType === 'none') {
       payload.discount_type = null;
       payload.discount_value = null;
+      payload.discount_start_date = null;
+      payload.discount_end_date = null;
     } else {
       const val = parseFloat(discountValue);
       if (isNaN(val) || val < 0) {
@@ -100,6 +144,28 @@ export default function AdminDiscountsPage() {
       }
       payload.discount_type = discountType;
       payload.discount_value = val;
+      
+      if (discountStartDate) {
+        let h = parseInt(startHour, 10) || 12;
+        if (startAmPm === 'PM' && h < 12) h += 12;
+        if (startAmPm === 'AM' && h === 12) h = 0;
+        const hh = h.toString().padStart(2, '0');
+        const mm = startMinute.padStart(2, '0');
+        payload.discount_start_date = new Date(`${discountStartDate}T${hh}:${mm}:00`).toISOString().replace('T', ' ').substring(0, 19);
+      } else {
+        payload.discount_start_date = null;
+      }
+      
+      if (discountEndDate) {
+        let h = parseInt(endHour, 10) || 12;
+        if (endAmPm === 'PM' && h < 12) h += 12;
+        if (endAmPm === 'AM' && h === 12) h = 0;
+        const hh = h.toString().padStart(2, '0');
+        const mm = endMinute.padStart(2, '0');
+        payload.discount_end_date = new Date(`${discountEndDate}T${hh}:${mm}:00`).toISOString().replace('T', ' ').substring(0, 19);
+      } else {
+        payload.discount_end_date = null;
+      }
     }
 
     updateProductDiscount.mutate(
@@ -567,28 +633,66 @@ export default function AdminDiscountsPage() {
               </div>
 
               {discountType !== 'none' && (
-                <div className="space-y-2 animate-in fade-in duration-200">
-                  <Label htmlFor="discount-value" className="font-bold text-slate-700">
-                    {discountType === 'percentage' ? 'Discount Percentage (%)' : 'Flat Discount Value (₹)'}
-                  </Label>
-                  <Input
-                    id="discount-value"
-                    type="number"
-                    placeholder={discountType === 'percentage' ? 'e.g. 15' : 'e.g. 50'}
-                    className="rounded-xl h-11"
-                    value={discountValue}
-                    onChange={(e) => setDiscountValue(e.target.value)}
-                  />
-                  {discountType === 'percentage' && discountValue && (
-                    <p className="text-xs text-muted-foreground font-semibold mt-1">
-                      New Promotional Price: <span className="text-emerald-600 font-bold">₹{Math.max(0, parseFloat((selectedProduct.price * (1 - parseFloat(discountValue) / 100)).toFixed(2)) || 0)}</span>
-                    </p>
-                  )}
-                  {discountType === 'flat' && discountValue && (
-                    <p className="text-xs text-muted-foreground font-semibold mt-1">
-                      New Promotional Price: <span className="text-emerald-600 font-bold">₹{Math.max(0, parseFloat((selectedProduct.price - parseFloat(discountValue)).toFixed(2)) || 0)}</span>
-                    </p>
-                  )}
+                <div className="space-y-4 animate-in fade-in duration-200">
+                  <div className="space-y-2">
+                    <Label htmlFor="discount-value" className="font-bold text-slate-700">
+                      {discountType === 'percentage' ? 'Discount Percentage (%)' : 'Flat Discount Value (₹)'}
+                    </Label>
+                    <Input
+                      id="discount-value"
+                      type="number"
+                      placeholder={discountType === 'percentage' ? 'e.g. 15' : 'e.g. 50'}
+                      className="rounded-xl h-11"
+                      value={discountValue}
+                      onChange={(e) => setDiscountValue(e.target.value)}
+                    />
+                    {discountType === 'percentage' && discountValue && (
+                      <p className="text-xs text-muted-foreground font-semibold mt-1">
+                        New Promotional Price: <span className="text-emerald-600 font-bold">₹{Math.max(0, parseFloat((selectedProduct.price * (1 - parseFloat(discountValue) / 100)).toFixed(2)) || 0)}</span>
+                      </p>
+                    )}
+                    {discountType === 'flat' && discountValue && (
+                      <p className="text-xs text-muted-foreground font-semibold mt-1">
+                        New Promotional Price: <span className="text-emerald-600 font-bold">₹{Math.max(0, parseFloat((selectedProduct.price - parseFloat(discountValue)).toFixed(2)) || 0)}</span>
+                      </p>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-3 pt-2 border-t">
+                    <h4 className="text-sm font-bold text-slate-800">Schedule Discount (Optional)</h4>
+                    <div className="flex flex-col gap-4">
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold text-slate-500 uppercase tracking-wider">From</Label>
+                        <div className="flex gap-2">
+                          <Input type="date" className="h-10 text-sm flex-1" value={discountStartDate} onChange={e => setDiscountStartDate(e.target.value)} />
+                          <div className="flex items-center gap-1 bg-white border rounded-xl overflow-hidden shadow-sm h-10 pr-1 shrink-0">
+                            <Input type="number" min="1" max="12" className="h-full text-sm w-[46px] border-0 text-center px-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent" value={startHour} onChange={e => setStartHour(e.target.value)} />
+                            <span className="text-slate-400 font-bold">:</span>
+                            <Input type="number" min="0" max="59" className="h-full text-sm w-[46px] border-0 text-center px-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent" value={startMinute} onChange={e => setStartMinute(e.target.value)} />
+                            <select className="h-full text-xs font-bold bg-slate-50 border-none outline-none px-2 rounded text-slate-700 cursor-pointer" value={startAmPm} onChange={e => setStartAmPm(e.target.value)}>
+                              <option value="AM">AM</option>
+                              <option value="PM">PM</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold text-slate-500 uppercase tracking-wider">To</Label>
+                        <div className="flex gap-2">
+                          <Input type="date" className="h-10 text-sm flex-1" value={discountEndDate} onChange={e => setDiscountEndDate(e.target.value)} />
+                          <div className="flex items-center gap-1 bg-white border rounded-xl overflow-hidden shadow-sm h-10 pr-1 shrink-0">
+                            <Input type="number" min="1" max="12" className="h-full text-sm w-[46px] border-0 text-center px-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent" value={endHour} onChange={e => setEndHour(e.target.value)} />
+                            <span className="text-slate-400 font-bold">:</span>
+                            <Input type="number" min="0" max="59" className="h-full text-sm w-[46px] border-0 text-center px-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent" value={endMinute} onChange={e => setEndMinute(e.target.value)} />
+                            <select className="h-full text-xs font-bold bg-slate-50 border-none outline-none px-2 rounded text-slate-700 cursor-pointer" value={endAmPm} onChange={e => setEndAmPm(e.target.value)}>
+                              <option value="AM">AM</option>
+                              <option value="PM">PM</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

@@ -28,6 +28,8 @@ class Product extends Model
         'sale_price',
         'discount_type',
         'discount_value',
+        'discount_start_date',
+        'discount_end_date',
         'weight_unit',
         'minimum_order_quantity',
         'maximum_order_quantity',
@@ -58,6 +60,8 @@ class Product extends Model
         'price' => 'float',
         'sale_price' => 'float',
         'discount_value' => 'float',
+        'discount_start_date' => 'datetime',
+        'discount_end_date' => 'datetime',
         'minimum_order_quantity' => 'float',
         'maximum_order_quantity' => 'float',
         'available_quantity' => 'float',
@@ -70,20 +74,46 @@ class Product extends Model
     protected static function booted()
     {
         static::saving(function ($product) {
-            if ($product->discount_type && $product->discount_value !== null) {
-                if ($product->discount_type === 'percentage') {
-                    // Fix 11: Cap percentage discount at 100% to prevent negative sale_price
-                    $clampedPercent = min(100, max(0, (float) $product->discount_value));
-                    $product->sale_price = max(0, round($product->price * (1 - $clampedPercent / 100), 2));
-                } elseif ($product->discount_type === 'flat') {
-                    $product->sale_price = max(0, round($product->price - $product->discount_value, 2));
-                }
-            } else {
+            if (!$product->discount_type || $product->discount_value === null) {
                 $product->sale_price = null;
                 $product->discount_type = null;
                 $product->discount_value = null;
             }
+
+            // Smart correction: if the user selected a time that evaluates to before the start time
+            // (e.g., 2 PM to 10 AM on the same day), automatically roll the end time over to the next day.
+            if ($product->discount_start_date && $product->discount_end_date) {
+                if ($product->discount_end_date->lt($product->discount_start_date)) {
+                    $product->discount_end_date = $product->discount_end_date->addDay();
+                }
+            }
         });
+    }
+
+    public function getSalePriceAttribute($value)
+    {
+        if (!$this->discount_type || $this->discount_value === null) {
+            return $value;
+        }
+
+        $now = now();
+
+        if ($this->discount_start_date && $now->lt($this->discount_start_date)) {
+            return $value;
+        }
+
+        if ($this->discount_end_date && $now->gt($this->discount_end_date)) {
+            return $value;
+        }
+
+        if ($this->discount_type === 'percentage') {
+            $clampedPercent = min(100, max(0, (float) $this->discount_value));
+            return max(0, round($this->price * (1 - $clampedPercent / 100), 2));
+        } elseif ($this->discount_type === 'flat') {
+            return max(0, round($this->price - $this->discount_value, 2));
+        }
+
+        return $value;
     }
 
     protected function variants(): Attribute

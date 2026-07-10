@@ -45,6 +45,8 @@ class ProductController extends Controller
             'sale_price'             => 'nullable|numeric|min:0',
             'discount_type'          => 'nullable|string|in:percentage,flat',
             'discount_value'         => 'nullable|numeric|min:0',
+            'discount_start_date'    => 'nullable|date',
+            'discount_end_date'      => 'nullable|date',
             'weight_unit'            => 'required|string',
             'minimum_order_quantity' => 'nullable|numeric|min:0',
             'maximum_order_quantity' => 'nullable|numeric|min:0',
@@ -116,6 +118,8 @@ class ProductController extends Controller
                     $fail('Percentage discount cannot exceed 100%.');
                 }
             }],
+            'discount_start_date' => 'nullable|date',
+            'discount_end_date' => 'nullable|date',
             'weight_unit' => 'sometimes|string',
             'minimum_order_quantity' => 'nullable|numeric|min:0',
             'maximum_order_quantity' => 'nullable|numeric|min:0',
