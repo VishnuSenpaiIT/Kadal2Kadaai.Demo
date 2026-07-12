@@ -9,6 +9,8 @@ export interface AdminProduct {
   sale_price: number | null;
   discount_type: string | null;
   discount_value: number | null;
+  discount_start_date?: string | null;
+  discount_end_date?: string | null;
   available_quantity: number;
   weight_unit: string;
   stock_status: string;

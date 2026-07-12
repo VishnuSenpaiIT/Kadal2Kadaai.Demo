@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useAdminProducts, useUpdateProduct } from '@/shared/api/hooks/useAdminProducts';
+import { DateTimePicker } from '@/components/ui/date-time-picker';
 import {
   useAdminBanners,
   useCreateBanner,
@@ -40,6 +41,17 @@ import {
 import { toast } from 'sonner';
 import { assetUrl } from '@/lib/asset-url';
 
+const parseDbDate = (dateStr: string | null | undefined): Date | null => {
+  if (!dateStr) return null;
+  // Replace space with T to make it standard ISO and handle Z safely in Safari
+  let cleanStr = dateStr.replace(' ', 'T');
+  if (!cleanStr.endsWith('Z') && !cleanStr.includes('+')) {
+    cleanStr += 'Z';
+  }
+  const dateObj = new Date(cleanStr);
+  return isNaN(dateObj.getTime()) ? null : dateObj;
+};
+
 export default function AdminDiscountsPage() {
   const [activeTab, setActiveTab] = useState('products');
   const [productSearch, setProductSearch] = useState('');
@@ -60,15 +72,9 @@ export default function AdminDiscountsPage() {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [discountType, setDiscountType] = useState<'percentage' | 'flat' | 'none'>('none');
   const [discountValue, setDiscountValue] = useState<string>('');
-  const [discountStartDate, setDiscountStartDate] = useState<string>('');
-  const [discountStartTime, setDiscountStartTime] = useState<string>('');
-  const [discountEndDate, setDiscountEndDate] = useState<string>('');
-  const [startHour, setStartHour] = useState('12');
-  const [startMinute, setStartMinute] = useState('00');
-  const [startAmPm, setStartAmPm] = useState('AM');
-  const [endHour, setEndHour] = useState('12');
-  const [endMinute, setEndMinute] = useState('00');
-  const [endAmPm, setEndAmPm] = useState('AM');
+  // Single datetime-local values (YYYY-MM-DDTHH:mm) — no AM/PM confusion
+  const [discountStartDateTime, setDiscountStartDateTime] = useState<string>('');
+  const [discountEndDateTime, setDiscountEndDateTime] = useState<string>('');
 
   const [bannerModalOpen, setBannerModalOpen] = useState(false);
   const [editingBanner, setEditingBanner] = useState<AdminBanner | null>(null);
@@ -86,37 +92,55 @@ export default function AdminDiscountsPage() {
     setSelectedProduct(product);
     setDiscountType((product.discount_type as 'percentage' | 'flat') || 'none');
     setDiscountValue(product.discount_value ? String(product.discount_value) : '');
-    
+
+    // Load start date/time — parse using native Date so the browser handles UTC -> Local conversion
     if (product.discount_start_date) {
-      const start = new Date(product.discount_start_date + (!product.discount_start_date.endsWith('Z') ? 'Z' : ''));
-      setDiscountStartDate(start.getFullYear() + '-' + String(start.getMonth() + 1).padStart(2, '0') + '-' + String(start.getDate()).padStart(2, '0'));
-      let h = start.getHours();
-      setStartAmPm(h >= 12 ? 'PM' : 'AM');
-      h = h % 12;
-      h = h ? h : 12;
-      setStartHour(String(h).padStart(2, '0'));
-      setStartMinute(String(start.getMinutes()).padStart(2, '0'));
+      // If it doesn't end with Z and doesn't contain a timezone offset, we append 'Z' to treat as UTC (since Laravel serializes to UTC)
+      let startStr = product.discount_start_date;
+      if (!startStr.endsWith('Z') && !startStr.includes('+') && startStr.includes('T')) {
+        startStr += 'Z';
+      } else if (!startStr.includes('T') && !startStr.endsWith('Z')) {
+        // If it is in space-separated format (e.g. YYYY-MM-DD HH:mm:ss), replace space with T and append Z
+        startStr = startStr.replace(' ', 'T') + 'Z';
+      }
+      
+      const date = new Date(startStr);
+      if (!isNaN(date.getTime())) {
+        const y = date.getFullYear();
+        const mo = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        const h = String(date.getHours()).padStart(2, '0');
+        const mi = String(date.getMinutes()).padStart(2, '0');
+        setDiscountStartDateTime(`${y}-${mo}-${d}T${h}:${mi}`);
+      } else {
+        setDiscountStartDateTime('');
+      }
     } else {
-      setDiscountStartDate('');
-      setStartHour('12');
-      setStartMinute('00');
-      setStartAmPm('AM');
+      setDiscountStartDateTime('');
     }
 
+    // Load end date/time
     if (product.discount_end_date) {
-      const end = new Date(product.discount_end_date + (!product.discount_end_date.endsWith('Z') ? 'Z' : ''));
-      setDiscountEndDate(end.getFullYear() + '-' + String(end.getMonth() + 1).padStart(2, '0') + '-' + String(end.getDate()).padStart(2, '0'));
-      let h = end.getHours();
-      setEndAmPm(h >= 12 ? 'PM' : 'AM');
-      h = h % 12;
-      h = h ? h : 12;
-      setEndHour(String(h).padStart(2, '0'));
-      setEndMinute(String(end.getMinutes()).padStart(2, '0'));
+      let endStr = product.discount_end_date;
+      if (!endStr.endsWith('Z') && !endStr.includes('+') && endStr.includes('T')) {
+        endStr += 'Z';
+      } else if (!endStr.includes('T') && !endStr.endsWith('Z')) {
+        endStr = endStr.replace(' ', 'T') + 'Z';
+      }
+      
+      const date = new Date(endStr);
+      if (!isNaN(date.getTime())) {
+        const y = date.getFullYear();
+        const mo = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        const h = String(date.getHours()).padStart(2, '0');
+        const mi = String(date.getMinutes()).padStart(2, '0');
+        setDiscountEndDateTime(`${y}-${mo}-${d}T${h}:${mi}`);
+      } else {
+        setDiscountEndDateTime('');
+      }
     } else {
-      setDiscountEndDate('');
-      setEndHour('12');
-      setEndMinute('00');
-      setEndAmPm('AM');
+      setDiscountEndDateTime('');
     }
 
     setDiscountModalOpen(true);
@@ -144,25 +168,17 @@ export default function AdminDiscountsPage() {
       }
       payload.discount_type = discountType;
       payload.discount_value = val;
-      
-      if (discountStartDate) {
-        let h = parseInt(startHour, 10) || 12;
-        if (startAmPm === 'PM' && h < 12) h += 12;
-        if (startAmPm === 'AM' && h === 12) h = 0;
-        const hh = h.toString().padStart(2, '0');
-        const mm = startMinute.padStart(2, '0');
-        payload.discount_start_date = new Date(`${discountStartDate}T${hh}:${mm}:00`).toISOString().replace('T', ' ').substring(0, 19);
+
+      // datetime-local returns 'YYYY-MM-DDTHH:mm' — convert to 'YYYY-MM-DD HH:mm:00'
+      // This is already in LOCAL time, no UTC conversion needed.
+      if (discountStartDateTime) {
+        payload.discount_start_date = discountStartDateTime.replace('T', ' ') + ':00';
       } else {
         payload.discount_start_date = null;
       }
-      
-      if (discountEndDate) {
-        let h = parseInt(endHour, 10) || 12;
-        if (endAmPm === 'PM' && h < 12) h += 12;
-        if (endAmPm === 'AM' && h === 12) h = 0;
-        const hh = h.toString().padStart(2, '0');
-        const mm = endMinute.padStart(2, '0');
-        payload.discount_end_date = new Date(`${discountEndDate}T${hh}:${mm}:00`).toISOString().replace('T', ' ').substring(0, 19);
+
+      if (discountEndDateTime) {
+        payload.discount_end_date = discountEndDateTime.replace('T', ' ') + ':00';
       } else {
         payload.discount_end_date = null;
       }
@@ -176,7 +192,9 @@ export default function AdminDiscountsPage() {
           setDiscountModalOpen(false);
         },
         onError: (err: any) => {
-          toast.error(err?.message || 'Failed to update discount');
+          const serverMsg = err?.response?.data?.message || err?.message || 'Failed to update discount';
+          toast.error(serverMsg);
+          console.error('Discount save error:', err?.response?.data || err);
         },
       }
     );
@@ -387,6 +405,21 @@ export default function AdminDiscountsPage() {
                     <TableBody>
                       {productsData.data.map((prod) => {
                         const hasDiscount = prod.discount_type && prod.discount_value !== null;
+                        
+                        // Calculate promo status based on schedule dates
+                        const now = new Date();
+                        const startDate = parseDbDate(prod.discount_start_date);
+                        const endDate = parseDbDate(prod.discount_end_date);
+                        
+                        let promoStatus: 'active' | 'scheduled' | 'expired' = 'active';
+                        if (hasDiscount) {
+                          if (startDate && now < startDate) {
+                            promoStatus = 'scheduled';
+                          } else if (endDate && now > endDate) {
+                            promoStatus = 'expired';
+                          }
+                        }
+
                         return (
                           <TableRow key={prod.id} className="hover:bg-slate-50 transition-colors">
                             <TableCell className="font-semibold text-slate-900 py-3">{prod.name}</TableCell>
@@ -398,12 +431,24 @@ export default function AdminDiscountsPage() {
                             <TableCell className="py-3 font-medium">₹{prod.price}</TableCell>
                             <TableCell className="py-3">
                               {hasDiscount ? (
-                                <Badge className="bg-emerald-500 text-white font-bold hover:bg-emerald-600 gap-1 shadow-sm">
-                                  <Percent className="w-3 h-3" />
-                                  {prod.discount_type === 'percentage' 
-                                    ? `${prod.discount_value}% OFF`
-                                    : `₹${prod.discount_value} OFF`}
-                                </Badge>
+                                <div className="flex flex-col gap-1 items-start">
+                                  <Badge className={`${
+                                    promoStatus === 'active' ? 'bg-emerald-500 hover:bg-emerald-600' :
+                                    promoStatus === 'scheduled' ? 'bg-blue-500 hover:bg-blue-600' :
+                                    'bg-slate-400 hover:bg-slate-500'
+                                  } text-white font-bold gap-1 shadow-sm`}>
+                                    <Percent className="w-3 h-3" />
+                                    {prod.discount_type === 'percentage' 
+                                      ? `${prod.discount_value}% OFF`
+                                      : `₹${prod.discount_value} OFF`}
+                                  </Badge>
+                                  {promoStatus === 'scheduled' && (
+                                    <span className="text-[10px] text-blue-600 font-semibold">Scheduled</span>
+                                  )}
+                                  {promoStatus === 'expired' && (
+                                    <span className="text-[10px] text-slate-500 font-medium">Expired</span>
+                                  )}
+                                </div>
                               ) : (
                                 <span className="text-muted-foreground text-xs font-light">None</span>
                               )}
@@ -658,39 +703,33 @@ export default function AdminDiscountsPage() {
                     )}
                   </div>
                   
-                  <div className="space-y-3 pt-2 border-t">
-                    <h4 className="text-sm font-bold text-slate-800">Schedule Discount (Optional)</h4>
+                  <div className="space-y-4 pt-2 border-t">
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-800">Schedule Discount (Optional)</h4>
+                      <p className="text-xs text-slate-500 mt-0.5">Leave blank to make the discount always active. Set both dates to schedule it for a specific time window.</p>
+                    </div>
                     <div className="flex flex-col gap-4">
-                      <div className="space-y-1.5">
-                        <Label className="text-xs font-bold text-slate-500 uppercase tracking-wider">From</Label>
-                        <div className="flex gap-2">
-                          <Input type="date" className="h-10 text-sm flex-1" value={discountStartDate} onChange={e => setDiscountStartDate(e.target.value)} />
-                          <div className="flex items-center gap-1 bg-white border rounded-xl overflow-hidden shadow-sm h-10 pr-1 shrink-0">
-                            <Input type="number" min="1" max="12" className="h-full text-sm w-[46px] border-0 text-center px-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent" value={startHour} onChange={e => setStartHour(e.target.value)} />
-                            <span className="text-slate-400 font-bold">:</span>
-                            <Input type="number" min="0" max="59" className="h-full text-sm w-[46px] border-0 text-center px-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent" value={startMinute} onChange={e => setStartMinute(e.target.value)} />
-                            <select className="h-full text-xs font-bold bg-slate-50 border-none outline-none px-2 rounded text-slate-700 cursor-pointer" value={startAmPm} onChange={e => setStartAmPm(e.target.value)}>
-                              <option value="AM">AM</option>
-                              <option value="PM">PM</option>
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-xs font-bold text-slate-500 uppercase tracking-wider">To</Label>
-                        <div className="flex gap-2">
-                          <Input type="date" className="h-10 text-sm flex-1" value={discountEndDate} onChange={e => setDiscountEndDate(e.target.value)} />
-                          <div className="flex items-center gap-1 bg-white border rounded-xl overflow-hidden shadow-sm h-10 pr-1 shrink-0">
-                            <Input type="number" min="1" max="12" className="h-full text-sm w-[46px] border-0 text-center px-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent" value={endHour} onChange={e => setEndHour(e.target.value)} />
-                            <span className="text-slate-400 font-bold">:</span>
-                            <Input type="number" min="0" max="59" className="h-full text-sm w-[46px] border-0 text-center px-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent" value={endMinute} onChange={e => setEndMinute(e.target.value)} />
-                            <select className="h-full text-xs font-bold bg-slate-50 border-none outline-none px-2 rounded text-slate-700 cursor-pointer" value={endAmPm} onChange={e => setEndAmPm(e.target.value)}>
-                              <option value="AM">AM</option>
-                              <option value="PM">PM</option>
-                            </select>
-                          </div>
-                        </div>
-                      </div>
+                      <DateTimePicker
+                        label="From (Start Date & Time)"
+                        value={discountStartDateTime}
+                        onChange={setDiscountStartDateTime}
+                        placeholder="Click to select start date & time"
+                      />
+                      <DateTimePicker
+                        label="To (End Date & Time)"
+                        value={discountEndDateTime}
+                        onChange={setDiscountEndDateTime}
+                        placeholder="Click to select end date & time"
+                      />
+                      {(discountStartDateTime || discountEndDateTime) && (
+                        <button
+                          type="button"
+                          className="text-xs text-slate-400 underline hover:text-red-500 text-left w-fit transition-colors"
+                          onClick={() => { setDiscountStartDateTime(''); setDiscountEndDateTime(''); }}
+                        >
+                          Clear schedule (make always active)
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -29,11 +29,14 @@ export interface Order {
   created_at: string;
   items: OrderItem[];
   address?: {
-    street: string;
+    house_flat_number: string;
+    street_name: string;
+    area_locality: string;
     city: string;
+    district: string;
     state: string;
     pincode: string;
-    landmark?: string;
+    landmark?: string | null;
   };
   seller?: {
     id: string;

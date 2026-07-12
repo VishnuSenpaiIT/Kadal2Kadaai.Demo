@@ -99,11 +99,11 @@ class Product extends Model
         $now = now();
 
         if ($this->discount_start_date && $now->lt($this->discount_start_date)) {
-            return $value;
+            return null;
         }
 
         if ($this->discount_end_date && $now->gt($this->discount_end_date)) {
-            return $value;
+            return null;
         }
 
         if ($this->discount_type === 'percentage') {
