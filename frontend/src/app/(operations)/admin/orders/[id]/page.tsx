@@ -346,9 +346,11 @@ export default function AdminOrderDetailPage({ params }: { params: Promise<{ id:
             </h3>
             {order.address ? (
               <div className="text-sm space-y-1">
-                <p className="font-medium">{order.address.street}</p>
-                {order.address.landmark && <p>{order.address.landmark}</p>}
-                <p>{order.address.city}, {order.address.state} {order.address.pincode}</p>
+                <p className="font-medium">{order.address.house_flat_number}, {order.address.street_name}</p>
+                <p>{order.address.area_locality}</p>
+                {order.address.landmark && <p className="text-muted-foreground text-xs">Landmark: {order.address.landmark}</p>}
+                <p>{order.address.city}, {order.address.district ? `${order.address.district}, ` : ''}{order.address.state} {order.address.pincode}</p>
+                {order.address.mobile_number && <p className="text-muted-foreground text-xs mt-1">Phone: {order.address.mobile_number}</p>}
               </div>
             ) : (
               <p className="text-sm text-muted-foreground">No shipping address recorded</p>

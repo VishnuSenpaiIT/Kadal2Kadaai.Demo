@@ -46,7 +46,7 @@ export default function RootLayout({
               <LocationProvider>
                 <div className="flex flex-col min-h-screen">
                   {children}
-                  <Toaster richColors position="top-right" />
+                  <Toaster richColors position="top-right" closeButton />
                 </div>
               </LocationProvider>
             </AuthProvider>

@@ -271,9 +271,10 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                   {order.address ? (
                     <>
                       <p className="font-bold mb-1">{order.consumer?.first_name} {order.consumer?.last_name}</p>
-                      <p>{order.address.street}</p>
-                      {order.address.landmark && <p>{order.address.landmark}</p>}
-                      <p>{order.address.city}, {order.address.state} {order.address.pincode}</p>
+                      <p>{order.address.house_flat_number}, {order.address.street_name}</p>
+                      <p>{order.address.area_locality}</p>
+                      {order.address.landmark && <p className="text-muted-foreground text-xs">Landmark: {order.address.landmark}</p>}
+                      <p>{order.address.city}, {order.address.district ? `${order.address.district}, ` : ''}{order.address.state} {order.address.pincode}</p>
                       <p className="mt-2 text-muted-foreground">Phone: {order.consumer?.contact_number || 'N/A'}</p>
                     </>
                   ) : (
