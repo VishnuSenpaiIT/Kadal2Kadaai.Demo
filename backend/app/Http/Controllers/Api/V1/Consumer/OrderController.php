@@ -230,8 +230,42 @@ class OrderController extends Controller
             }
         });
 
+        // Calculate total amount to create Razorpay Order
+        $totalAmount = collect($orders)->sum('total');
+        $razorpayOrderId = null;
+
+        if ($totalAmount > 0 && env('RAZORPAY_KEY_ID') && env('RAZORPAY_KEY_SECRET')) {
+            $api = new \Razorpay\Api\Api(env('RAZORPAY_KEY_ID'), env('RAZORPAY_KEY_SECRET'));
+            
+            $razorpayOrder = $api->order->create([
+                'receipt'         => $orders[0]->order_number,
+                'amount'          => round($totalAmount * 100), // amount in paise
+                'currency'        => 'INR',
+                'payment_capture' => 1 // auto capture
+            ]);
+
+            $razorpayOrderId = $razorpayOrder['id'];
+
+            // Create Payment records linked to each order
+            foreach ($orders as $order) {
+                \App\Models\Payment::create([
+                    'order_id' => $order->id,
+                    'razorpay_order_id' => $razorpayOrderId,
+                    'method' => \App\Enums\PaymentMethod::Razorpay->value,
+                    'status' => \App\Enums\PaymentStatus::Pending->value,
+                    'amount' => $order->total,
+                    'currency' => 'INR',
+                ]);
+            }
+        }
+
         return $this->successResponse(
-            count($orders) === 1 ? $orders[0] : $orders,
+            [
+                'order' => count($orders) === 1 ? $orders[0] : $orders,
+                'razorpay_order_id' => $razorpayOrderId,
+                'razorpay_key_id' => env('RAZORPAY_KEY_ID'),
+                'amount' => round($totalAmount * 100),
+            ],
             'Order placed successfully',
             201
         );

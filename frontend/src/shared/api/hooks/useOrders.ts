@@ -79,7 +79,7 @@ export function useCheckout() {
   return useMutation({
     mutationFn: async (payload: { address_id: string; harbour_id?: number | null; notes?: string }) => {
       const res = await apiClient.post('/v1/checkout', payload);
-      return (res as unknown as { data: Order | Order[] }).data;
+      return (res as unknown as { data: { order: Order | Order[], razorpay_order_id: string | null, razorpay_key_id: string | null, amount: number } }).data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });
@@ -100,3 +100,17 @@ export function useCancelOrder() {
     },
   });
 }
+
+export function useVerifyPayment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
+      const res = await apiClient.post('/v1/payment/verify', payload);
+      return res;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+    },
+  });
+}
+

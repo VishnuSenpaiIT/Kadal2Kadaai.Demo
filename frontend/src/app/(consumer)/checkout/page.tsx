@@ -11,14 +11,16 @@ import { Container } from '@/components/layout/shared/Container';
 import { Button } from '@/components/ui/button';
 import { Loader2, MapPin, AlertCircle, ArrowRight, ShieldCheck, CheckCircle2, Anchor } from 'lucide-react';
 import Link from 'next/link';
+import Script from 'next/script';
 
 export default function CheckoutPage() {
   const router = useRouter();
   // Fix 15: Auth guard — redirect unauthenticated users before rendering anything
-  const { isAuthenticated, isInitialized } = useAuth();
+  const { user, isAuthenticated, isInitialized } = useAuth();
   const { data: cart, isLoading: isCartLoading } = useCart();
   const { data: addresses, isLoading: isAddressesLoading } = useAddresses();
   const checkout = useCheckout();
+  const verifyPayment = useVerifyPayment();
 
   const [selectedAddressId, setSelectedAddressId] = useState<string>('');
   const [notes, setNotes] = useState('');
@@ -92,8 +94,45 @@ export default function CheckoutPage() {
       address_id: selectedAddressId, 
       notes 
     }, {
-      onSuccess: () => {
-        router.push('/checkout/success');
+      onSuccess: (data: any) => {
+        if (data && data.razorpay_order_id) {
+          const options = {
+            key: data.razorpay_key_id,
+            amount: data.amount,
+            currency: 'INR',
+            name: 'Kadal2Kadaai',
+            description: 'Order Payment',
+            order_id: data.razorpay_order_id,
+            handler: function (response: any) {
+              verifyPayment.mutate({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }, {
+                onSuccess: () => {
+                   router.push('/checkout/success');
+                },
+                onError: () => {
+                   setError('Payment verification failed. Please contact support.');
+                }
+              });
+            },
+            prefill: {
+              name: user?.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : 'Customer',
+              contact: user?.contact_number || '',
+            },
+            theme: {
+              color: '#3399cc'
+            }
+          };
+          const rzp = new (window as any).Razorpay(options);
+          rzp.on('payment.failed', function (response: any) {
+            setError(response.error.description || 'Payment failed. Please try again.');
+          });
+          rzp.open();
+        } else {
+          router.push('/checkout/success');
+        }
       },
       onError: (err: any) => {
         setError(err.message || 'Checkout failed. Please try again.');
@@ -109,6 +148,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="py-12 lg:py-20 bg-background min-h-screen relative overflow-hidden">
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
       {/* Decorative Background */}
       <div className="absolute top-0 left-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none z-0 -translate-x-1/2 -translate-y-1/4"></div>
 
@@ -233,9 +273,9 @@ export default function CheckoutPage() {
                   <span className="font-bold text-xl text-foreground">Total to Pay</span>
                   <span className="font-black text-3xl text-primary drop-shadow-sm">₹{total}</span>
                 </div>
-                <div className="flex items-center gap-2 mt-3 text-xs font-semibold text-emerald-600 bg-emerald-50 w-fit px-3 py-1.5 rounded-md">
-                  <CheckCircle2 className="w-4 h-4" />
-                  Cash on Delivery
+                <div className="flex items-center gap-2 mt-3 text-xs font-semibold text-primary bg-primary/10 w-fit px-3 py-1.5 rounded-md">
+                  <ShieldCheck className="w-4 h-4" />
+                  Pay securely with Razorpay
                 </div>
               </div>
               
